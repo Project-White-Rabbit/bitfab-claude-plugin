@@ -1,4 +1,4 @@
-import { exec } from "node:child_process"
+import { exec, execSync } from "node:child_process"
 import http from "node:http"
 import os from "node:os"
 import { getConfig, saveCredentials } from "../config.js"
@@ -26,8 +26,41 @@ function findOpenPort(): Promise<number> {
   })
 }
 
+function getFrontmostApp(): string | null {
+  if (os.platform() !== "darwin") {
+    return null
+  }
+  try {
+    return execSync(
+      `osascript -e 'tell application "System Events" to get name of first process whose frontmost is true'`,
+      { stdio: "pipe", encoding: "utf-8" },
+    ).trim()
+  } catch {
+    return null
+  }
+}
+
+function focusApp(appName: string | null): void {
+  if (!appName || os.platform() !== "darwin") {
+    return
+  }
+  exec(`osascript -e 'tell application "${appName}" to activate'`)
+}
+
+const CALLBACK_HTML = `<html>
+<body style="margin:0;background:#f8fafc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden">
+  <div style="text-align:center;max-width:400px">
+    <h1 style="font-size:24px;font-weight:600;margin:0 0 16px 0">Simforge</h1>
+    <p style="margin:0;color:#059669">Authenticated! You can close this window.</p>
+    <button onclick="window.close()" style="margin-top:16px;padding:8px 16px;background:#0f172a;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer">Close Window</button>
+  </div>
+</body>
+<script>window.close()</script>
+</html>`
+
 async function main() {
   const config = getConfig()
+  const previousApp = getFrontmostApp()
   const port = await findOpenPort()
 
   console.log("Starting authentication flow...")
@@ -51,19 +84,13 @@ async function main() {
       if (token) {
         saveCredentials(token)
         res.writeHead(200, { "Content-Type": "text/html" })
-        res.end(`<html>
-<body style="margin:0;background:#f8fafc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden">
-  <div style="text-align:center;max-width:400px">
-    <h1 style="font-size:24px;font-weight:600;margin:0 0 16px 0">Simforge</h1>
-    <p style="margin:0;color:#059669">Authenticated! You can close this tab.</p>
-  </div>
-</body>
-</html>`)
+        res.end(CALLBACK_HTML)
         console.log("Authentication successful!")
         setTimeout(() => {
+          focusApp(previousApp)
           server.close()
           process.exit(0)
-        }, 2000)
+        }, 500)
       } else {
         res.writeHead(400, { "Content-Type": "application/json" })
         res.end(JSON.stringify({ ok: false, error: "No token received" }))
