@@ -92,10 +92,10 @@ function findOpenPort(): Promise<number> {
 }
 
 async function main() {
-  const traceId = process.argv[2]
+  const traceIds = process.argv.slice(2)
 
-  if (!traceId) {
-    console.error("Usage: label <traceId>")
+  if (traceIds.length === 0) {
+    console.error("Usage: label <traceId> [traceId2] [traceId3] ...")
     console.error("No trace ID provided.")
     process.exit(1)
   }
@@ -124,6 +124,8 @@ async function main() {
     if (url.pathname === "/done") {
       const status = url.searchParams.get("status") ?? "unknown"
       const decision = url.searchParams.get("decision")
+      const labeled = url.searchParams.get("labeled")
+      const total = url.searchParams.get("total")
       const isFetch = url.searchParams.get("isFetch") === "true"
 
       res.writeHead(200, { "Content-Type": "text/html" })
@@ -138,9 +140,17 @@ async function main() {
 </html>`)
 
       if (status === "saved") {
-        console.log(`Labeling complete: ${decision ?? "labeled"}`)
+        if (labeled && total) {
+          console.log(`Labeling complete: ${labeled}/${total} traces labeled (last: ${decision ?? "labeled"})`)
+        } else {
+          console.log(`Labeling complete: ${decision ?? "labeled"}`)
+        }
       } else {
-        console.log("Labeling ended without saving.")
+        if (labeled && total && Number(labeled) > 0) {
+          console.log(`Labeling ended early: ${labeled}/${total} traces labeled.`)
+        } else {
+          console.log("Labeling ended without saving.")
+        }
       }
 
       setTimeout(() => {
@@ -157,17 +167,27 @@ async function main() {
   })
 
   server.listen(port, () => {
-    const labelUrl = `${config.serviceUrl}/labeling/${encodeURIComponent(traceId)}?callbackPort=${port}`
-    console.log(`Opening labeling page: ${labelUrl}`)
-    openBrowser(labelUrl)
+    const firstTraceId = traceIds[0]
+    const labelUrl = new URL(`${config.serviceUrl}/labeling/${encodeURIComponent(firstTraceId)}`)
+    labelUrl.searchParams.set("callbackPort", String(port))
+    if (traceIds.length > 1) {
+      labelUrl.searchParams.set("traceIds", traceIds.join(","))
+    }
+    console.log(
+      traceIds.length > 1
+        ? `Opening labeling page for ${traceIds.length} traces: ${labelUrl}`
+        : `Opening labeling page: ${labelUrl}`,
+    )
+    openBrowser(labelUrl.toString())
     console.log("Waiting for labeling to complete...")
   })
 
+  const timeoutMs = traceIds.length > 1 ? Math.max(600_000, traceIds.length * 120_000) : 600_000
   setTimeout(() => {
-    console.log("Labeling timed out after 10 minutes.")
+    console.log(`Labeling timed out after ${Math.round(timeoutMs / 60_000)} minutes.`)
     server.close()
     process.exit(0)
-  }, 600_000)
+  }, timeoutMs)
 }
 
 main().catch((err) => {
