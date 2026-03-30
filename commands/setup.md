@@ -1,25 +1,25 @@
 ---
-description: Set up Simforge tracing — authenticate, instrument, and create replay scripts
+description: Set up Bitfab tracing — authenticate, instrument, and create replay scripts
 allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write"]
 argument-hint: [all|login|instrument|replay]
 ---
 
-# Simforge Setup
+# Bitfab Setup
 
-This skill handles Simforge onboarding in three phases: **login**, **instrument**, and **replay**. Run them individually or all at once.
+This skill handles Bitfab onboarding in three phases: **login**, **instrument**, and **replay**. Run them individually or all at once.
 
 | Invocation | Action |
 |---|---|
-| `/simforge:setup` or `/simforge:setup all` | Run full setup (login → instrument → replay) |
-| `/simforge:setup login` | Authenticate and retrieve API key |
-| `/simforge:setup instrument` | Instrument AI workflows with Simforge tracing |
-| `/simforge:setup replay` | Create or update replay scripts for instrumented workflows |
+| `/bitfab:setup` or `/bitfab:setup all` | Run full setup (login → instrument → replay) |
+| `/bitfab:setup login` | Authenticate and retrieve API key |
+| `/bitfab:setup instrument` | Instrument AI workflows with Bitfab tracing |
+| `/bitfab:setup replay` | Create or update replay scripts for instrumented workflows |
 
 ---
 
 ## Login
 
-Authenticate with Simforge and retrieve the API key.
+Authenticate with Bitfab and retrieve the API key.
 
 ### Step 1: Check Authentication
 
@@ -42,10 +42,10 @@ After successful login, confirm to the user and continue.
 Read the stored credentials to get the API key:
 
 ```bash
-node -e "const fs = require('fs'), os = require('os'), p = require('path').join(os.homedir(), '.config', 'simforge', 'credentials.json'); try { console.log(JSON.parse(fs.readFileSync(p, 'utf-8')).apiKey) } catch { console.error('No credentials found') }"
+node -e "const fs = require('fs'), os = require('os'), p = require('path').join(os.homedir(), '.config', 'bitfab', 'credentials.json'); try { console.log(JSON.parse(fs.readFileSync(p, 'utf-8')).apiKey) } catch { console.error('No credentials found') }"
 ```
 
-Use this key for the `SIMFORGE_API_KEY` environment variable.
+Use this key for the `BITFAB_API_KEY` environment variable.
 
 **If running `login` only**, stop here and report the result.
 
@@ -53,45 +53,45 @@ Use this key for the `SIMFORGE_API_KEY` environment variable.
 
 ## Instrument
 
-Instrument the codebase with Simforge tracing. Requires authentication (run `login` first if not authenticated).
+Instrument the codebase with Bitfab tracing. Requires authentication (run `login` first if not authenticated).
 
 ### Step 1: Check Existing Instrumentation
 
-Before instrumenting, check whether Simforge is already set up in this codebase.
+Before instrumenting, check whether Bitfab is already set up in this codebase.
 
 1. **Detect the project language** (TypeScript, Python, Ruby, or Go)
 2. **Search for existing SDK usage:**
-   - TypeScript: `grep -r "from \"@goharvest/simforge\"" --include="*.ts" --include="*.tsx"` or `withSpan` / `getFunction` calls
-   - Python: `grep -r "from simforge import" --include="*.py"` or `@span` / `get_function` calls
-   - Ruby: `grep -r "simforge_span\|Simforge::Traceable" --include="*.rb"` or `simforge_function` calls
-   - Go: `grep -r "simforge-go" --include="*.go"` or `client.Span` / `client.Start` calls
+   - TypeScript: `grep -r "from \"@goharvest/bitfab\"" --include="*.ts" --include="*.tsx"` or `withSpan` / `getFunction` calls
+   - Python: `grep -r "from bitfab import" --include="*.py"` or `@span` / `get_function` calls
+   - Ruby: `grep -r "bitfab_span\|Bitfab::Traceable" --include="*.rb"` or `bitfab_function` calls
+   - Go: `grep -r "bitfab-go" --include="*.go"` or `client.Span` / `client.Start` calls
 3. **If instrumentation already exists:**
    - List the trace function keys and instrumented functions you found
    - Identify any AI workflows that are NOT yet instrumented
-   - Ask the user: "I found existing Simforge instrumentation for these trace functions: [list]. There are [N] additional AI workflows that could be instrumented: [list]. Want me to instrument any of these?"
+   - Ask the user: "I found existing Bitfab instrumentation for these trace functions: [list]. There are [N] additional AI workflows that could be instrumented: [list]. Want me to instrument any of these?"
    - If the user says yes, proceed to the instrumentation prompt below for just the new workflows
    - If the user says no or everything is covered, skip to the end
 4. **If no instrumentation exists**, proceed to the full instrumentation prompt below.
 
 ### Step 2: Instrument the Codebase
 
-Follow the instrumentation prompt below. This is the same flow used by the Simforge setup page.
+Follow the instrumentation prompt below. This is the same flow used by the Bitfab setup page.
 
 For detailed SDK documentation, refer to:
-- **TypeScript SDK**: https://docs.simforge.goharvest.ai/typescript-sdk
-- **Python SDK**: https://docs.simforge.goharvest.ai/python-sdk
-- **Ruby SDK**: https://docs.simforge.goharvest.ai/ruby-sdk
-- **Go SDK**: https://docs.simforge.goharvest.ai/go-sdk
-- **Full documentation**: https://docs.simforge.goharvest.ai/introduction
+- **TypeScript SDK**: https://docs.bitfab.ai/typescript-sdk
+- **Python SDK**: https://docs.bitfab.ai/python-sdk
+- **Ruby SDK**: https://docs.bitfab.ai/ruby-sdk
+- **Go SDK**: https://docs.bitfab.ai/go-sdk
+- **Full documentation**: https://docs.bitfab.ai/introduction
 
 ### Instrumentation Prompt
 
-Simforge captures every AI function call — inputs, outputs, and errors — so you can see exactly what your AI is doing and discover what's going wrong. The goal is to have enough context in each trace to tell whether a call succeeded or failed, and why.
+Bitfab captures every AI function call — inputs, outputs, and errors — so you can see exactly what your AI is doing and discover what's going wrong. The goal is to have enough context in each trace to tell whether a call succeeded or failed, and why.
 
-Instrument this codebase with Simforge tracing:
+Instrument this codebase with Bitfab tracing:
 
 1. Use the API key from the Login phase (or retrieve it now if already authenticated).
-2. Install the SDK (if not already installed) and set the SIMFORGE_API_KEY environment variable
+2. Install the SDK (if not already installed) and set the BITFAB_API_KEY environment variable
 3. Read the SDK documentation for the detected language (linked above). Read it carefully.
 4. Read the codebase to understand the architecture and identify ALL AI workflows — every place the app makes LLM calls, runs agents, or makes AI-driven decisions
 5. Present the user with a numbered list of workflows you found, ordered by value (most complex or most LLM-heavy first). For each, give the function name, a brief description, and why tracing it is valuable. Recommend one to start with and explain why. Ask which to instrument: a number, multiple numbers, or "all".
@@ -134,13 +134,13 @@ Trace function: "my-agent"
 
 Create or update replay scripts for instrumented trace functions. Requires instrumentation to be present in the codebase.
 
-Replay scripts let the team regression-test any trace function against production data with one command — they use `simforge.replay()` / `client.replay()` to fetch historical traces, re-run them through the current code, and report old vs. new outputs side-by-side.
+Replay scripts let the team regression-test any trace function against production data with one command — they use `bitfab.replay()` / `client.replay()` to fetch historical traces, re-run them through the current code, and report old vs. new outputs side-by-side.
 
 For replay API details, refer to the SDK documentation for the detected language (linked in the Instrument section).
 
 ### Step 1: Search for an existing replay script
 
-- Look for files matching `scripts/replay.*`, `scripts/*replay*`, or any file that imports `simforge.replay` / `client.replay`
+- Look for files matching `scripts/replay.*`, `scripts/*replay*`, or any file that imports `bitfab.replay` / `client.replay`
 
 ### Step 2: If a replay script exists
 
@@ -157,7 +157,7 @@ For replay API details, refer to the SDK documentation for the detected language
   - Accept optional `--limit N` (default 10) and `--trace-ids id1,id2` flags
   - Map pipeline names to trace function keys and their replay functions
   - Use a per-pipeline replay function for each trace function (important because replay deserializes historical inputs — if the function signature doesn't match the raw input shape, the wrapper reshapes arguments)
-  - Call `simforge.replay()` / `client.replay()` and print results with delta summaries (original count → new count)
+  - Call `bitfab.replay()` / `client.replay()` and print results with delta summaries (original count → new count)
   - Print a summary (total replayed, same, changed, errors) and the test run URL
   - Live in a `scripts/` directory (or the project's existing scripts location)
 
@@ -165,7 +165,7 @@ For replay API details, refer to the SDK documentation for the detected language
 
 ## Full Setup Flow
 
-When running `/simforge:setup` or `/simforge:setup all`, execute all three phases in order:
+When running `/bitfab:setup` or `/bitfab:setup all`, execute all three phases in order:
 
 1. **Login** — authenticate and get API key
 2. **Instrument** — discover and instrument AI workflows

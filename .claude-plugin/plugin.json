@@ -1,12 +1,12 @@
 {
-  "name": "simforge",
-  "description": "Simforge LLM evaluation tools for Claude Code — trace inspection, grader management, and diagnostics via MCP.",
+  "name": "bitfab",
+  "description": "Bitfab LLM evaluation tools for Claude Code — trace inspection, grader management, and diagnostics via MCP.",
   "version": "0.1.0",
   "author": {
-    "name": "Simforge"
+    "name": "Bitfab"
   },
-  "homepage": "https://github.com/Project-White-Rabbit/simforge-claude-plugin",
-  "repository": "https://github.com/Project-White-Rabbit/simforge-claude-plugin",
+  "homepage": "https://github.com/Project-White-Rabbit/bitfab-claude-plugin",
+  "repository": "https://github.com/Project-White-Rabbit/bitfab-claude-plugin",
   "license": "MIT",
-  "keywords": ["simforge", "llm", "evaluation", "tracing", "mcp"]
+  "keywords": ["bitfab", "llm", "evaluation", "tracing", "mcp"]
 }

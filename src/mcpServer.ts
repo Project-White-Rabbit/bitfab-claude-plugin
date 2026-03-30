@@ -13,24 +13,24 @@ function proxyToolCall(toolName: string, args: Record<string, unknown>) {
 }
 
 const server = new McpServer({
-  name: "Simforge",
+  name: "Bitfab",
   version: "1.0.0",
 })
 
 server.tool(
-  "setup_simforge",
-  "Get the full setup guide for instrumenting your code with the Simforge SDK. Returns install commands, initialization code, instrumentation patterns, and guidance on choosing the right granularity for trace functions. Call this first when setting up Simforge. Read the guide's 'Choosing What to Instrument' section before deciding what to trace.",
+  "setup_bitfab",
+  "Get the full setup guide for instrumenting your code with the Bitfab SDK. Returns install commands, initialization code, instrumentation patterns, and guidance on choosing the right granularity for trace functions. Call this first when setting up Bitfab. Read the guide's 'Choosing What to Instrument' section before deciding what to trace.",
   {
     language: z.enum(["typescript", "python", "ruby", "go"]),
   },
-  async ({ language }) => proxyToolCall("setup_simforge", { language }),
+  async ({ language }) => proxyToolCall("setup_bitfab", { language }),
 )
 
 server.tool(
-  "get_simforge_api_key",
-  "Get your Simforge API key for SDK initialization. Returns the plaintext key to use in environment variables. Call this after setup_simforge to configure the SIMFORGE_API_KEY environment variable.",
+  "get_bitfab_api_key",
+  "Get your Bitfab API key for SDK initialization. Returns the plaintext key to use in environment variables. Call this after setup_bitfab to configure the BITFAB_API_KEY environment variable.",
   {},
-  async () => proxyToolCall("get_simforge_api_key", {}),
+  async () => proxyToolCall("get_bitfab_api_key", {}),
 )
 
 server.tool(
@@ -61,7 +61,7 @@ server.tool(
 
 server.tool(
   "create_grader",
-  "Create a failure-mode grader specification for a traced function. Use this after identifying a failure pattern in the user's AI agent — the traceFunctionKey must match a function instrumented with the Simforge SDK. The grader records what to evaluate (evaluationFocus) and optionally how to distinguish pass/fail cases. Call list_graders first to check if a similar grader already exists.",
+  "Create a failure-mode grader specification for a traced function. Use this after identifying a failure pattern in the user's AI agent — the traceFunctionKey must match a function instrumented with the Bitfab SDK. The grader records what to evaluate (evaluationFocus) and optionally how to distinguish pass/fail cases. Call list_graders first to check if a similar grader already exists.",
   {
     traceFunctionKey: z
       .string()
@@ -124,7 +124,7 @@ server.tool(
       .string()
       .optional()
       .describe(
-        "Filter by grader type: code_javascript or simforge_llm_as_judge",
+        "Filter by grader type: code_javascript or bitfab_llm_as_judge",
       ),
     verbose: z
       .boolean()
@@ -216,6 +216,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error("Simforge MCP server failed to start:", err)
+  console.error("Bitfab MCP server failed to start:", err)
   process.exit(1)
 })

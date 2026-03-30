@@ -1,7 +1,7 @@
 {
-  "name": "simforge-claude-plugin",
+  "name": "bitfab-claude-plugin",
   "version": "0.1.0",
-  "description": "Simforge LLM evaluation tools for Claude Code — trace inspection, grader management, and diagnostics via MCP",
+  "description": "Bitfab LLM evaluation tools for Claude Code — trace inspection, grader management, and diagnostics via MCP",
   "type": "module",
   "scripts": {
     "build": "tsc",
@@ -16,13 +16,13 @@
   },
   "keywords": [
     "claude-code",
-    "simforge",
+    "bitfab",
     "llm",
     "evaluation",
     "tracing",
     "mcp"
   ],
-  "author": "Simforge",
+  "author": "Bitfab",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"

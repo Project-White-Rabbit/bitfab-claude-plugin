@@ -135,7 +135,7 @@ describe("McpProxy", () => {
       )
       expect(result).toEqual(
         errorResult(
-          "Not authenticated. Run /simforge:login to connect your Simforge account.",
+          "Not authenticated. Run /bitfab:login to connect your Bitfab account.",
         ),
       )
     })
@@ -300,7 +300,7 @@ describe("McpProxy", () => {
 
       const result = await proxy.toolCall(configWithUrl(), "tool", {})
       expect(result).toEqual(
-        errorResult("Simforge API error (500): Internal Server Error"),
+        errorResult("Bitfab API error (500): Internal Server Error"),
       )
     })
 
@@ -332,7 +332,7 @@ describe("McpProxy", () => {
       }
 
       const result = await proxy.toolCall(configWithUrl(), "bad_tool", {})
-      expect(result).toEqual(errorResult("Simforge error: Tool not found"))
+      expect(result).toEqual(errorResult("Bitfab error: Tool not found"))
     })
 
     it("returns error on network failure", async () => {
@@ -344,7 +344,7 @@ describe("McpProxy", () => {
       )
       expect(result.isError).toBe(true)
       expect(result.content[0].text).toContain(
-        "Failed to initialize Simforge session",
+        "Failed to initialize Bitfab session",
       )
     })
 

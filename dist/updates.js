@@ -3,7 +3,7 @@ import os from "node:os";
 import path from "node:path";
 import { getVersion } from "./version.js";
 const CURRENT_VERSION = getVersion();
-const REPO = "Project-White-Rabbit/simforge-claude-plugin";
+const REPO = "Project-White-Rabbit/bitfab-claude-plugin";
 async function getLatestVersion() {
     try {
         const response = await fetch(`https://raw.githubusercontent.com/${REPO}/main/package.json`, { signal: AbortSignal.timeout(3000) });
@@ -54,5 +54,5 @@ export async function checkForUpdate() {
     };
 }
 export function formatUpdateMessage(latest) {
-    return `v${latest} available — run /simforge:update to update`;
+    return `v${latest} available — run /bitfab:update to update`;
 }

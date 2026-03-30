@@ -74,7 +74,7 @@ export class McpProxy {
     const response = await this.fetch(config, "initialize", {
       protocolVersion: "2025-03-26",
       capabilities: {},
-      clientInfo: { name: "simforge-plugin", version: "1.0.0" },
+      clientInfo: { name: "bitfab-plugin", version: "1.0.0" },
     })
 
     if (!response.ok) {
@@ -91,7 +91,7 @@ export class McpProxy {
   ) {
     if (!config.apiKey) {
       return errorResult(
-        "Not authenticated. Run /simforge:login to connect your Simforge account.",
+        "Not authenticated. Run /bitfab:login to connect your Bitfab account.",
       )
     }
 
@@ -99,7 +99,7 @@ export class McpProxy {
       await this.ensureSession(config)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      return errorResult(`Failed to initialize Simforge session: ${message}`)
+      return errorResult(`Failed to initialize Bitfab session: ${message}`)
     }
 
     let response: Response
@@ -110,7 +110,7 @@ export class McpProxy {
       })
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      return errorResult(`Network error connecting to Simforge: ${message}`)
+      return errorResult(`Network error connecting to Bitfab: ${message}`)
     }
 
     // Stale session — clear and retry once
@@ -124,13 +124,13 @@ export class McpProxy {
         })
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err)
-        return errorResult(`Failed to reconnect to Simforge: ${message}`)
+        return errorResult(`Failed to reconnect to Bitfab: ${message}`)
       }
     }
 
     if (!response.ok) {
       return errorResult(
-        `Simforge API error (${response.status}): ${await response.text().catch(() => "unknown")}`,
+        `Bitfab API error (${response.status}): ${await response.text().catch(() => "unknown")}`,
       )
     }
 
@@ -138,14 +138,14 @@ export class McpProxy {
     try {
       data = await parseResponse(response)
     } catch {
-      return errorResult("Failed to parse response from Simforge API")
+      return errorResult("Failed to parse response from Bitfab API")
     }
 
     if (data.error) {
-      return errorResult(`Simforge error: ${data.error.message}`)
+      return errorResult(`Bitfab error: ${data.error.message}`)
     }
 
-    return data.result ?? errorResult("Empty response from Simforge API")
+    return data.result ?? errorResult("Empty response from Bitfab API")
   }
 
   getSessionId(): string | null {

@@ -6,6 +6,6 @@ function main() {
     }
     deleteCredentials();
     console.log(`Credentials removed from ${CREDENTIALS_FILE}`);
-    console.log("Logged out of Simforge.");
+    console.log("Logged out of Bitfab.");
 }
 main();

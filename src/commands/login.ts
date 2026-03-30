@@ -50,7 +50,7 @@ function focusApp(appName: string | null): void {
 const CALLBACK_HTML = `<html>
 <body style="margin:0;background:#f8fafc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden">
   <div style="text-align:center;max-width:400px">
-    <h1 style="font-size:24px;font-weight:600;margin:0 0 16px 0">Simforge</h1>
+    <h1 style="font-size:24px;font-weight:600;margin:0 0 16px 0">Bitfab</h1>
     <p style="margin:0;color:#059669">Authenticated! You can close this window.</p>
     <button onclick="window.close()" style="margin-top:16px;padding:8px 16px;background:#0f172a;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer">Close Window</button>
   </div>
@@ -86,7 +86,7 @@ async function main() {
         res.writeHead(200, { "Content-Type": "text/html" })
         res.end(CALLBACK_HTML)
         console.log(
-          "Authentication successful! Simforge MCP tools are now active.",
+          "Authentication successful! Bitfab MCP tools are now active.",
         )
         focusApp(previousApp)
         server.close()

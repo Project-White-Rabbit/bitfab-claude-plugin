@@ -98,7 +98,7 @@ describe("McpProxy", () => {
         it("returns auth error when no API key", async () => {
             const proxy = new McpProxy();
             const result = await proxy.toolCall({ serviceUrl: baseUrl, apiKey: null }, "list_trace_functions", {});
-            expect(result).toEqual(errorResult("Not authenticated. Run /simforge:login to connect your Simforge account."));
+            expect(result).toEqual(errorResult("Not authenticated. Run /bitfab:login to connect your Bitfab account."));
         });
         it("initializes session then calls tool", async () => {
             const proxy = new McpProxy();
@@ -224,7 +224,7 @@ describe("McpProxy", () => {
                 }
             };
             const result = await proxy.toolCall(configWithUrl(), "tool", {});
-            expect(result).toEqual(errorResult("Simforge API error (500): Internal Server Error"));
+            expect(result).toEqual(errorResult("Bitfab API error (500): Internal Server Error"));
         });
         it("returns error on JSON-RPC error in response", async () => {
             const proxy = new McpProxy();
@@ -252,13 +252,13 @@ describe("McpProxy", () => {
                 }
             };
             const result = await proxy.toolCall(configWithUrl(), "bad_tool", {});
-            expect(result).toEqual(errorResult("Simforge error: Tool not found"));
+            expect(result).toEqual(errorResult("Bitfab error: Tool not found"));
         });
         it("returns error on network failure", async () => {
             const proxy = new McpProxy();
             const result = await proxy.toolCall({ serviceUrl: "http://127.0.0.1:1", apiKey: "key" }, "tool", {});
             expect(result.isError).toBe(true);
-            expect(result.content[0].text).toContain("Failed to initialize Simforge session");
+            expect(result.content[0].text).toContain("Failed to initialize Bitfab session");
         });
         it("sends correct headers", async () => {
             const proxy = new McpProxy();

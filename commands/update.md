@@ -1,11 +1,11 @@
 ---
-description: Update Simforge plugin to the latest version
+description: Update Bitfab plugin to the latest version
 allowed-tools: ["Bash"]
 ---
 
-# Simforge Update
+# Bitfab Update
 
-Run the update script to check for and apply the latest Simforge plugin version:
+Run the update script to check for and apply the latest Bitfab plugin version:
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/commands/update.js"

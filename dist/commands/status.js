@@ -8,7 +8,7 @@ async function main() {
     console.log(`Version: v${current}${versionSuffix}`);
     if (!hasCredentials()) {
         console.log("Status: not authenticated");
-        console.log("\nRun /simforge:login to authenticate.");
+        console.log("\nRun /bitfab:login to authenticate.");
         return;
     }
     console.log("Status: authenticated");

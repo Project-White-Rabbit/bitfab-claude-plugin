@@ -5,7 +5,7 @@ async function main() {
   const { current, latest, updateAvailable } = await checkForUpdate()
 
   if (!updateAvailable || !latest) {
-    console.log(`Simforge plugin v${current} is already up to date.`)
+    console.log(`Bitfab plugin v${current} is already up to date.`)
     return
   }
 
@@ -13,15 +13,15 @@ async function main() {
   console.log("Updating marketplace...")
 
   try {
-    execSync("claude plugin marketplace update simforge", {
+    execSync("claude plugin marketplace update bitfab", {
       stdio: "inherit",
     })
   } catch {
     console.error(
-      "Failed to update marketplace. Is the 'simforge' marketplace registered?",
+      "Failed to update marketplace. Is the 'bitfab' marketplace registered?",
     )
     console.error(
-      "You can add it with: claude plugin marketplace add Project-White-Rabbit/simforge-claude-plugin",
+      "You can add it with: claude plugin marketplace add Project-White-Rabbit/bitfab-claude-plugin",
     )
     process.exit(1)
   }
@@ -29,7 +29,7 @@ async function main() {
   console.log("Updating plugin...")
 
   try {
-    execSync("claude plugin update simforge@simforge", {
+    execSync("claude plugin update bitfab@bitfab", {
       stdio: "inherit",
     })
   } catch {
@@ -38,7 +38,7 @@ async function main() {
   }
 
   console.log(
-    `\nSimforge plugin updated to v${latest}. Restart Claude Code to apply the update.`,
+    `\nBitfab plugin updated to v${latest}. Restart Claude Code to apply the update.`,
   )
 }
 

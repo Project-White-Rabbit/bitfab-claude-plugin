@@ -4,7 +4,7 @@ import path from "node:path"
 import { getVersion } from "./version.js"
 
 const CURRENT_VERSION = getVersion()
-const REPO = "Project-White-Rabbit/simforge-claude-plugin"
+const REPO = "Project-White-Rabbit/bitfab-claude-plugin"
 
 async function getLatestVersion(): Promise<string | null> {
   try {
@@ -77,5 +77,5 @@ export async function checkForUpdate(): Promise<UpdateStatus> {
 }
 
 export function formatUpdateMessage(latest: string): string {
-  return `v${latest} available — run /simforge:update to update`
+  return `v${latest} available — run /bitfab:update to update`
 }

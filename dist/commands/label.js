@@ -87,7 +87,7 @@ async function main() {
         process.exit(1);
     }
     if (!hasCredentials()) {
-        console.error("Not authenticated. Run /simforge:login first.");
+        console.error("Not authenticated. Run /bitfab:login first.");
         process.exit(1);
     }
     const config = getConfig();
@@ -112,7 +112,7 @@ async function main() {
             res.end(`<html>
 <body style="margin:0;background:#f8fafc;color:#0f172a;font-family:system-ui,-apple-system,sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;overflow:hidden">
   <div style="text-align:center;max-width:400px">
-    <h1 style="font-size:24px;font-weight:600;margin:0 0 16px 0">Simforge</h1>
+    <h1 style="font-size:24px;font-weight:600;margin:0 0 16px 0">Bitfab</h1>
     <p style="margin:0;color:#059669">Labeling complete! You can close this window.</p>
     <button onclick="window.close()" style="margin-top:16px;padding:8px 16px;background:#0f172a;color:white;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer">Close Window</button>
   </div>

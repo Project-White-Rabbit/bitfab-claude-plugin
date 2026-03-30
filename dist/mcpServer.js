@@ -9,13 +9,13 @@ function proxyToolCall(toolName, args) {
     return proxy.toolCall(getConfig(), toolName, args);
 }
 const server = new McpServer({
-    name: "Simforge",
+    name: "Bitfab",
     version: "1.0.0",
 });
-server.tool("setup_simforge", "Get the full setup guide for instrumenting your code with the Simforge SDK. Returns install commands, initialization code, instrumentation patterns, and guidance on choosing the right granularity for trace functions. Call this first when setting up Simforge. Read the guide's 'Choosing What to Instrument' section before deciding what to trace.", {
+server.tool("setup_bitfab", "Get the full setup guide for instrumenting your code with the Bitfab SDK. Returns install commands, initialization code, instrumentation patterns, and guidance on choosing the right granularity for trace functions. Call this first when setting up Bitfab. Read the guide's 'Choosing What to Instrument' section before deciding what to trace.", {
     language: z.enum(["typescript", "python", "ruby", "go"]),
-}, async ({ language }) => proxyToolCall("setup_simforge", { language }));
-server.tool("get_simforge_api_key", "Get your Simforge API key for SDK initialization. Returns the plaintext key to use in environment variables. Call this after setup_simforge to configure the SIMFORGE_API_KEY environment variable.", {}, async () => proxyToolCall("get_simforge_api_key", {}));
+}, async ({ language }) => proxyToolCall("setup_bitfab", { language }));
+server.tool("get_bitfab_api_key", "Get your Bitfab API key for SDK initialization. Returns the plaintext key to use in environment variables. Call this after setup_bitfab to configure the BITFAB_API_KEY environment variable.", {}, async () => proxyToolCall("get_bitfab_api_key", {}));
 server.tool("list_trace_functions", "List all traced functions in your organization with evaluation stats per function. Use this to see evaluation status at a glance. Call get_trace_function_diagnostics with a specific traceFunctionKey to drill into failure details.", {}, async () => proxyToolCall("list_trace_functions", {}));
 server.tool("get_trace_function_diagnostics", "Get detailed failure diagnostics for a specific traced function — includes evaluation criteria, failure summaries, and recent individual failures with trace IDs. Use this to understand exactly why traces are failing so you can make targeted code fixes. You can call this directly if you already know the traceFunctionKey from the codebase, or use list_trace_functions first to discover available keys.", {
     traceFunctionKey: z
@@ -29,7 +29,7 @@ server.tool("get_trace_function_diagnostics", "Get detailed failure diagnostics 
     traceFunctionKey,
     graderId,
 }));
-server.tool("create_grader", "Create a failure-mode grader specification for a traced function. Use this after identifying a failure pattern in the user's AI agent — the traceFunctionKey must match a function instrumented with the Simforge SDK. The grader records what to evaluate (evaluationFocus) and optionally how to distinguish pass/fail cases. Call list_graders first to check if a similar grader already exists.", {
+server.tool("create_grader", "Create a failure-mode grader specification for a traced function. Use this after identifying a failure pattern in the user's AI agent — the traceFunctionKey must match a function instrumented with the Bitfab SDK. The grader records what to evaluate (evaluationFocus) and optionally how to distinguish pass/fail cases. Call list_graders first to check if a similar grader already exists.", {
     traceFunctionKey: z
         .string()
         .describe("The trace function key from the instrumented source code"),
@@ -70,7 +70,7 @@ server.tool("list_graders", 'List all graders and their criteria for a traced fu
     type: z
         .string()
         .optional()
-        .describe("Filter by grader type: code_javascript or simforge_llm_as_judge"),
+        .describe("Filter by grader type: code_javascript or bitfab_llm_as_judge"),
     verbose: z
         .boolean()
         .optional()
@@ -137,6 +137,6 @@ async function main() {
     await server.connect(transport);
 }
 main().catch((err) => {
-    console.error("Simforge MCP server failed to start:", err);
+    console.error("Bitfab MCP server failed to start:", err);
     process.exit(1);
 });

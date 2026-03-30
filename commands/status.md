@@ -1,11 +1,11 @@
 ---
-description: Check Simforge authentication, MCP, and connection status
+description: Check Bitfab authentication, MCP, and connection status
 allowed-tools: ["Bash"]
 ---
 
-# Simforge Status
+# Bitfab Status
 
-Run the status script to check if Simforge is configured and connected.
+Run the status script to check if Bitfab is configured and connected.
 
 ```bash
 node "${CLAUDE_PLUGIN_ROOT}/dist/commands/status.js"
