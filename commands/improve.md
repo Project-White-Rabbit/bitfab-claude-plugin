@@ -1,6 +1,8 @@
 ---
-
-## description: Iterate on a traced function to improve pass rates using failed traces, labeling, and replay allowed-tools: \["Bash", "Read", "Glob", "Grep", "Edit", "Write", "Agent", "AskUserQuestion", "Skill"\] argument-hint: &lt;trace-function-key&gt;
+description: Iterate on a traced function to improve pass rates using failed traces, labeling, and replay
+allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "Agent", "AskUserQuestion", "Skill"]
+argument-hint: <trace-function-key>
+---
 
 # Bitfab Improve
 
@@ -18,8 +20,8 @@ If a `traceFunctionKey` was provided as an argument, use it. Otherwise:
 
 1. Call `mcp__plugin_bitfab_Bitfab__list_trace_functions` to list all available trace functions
 2. For each function, include a brief description of what it does — infer from the function key name (e.g., `memory-search` → searches memories, `memory-extraction` → extracts memories from conversations). Keep descriptions to one sentence.
-3. Present the list to the user with names, descriptions, and evaluation stats (grader count, pass/fail numbers)
-4. Use `AskUserQuestion` to ask which one they want to improve — recommend the one with the most signal (graders + failures) — wait for their answer before continuing
+3. Present the full list to the user in the question text showing all functions with their keys and descriptions
+4. Use `AskUserQuestion` with just 2 options: the recommended function (pick the one with the most recent activity or traces) and a free-text "Type a function key" option. The user can see the full list above and either accept the recommendation or type their choice.
 
 ## Phase 2: Verify Instrumentation & Replay
 
@@ -27,20 +29,22 @@ Check that this trace function has both instrumentation and a replay script.
 
 ### Check Instrumentation
 
-Search the codebase for the trace function key to confirm SDK usage:
+Search the codebase for the trace function key to find where the SDK is used:
 
 - TypeScript: `grep -r "<traceFunctionKey>" --include="*.ts" --include="*.tsx"`
 - Python: `grep -r "<traceFunctionKey>" --include="*.py"`
 - Ruby: `grep -r "<traceFunctionKey>" --include="*.rb"`
 - Go: `grep -r "<traceFunctionKey>" --include="*.go"`
 
-If the trace function key is NOT found in the codebase, use `AskUserQuestion` to ask the user:
+If the key is found, note the file location — this is the code you'll iterate on in later phases.
 
-> "I can't find instrumentation for `<traceFunctionKey>` in this codebase."
+If the key is NOT found in the codebase, the function is instrumented elsewhere (the traces exist on Bitfab). Use `AskUserQuestion` to ask:
+
+> "I can't find `<traceFunctionKey>` in this codebase — it may be instrumented in another repo or under a different key."
 >
-> Options: "Instrument now (Recommended)" — set up tracing inline / "Pick a different function" / "Stop"
+> Options: "Instrument now (Recommended)" — set up tracing in this codebase / "Continue anyway" — work with the traces even without local code / "Pick a different function" / "Stop"
 
-If the user chooses **"Instrument now"**, invoke `/bitfab:setup instrument` using the Skill tool, then continue with Phase 2 Check Replay Script.
+If the user chooses **"Instrument now"**, invoke `/bitfab:setup instrument` using the Skill tool, then continue with Phase 2 Check Replay Script. If **"Continue anyway"**, skip to Phase 3 (dataset building) since there's no local code to iterate on yet.
 
 ### Check Replay Script
 
@@ -48,6 +52,8 @@ Search for a replay script that covers this trace function:
 
 - Look for files matching `scripts/replay.*`, `scripts/*replay*`, or any file that imports `bitfab.replay` / `client.replay`
 - Read the script and check that it maps the target trace function key
+
+If a replay script exists but targets a different function key, do NOT modify the existing script or suggest changing the code's function key. Instead, treat it as "no replay script for this function" and offer to create a new one.
 
 If no replay script exists or it doesn't cover this function, use `AskUserQuestion` to ask the user:
 
@@ -63,9 +69,13 @@ Build an in-context dataset of traces with approved expected outcomes. The user'
 
 1. **Find traces** — Use `mcp__plugin_bitfab_Bitfab__search_traces` to find failed or interesting traces. Prioritize human-labeled failures, then automated grader failures with diagnostics, then recent traces with unusual outputs.
 2. **Present a trace** — Pick one notable trace. Call `mcp__plugin_bitfab_Bitfab__read_traces` with `scope: "full"`, then use `AskUserQuestion` to show the user the input and actual output.
-3. **Get the user's judgment** — Ask: is this a failure? If so, what should the correct output be? Record their expected outcome and reasoning.
+3. **Get the user's judgment** — Use `AskUserQuestion` showing the input and actual output, with these options:
+   - "This is a failure" — the user will provide the correct expected output
+   - "This looks correct" — mark as passing, no expected outcome needed
+   - "Skip this trace" — exclude from the dataset
+   - "Yes, and accept all additional decisions made by Claude Code" — Claude reads the remaining traces and, based on the context built up so far, classifies each as pass/fail, generates expected outcomes, and proceeds directly to Phase 4 without waiting for approval.
 4. **Filter and update** — Drop or update traces and their expected outcomes based on the users feedback. Identify duplicates that may not be needed in the dataset after user feedback. This dataset is used by an intelligent agent so minor input discrepancies are often handled unlike training a model.
-5. **Repeat 1–4** Based on user feedback, you may start the loop at 1 or 2 until the dataset has enough approved traces to generate useful code fixes. Don't rush — one trace at a time keeps feedback focused.
+5. **Repeat 1–4** Based on user feedback, you may start the loop at 1 or 2 until the dataset has enough approved traces to generate useful code fixes. Don't rush — one trace at a time keeps feedback focused. If the user chose "Auto-fill remaining", process all remaining traces automatically, then go straight to step 6.
 6. **Confirm the dataset** — Present the full list via `AskUserQuestion`: each entry showing (trace ID, actual output, expected outcome, user's reasoning). Get explicit approval before moving on.
 7. **Hold in-context** — This approved dataset is the benchmark for all experiments in Phase 5. Keep it in your working context throughout.
 
