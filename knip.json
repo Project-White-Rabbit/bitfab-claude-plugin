@@ -3,5 +3,6 @@
   "entry": ["src/mcpServer.ts", "src/commands/*.ts", "src/hooks/*.ts"],
   "project": ["src/**/*.ts"],
   "ignore": ["src/**/*.test.ts"],
-  "ignoreBinaries": ["biome", "knip", "madge"]
+  "ignoreBinaries": ["biome", "knip", "madge"],
+  "ignoreDependencies": ["bitfab-plugin-lib"]
 }

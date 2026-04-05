@@ -1,26 +1,4 @@
-import { hasCredentials } from "../config.js";
-import { checkForUpdate } from "../updates.js";
-const messages = [];
-try {
-    if (!hasCredentials()) {
-        messages.push(`[Bitfab] Not authenticated. Run /bitfab:setup to connect your account and instrument your codebase.`);
-    }
-}
-catch { }
-try {
-    const { current, latest, updateAvailable, autoUpdateEnabled } = await checkForUpdate();
-    if (updateAvailable && latest) {
-        const lines = [`[Bitfab] Update available: v${current} → v${latest}.`];
-        if (autoUpdateEnabled) {
-            lines.push(`          Auto-update is enabled — restart to apply.`);
-        }
-        else {
-            lines.push(`          Run /bitfab:update to update, or enable auto-update: /plugin → Marketplaces → bitfab → Enable auto-update`);
-        }
-        messages.push(lines.join("\n"));
-    }
-}
-catch { }
-if (messages.length > 0) {
-    process.stdout.write(JSON.stringify({ systemMessage: `\n${messages.join("\n")}` }));
-}
+import { runSessionStart } from "bitfab-plugin-lib";
+import { platform } from "../platform.js";
+import { getVersion } from "../version.js";
+await runSessionStart(getVersion(), platform);
