@@ -9,8 +9,7 @@ export const platform: PlatformConfig = {
   cliBinary: "claude",
   displayName: "Claude Code",
   supportsAutoUpdate: true,
-  marketplaceName: "claude-plugins-official",
+  marketplaceName: "bitfab",
   pluginName: "bitfab",
-  marketplacePreRegistered: true,
-  legacyMarketplaceKey: "bitfab@bitfab",
+  marketplacePreRegistered: false,
 }
