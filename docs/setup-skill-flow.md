@@ -1,6 +1,6 @@
 # `/bitfab:setup` Skill Flow
 
-Visual reference for the three phases of the Bitfab setup skill (`commands/setup.md`).
+Visual reference for the four phases of the Bitfab setup skill (`commands/setup.md`).
 Edit the Mermaid block below to keep this in sync with the skill.
 
 ## Full flow
@@ -11,6 +11,7 @@ flowchart TD
     ModeCheck -->|all| L1
     ModeCheck -->|login| L1
     ModeCheck -->|instrument| I1
+    ModeCheck -->|modify| M1
     ModeCheck -->|replay| R1
 
     %% ============ LOGIN PHASE ============
@@ -31,8 +32,9 @@ flowchart TD
         direction TB
         I1["1. Detect language<br/>identify apps vs libraries"] --> I2["2. Search for existing SDK usage<br/>per app dir in monorepos"]
         I2 --> ISDK{Existing<br/>SDK usage?}
-        ISDK -- Yes --> IAskMore[/"AskUserQuestion:<br/>• Search more workflows<br/>• Continue to Replay"/]
+        ISDK -- Yes --> IAskMore[/"AskUserQuestion:<br/>• Search more workflows<br/>• Modify existing trace setup<br/>• Continue to Replay"/]
         IAskMore -- Continue --> R1
+        IAskMore -- Modify --> M1
         IAskMore -- Search more --> I345
         ISDK -- No --> I345
 
@@ -66,6 +68,34 @@ flowchart TD
     IStop{instrument mode only?} -- Yes --> EndInstr([Stop])
     IStop -- No --> R1
 
+    %% ============ MODIFY PHASE ============
+    subgraph ModifyPhase["MODIFY PHASE"]
+        direction TB
+        M1["1. Gather existing trace functions<br/>grep getFunction / get_function / etc."] --> MExists{Any<br/>existing keys?}
+        MExists -- No --> MNone([Tell user to run<br/>/bitfab:setup instrument, stop])
+        MExists -- Yes --> M2["2. ★ Pick exactly ONE trace function ★<br/>AskUserQuestion with existing keys"]
+        M2 --> M3["3. Reconstruct the current trace plan<br/>read instrumented files — 'before' state"]
+        M3 --> M4[/"4. ★ Pick exactly ONE direction ★<br/>AskUserQuestion (5 directions):<br/>1) Add context<br/>2) Increase depth<br/>3) Reduce depth<br/>4) Move root upstream<br/>5) Move root downstream"/]
+        M4 --> M5Build["5. Build modified trace plan under<br/>★ PURELY ADDITIVE ★ constraint<br/>apply direction-specific rules"]
+        M5Build --> MAdd{Requires<br/>behavior change?}
+        MAdd -- Yes --> MInvalid["Direction invalid for this tree:<br/>explain why, return to step 4<br/>(or split into multiple cycles)"]
+        MInvalid --> M4
+        MAdd -- No --> M6["6. Present BEFORE/AFTER diff<br/>AskUserQuestion:<br/>Proceed / Expand / Adjust / Cancel"]
+        M6 -- Adjust --> M5Build
+        M6 -- Cancel --> MCancel([Stop])
+        M6 -- Expand --> M6
+        M6 -- Proceed --> M7{Direction 4 or 5?<br/>(root moved)}
+        M7 -- Yes --> M7Key[/"7. AskUserQuestion:<br/>Keep key / Rename"/]
+        M7 -- No --> M8
+        M7Key --> M8["8. Apply changes — purely additive<br/>removing withSpan wrapper allowed only<br/>in direction 3; batch edits in parallel"]
+        M8 --> M9["9. Tell user how to run app<br/>do NOT run yourself"]
+        M9 --> MNext[/"★ MANDATORY STOP ★<br/>AskUserQuestion:<br/>A) Generate trace<br/>B) Modify another trace function<br/>C) Done"/]
+        MNext -- B --> M2
+    end
+
+    MNext -- A --> EndModify([Stop])
+    MNext -- C --> EndModify
+
     %% ============ REPLAY PHASE ============
     subgraph ReplayPhase["REPLAY PHASE"]
         direction TB
@@ -86,9 +116,9 @@ flowchart TD
     classDef question fill:#fae8ff,stroke:#86198f,color:#000
     classDef constraint fill:#fee2e2,stroke:#b91c1c,color:#000
 
-    class EndLogin,EndInstr,EndUpToDate,EndDone terminal
-    class IAskMore,INext,RAskRefactor,I8Resolve,I8RefactorPlan question
-    class I8,I10Build,IRestructure,I11 constraint
+    class EndLogin,EndInstr,EndUpToDate,EndDone,EndModify,MNone,MCancel terminal
+    class IAskMore,INext,RAskRefactor,I8Resolve,I8RefactorPlan,M6,M7Key,MNext question
+    class I8,I10Build,IRestructure,I11,M2,M4,M5Build,MInvalid,M8 constraint
 ```
 
 ## Key invariants the diagram enforces
@@ -103,7 +133,7 @@ flowchart TD
 
 5. **Trace plan presentation is gated.** The trace plan is never shown until the additive check passes (10a → 10b). Behavior-changing approaches are never offered as options.
 
-6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `all` mode flows through all three phases. `replay` mode jumps straight to Replay.
+6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `all` mode flows through login → instrument → replay (Modify is **not** part of `all`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay.
 
 7. **Replay coverage is computed before action.** The Replay phase reads the current state first (existing keys + existing scripts), then takes one of three branches: all covered → stop, missing keys → add, none exist → create. No user prompt on any branch.
 
@@ -118,6 +148,14 @@ flowchart TD
 12. **Replay is unconditional in `all` mode, and non-interactive once entered.** After Instrument step 13 option D in `all` mode, Replay always runs. Replay does not depend on traces existing — it reads trace function keys from code. Once inside Replay, there is no "Skip" branch: missing scripts get added and absent scripts get created without asking. The only Replay terminal state besides completion is "scripts exist and cover all keys, stop."
 
 13. **Step 13 is a mandatory AskUserQuestion stop, and the only caller of `search_traces`.** The skill never silently transitions from Instrument to Replay; an empty `search_traces` result means "offer option A," not "skip." Replay does not check for traces — scripts are created from trace function keys in code.
+
+14. **One trace function and one direction per Modify cycle.** Modify step 2 picks exactly one trace function; Modify step 4 picks exactly one of the five directions (add context / increase depth / reduce depth / move root upstream / move root downstream). Mixing directions or batching trace functions is forbidden — the user loops via the Modify step 9 menu if they want more.
+
+15. **Purely additive modifications.** Modify step 5 enforces the same additive constraint as Instrument step 10a: if the chosen direction would require a behavior change, the direction is rejected (the user picks a different direction or splits into multiple cycles). Removing a `withSpan`/`@span` wrapper is the only structural edit allowed, and only under direction 3 (Reduce depth), and only when the underlying call stays intact.
+
+16. **Before/after diff is gated on the same additive check.** Modify step 6 is only reached after step 5 proves the direction is additive; the diff is never shown alongside a behavior-changing option.
+
+17. **Key rename is an explicit user decision.** Directions 4 and 5 (root moves) always prompt for keep-or-rename at Modify step 7. Directions 1–3 never prompt — the key is preserved.
 
 ## Legend
 
