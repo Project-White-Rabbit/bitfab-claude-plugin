@@ -14,7 +14,7 @@ flowchart TD
     %% ============ PHASE 1 ============
     subgraph Phase1["PHASE 1 — Identify Trace Function"]
         direction TB
-        P1List["mcp: list_trace_functions"] --> P1Desc["Add a 1-line description per function<br/>(infer from key name)"]
+        P1List["mcp: list_trace_functions"] --> P1Desc["Use ONLY returned metadata (keys, counts, last activity)<br/>NEVER infer/guess descriptions from key names<br/>Cross-check each key via grep → mark ✅ instrumented here (path)<br/>or ⚠️ not found in this repo"]
         P1Desc --> P1Ask[/"AskUserQuestion:<br/>• Recommended (most recent activity)<br/>• Type a function key"/]
     end
 
@@ -122,6 +122,8 @@ flowchart TD
 7. **Re-entry to Phase 1.** Both AskUserQuestions in Phase 2 ("Pick different function") loop back to `P1List` — the user can swap targets without restarting the skill.
 
 8. **Replan loop from Phase 5 → Phase 4.** If experiments improved nothing or introduced regressions, the loop returns to Phase 4 Step 3 (re-categorize) rather than Phase 5 Step 1 (re-run the same experiment).
+
+9. **No hallucinated function descriptions in Phase 1.** The list shown to the user uses only data returned by `list_trace_functions` (keys, trace counts, last activity). Claude never invents a description from the key name — key names are often ambiguous or misleading and guessed descriptions confuse the user. Each returned key is additionally cross-checked against the local codebase via `grep`, and each entry is marked ✅ instrumented here (with path) or ⚠️ not found in this repo so the user can see ground truth before picking.
 
 ## Legend
 

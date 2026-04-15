@@ -38,7 +38,7 @@ flowchart TD
         IAskMore -- Search more --> I345
         ISDK -- No --> I345
 
-        I345["3-5. API key, install SDK,<br/>set BITFAB_API_KEY,<br/>fetch docs.bitfab.ai/&lt;lang&gt;-sdk"] --> I6["6. Choose root span =<br/>★ outer workflow function ★<br/>NEVER the LLM/agent SDK call itself"]
+        I345["3-5. API key, install SDK,<br/>write BITFAB_API_KEY to app .env<br/>(+ gitignore),<br/>fetch docs.bitfab.ai/&lt;lang&gt;-sdk"] --> I6["6. Choose root span =<br/>★ outer workflow function ★<br/>NEVER the LLM/agent SDK call itself"]
         I6 --> I7["7. Read codebase<br/>find ALL AI workflows + work<br/>above / alongside / below SDK calls"]
         I7 --> I8["8. Present numbered list:<br/>trace boundary, end-to-end scope,<br/>why valuable<br/>★ Pick exactly ONE workflow ★<br/>NEVER multiple, NEVER all"]
         I8 --> I8Serial{"Inputs serializable<br/>by SDK tracing layer?"}
@@ -156,6 +156,8 @@ flowchart TD
 16. **Before/after diff is gated on the same additive check.** Modify step 6 is only reached after step 5 proves the direction is additive; the diff is never shown alongside a behavior-changing option.
 
 17. **Key rename is an explicit user decision.** Directions 4 and 5 (root moves) always prompt for keep-or-rename at Modify step 7. Directions 1–3 never prompt — the key is preserved.
+
+18. **`BITFAB_API_KEY` is written to the app's env file, not just exported.** Step 4 of Instrument persists the key into `.env.local` / `.env.development` / `.env` in the app directory (create if missing), skips overwriting an existing `BITFAB_API_KEY=` line, and ensures the env file is gitignored. An in-shell `export` alone is insufficient — replay and the app both read from `.env`, so a missing file write causes silent trace loss. The confirmation to the user references the file path only; the key value is never printed.
 
 ## Legend
 
