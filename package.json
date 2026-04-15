@@ -1,6 +1,6 @@
 {
   "name": "bitfab-claude-plugin",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "description": "Bitfab LLM evaluation tools for Claude Code — trace inspection, grader management, and diagnostics via MCP",
   "type": "module",
   "scripts": {
