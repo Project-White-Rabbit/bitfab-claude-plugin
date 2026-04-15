@@ -36,7 +36,7 @@ flowchart TD
         IAskMore -- Search more --> I345
         ISDK -- No --> I345
 
-        I345["3-5. API key, install SDK,<br/>set BITFAB_API_KEY,<br/>mcp: setup_bitfab for SDK guide"] --> I6["6. Choose root span =<br/>★ outer workflow function ★<br/>NEVER the LLM/agent SDK call itself"]
+        I345["3-5. API key, install SDK,<br/>set BITFAB_API_KEY,<br/>fetch docs.bitfab.ai/&lt;lang&gt;-sdk"] --> I6["6. Choose root span =<br/>★ outer workflow function ★<br/>NEVER the LLM/agent SDK call itself"]
         I6 --> I7["7. Read codebase<br/>find ALL AI workflows + work<br/>above / alongside / below SDK calls"]
         I7 --> I8["8. Present numbered list:<br/>trace boundary, end-to-end scope,<br/>why valuable<br/>★ Pick exactly ONE workflow ★<br/>NEVER multiple, NEVER all"]
         I8 --> I8Serial{"Inputs serializable<br/>by SDK tracing layer?"}
