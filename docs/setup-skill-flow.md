@@ -8,11 +8,14 @@ Edit the Mermaid block below to keep this in sync with the skill.
 ```mermaid
 flowchart TD
     Start([User invokes /bitfab:setup mode]) --> ModeCheck{Mode}
-    ModeCheck -->|all| L1
+    ModeCheck -->|all| P0
     ModeCheck -->|login| L1
     ModeCheck -->|instrument| I1
     ModeCheck -->|modify| M1
     ModeCheck -->|replay| R1
+
+    %% ============ PREAMBLE ============
+    P0["0. Preamble<br/>render CODE→TRACES→DATASETS→IMPROVE block verbatim<br/>no AskUserQuestion, no confirmation"] --> L1
 
     %% ============ LOGIN PHASE ============
     subgraph LoginPhase["LOGIN PHASE"]
@@ -122,6 +125,8 @@ flowchart TD
 ```
 
 ## Key invariants the diagram enforces
+
+0. **Preamble runs once, only in `all` mode.** The explanation block (CODE → TRACES → DATASETS → IMPROVE, primitives, phase summary) renders verbatim at the start of `/bitfab:setup` / `/bitfab:setup all`, then flows directly into Login. No confirmation step, no marker file — sub-modes (`login`, `instrument`, `replay`) skip it entirely because the user has already chosen a phase.
 
 1. **One workflow per Instrument cycle.** Step 8 takes exactly one workflow. The "next workflow" loop from step 13 always returns to step 8 — never to a parallel branch. This means one trace function, one trace plan, one set of code changes per cycle.
 
