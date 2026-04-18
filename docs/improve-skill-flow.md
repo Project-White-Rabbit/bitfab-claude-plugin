@@ -48,9 +48,9 @@ flowchart TD
         direction TB
         P3Start["1. mcp: search_traces validated:true<br/>collect already-validated traces"] --> P3Step2["2. mcp: search_traces (no filter)<br/>+ read_traces scope:summary<br/>find diverse unlabeled candidates"]
         P3Step2 --> P3Step3[/"3. AskUserQuestion:<br/>approve / adjust / skip candidates"/]
-        P3Step3 --> P3Step4["4. ★ HARD RULE ★<br/>Read code (Phase 2 file location)<br/>read_traces scope:full<br/>update_agent_labels with label + annotation<br/>BEFORE running label.js"]
-        P3Step4 --> P3Step5["5. node label.js traceId1 traceId2 ...<br/>opens labeling UI in browser"]
-        P3Step5 --> P3Step6["6. Wait for label.js to exit<br/>(blocks until user finishes)"]
+        P3Step3 --> P3Step4["4. ★ HARD RULE ★<br/>Read code (Phase 2 file location)<br/>read_traces scope:full<br/>update_agent_labels with label + annotation<br/>BEFORE running startDataset.js"]
+        P3Step4 --> P3Step5["5. node startDataset.js traceId1 traceId2 ...<br/>opens labeling UI in browser"]
+        P3Step5 --> P3Step6["6. Wait for startDataset.js to exit<br/>(blocks until user finishes)"]
         P3Step6 --> P3Step7["7. read_traces scope:full<br/>on validated + newly labeled set"]
         P3Step7 --> P3Gate{"8. ★ GATE ★<br/>≥1 validated failing label?<br/>(search_traces validated:true labelResult:false)"}
         P3Gate -- No --> P3Step2
@@ -104,7 +104,7 @@ flowchart TD
 
 ## Key invariants the diagram enforces
 
-1. **Pre-label before UI (HARD RULE).** Phase 3 Step 4 must call `mcp: update_agent_labels` with verdicts + annotations for every approved trace **before** Step 5 runs `label.js`. The user enters the labeling UI to confirm or correct Claude's verdicts, never to label from scratch. Skipping this is a process violation.
+1. **Pre-label before UI (HARD RULE).** Phase 3 Step 4 must call `mcp: update_agent_labels` with verdicts + annotations for every approved trace **before** Step 5 runs `startDataset.js`. The user enters the labeling UI to confirm or correct Claude's verdicts, never to label from scratch. Skipping this is a process violation.
 
 2. **Grounded labeling.** Step 4's verdicts must be grounded in the codebase, not just the trace text — Claude reads the instrumented function (located in Phase 2) and nearby intent (comments, BAML files, related tests) before deciding pass/fail. Annotations are written for the human reviewer.
 
