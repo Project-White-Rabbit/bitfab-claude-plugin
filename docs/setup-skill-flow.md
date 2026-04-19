@@ -33,7 +33,7 @@ flowchart TD
     %% ============ INSTRUMENT PHASE ============
     subgraph InstrPhase["INSTRUMENT PHASE"]
         direction TB
-        I1["1. Detect language<br/>identify apps vs libraries"] --> I2["2. Search for existing SDK usage<br/>per app dir in monorepos"]
+        I1["1. Detect language + frameworks<br/>identify apps vs libraries<br/>flag LangGraph/LangChain, OpenAI Agents,<br/>Claude Agent SDK, BAML imports"] --> I2["2. Search for existing SDK usage<br/>per app dir in monorepos"]
         I2 --> ISDK{Existing<br/>SDK usage?}
         ISDK -- Yes --> IAskMore[/"AskUserQuestion:<br/>• Search more workflows<br/>• Modify existing trace setup<br/>• Continue to Replay"/]
         IAskMore -- Continue --> R1
@@ -41,7 +41,7 @@ flowchart TD
         IAskMore -- Search more --> I345
         ISDK -- No --> I345
 
-        I345["3-5. API key, install SDK,<br/>set BITFAB_API_KEY,<br/>fetch docs.bitfab.ai/reference/&lt;lang&gt;<br/>(then /&lt;lang&gt;-sdk if needed)"] --> I6["6. Choose root span =<br/>★ outer workflow function ★<br/>NEVER the LLM/agent SDK call itself"]
+        I345["3-5. API key, install SDK,<br/>set BITFAB_API_KEY,<br/>fetch /reference/&lt;lang&gt; + /frameworks/&lt;detected&gt;<br/>(then /&lt;lang&gt;-sdk if needed)"] --> I6["6. Choose root span =<br/>★ outer workflow function ★<br/>NEVER the LLM/agent SDK call itself"]
         I6 --> I7["7. Read codebase<br/>find ALL AI workflows + work<br/>above / alongside / below SDK calls"]
         I7 --> I8["8. Present numbered list:<br/>trace boundary, end-to-end scope,<br/>why valuable<br/>★ Pick exactly ONE workflow ★<br/>NEVER multiple, NEVER all"]
         I8 --> I8Serial{"Inputs serializable<br/>by SDK tracing layer?"}
@@ -130,9 +130,11 @@ flowchart TD
 
 1. **One workflow per Instrument cycle.** Step 8 takes exactly one workflow. The "next workflow" loop from step 13 always returns to step 8 — never to a parallel branch. This means one trace function, one trace plan, one set of code changes per cycle.
 
-2. **Trace boundary = outer workflow, not the SDK/agent call.** Step 6 fixes the root as the outer workflow function (API handler, message processor, job runner, pipeline coordinator). The agent SDK's `run()` or the raw LLM call is never the root when there's a clear caller above it. Step 7 explicitly looks for work above / alongside / below any agent or SDK call so step 8's scope description and step 10's trace plan reflect end-to-end coverage, not just SDK internals.
+2. **Trace boundary = outer workflow, not the SDK/agent call.** The root must be re-invokable by the replay harness as a plain lambda with serialized inputs — so it must own its state setup, not consume a pre-built framework/stateful object (compiled graphs, configured SDK clients, DB sessions). Step 6 fixes the root as the outer workflow function (API handler, message processor, job runner, pipeline coordinator) that builds the framework + invokes it + processes the output. The agent SDK's `run()` / `invoke()` is never the root when there's a clear caller above it. Step 7 explicitly looks for work above / alongside / below any agent or SDK call so step 8's scope description and step 10's trace plan reflect end-to-end coverage, not just SDK internals.
 
 3. **Trace processor SDKs default to hybrid plans.** When the SDK registers a processor (OpenAI Agents SDK, etc.), step 10a defaults to a hybrid plan: manual `●` spans wrap the workflow, the SDK call appears as one `(agent)` child whose grandchildren are `[auto]` lines, and other manual spans capture work above/alongside/below the SDK call. The bare auto-only plan is reserved for the rare case where the workflow truly is just the SDK call.
+
+3a. **One flow = one trace function key.** Step 10a forbids a second key that covers the same flow. When an outer `@bitfab.span` / `withSpan` / `bitfab_span` and a framework handler (LangGraph callback, Claude Agent SDK handler) wrap the same work, they must share the same key. Separate trace functions are for reusable sub-components with their own standalone root.
 
 4. **Purely additive instrumentation.** Step 10a builds the trace plan under the constraint that the tree must be implementable without behavior changes. If a candidate tree requires `await`-ing a stream that wasn't awaited, delaying a call, reordering, blocking a callback, or restructuring control flow, the tree is invalid — restructure the *tree* (siblings, separate cycles, flatter shape), not the code.
 
