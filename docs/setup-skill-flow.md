@@ -64,9 +64,10 @@ flowchart TD
         I11Instr --> I12
         I11Replay --> I12
         I12["12. Tell user how to run app<br/>AND how to run replay once traces exist<br/>do NOT run yourself"]
-        I12 --> I13["★ MANDATORY STOP ★<br/>13. mcp: search_traces (only call site)<br/>empty result is expected"]
-        I13 --> INext[/"AskUserQuestion (always):<br/>A) Generate traces (only if none exist)<br/>B) Instrument next workflow<br/>C) Other workflow<br/>D) Done"/]
-        INext -- A --> I8
+        I12 --> I13["★ MANDATORY STOP ★<br/>13. AskUserQuestion"]
+        I13 --> INext[/"AskUserQuestion (always):<br/>A) Generate traces + Node blocks<br/>on waitForTrace.js until first hit<br/>(or ~10min timeout)<br/>B) Instrument next workflow<br/>C) Other workflow<br/>D) Done"/]
+        INext -- A --> IAPoll["A. Present script / let user run it<br/>Bash: node dist/commands/waitForTrace.js<br/>(polls every 10s inside Node, zero agent tokens)<br/>parse final JSON line: found / timeout / interrupted"]
+        IAPoll --> I8
         INext -- B --> I8
         INext -- C --> I8
         INext -- D --> IStop
@@ -162,7 +163,7 @@ flowchart TD
 
 13. **Instrumentation and replay pipeline are generated concurrently via subagent delegation.** Step 11 fans out into 11a (main agent: instrumentation edits) and 11b (subagent: replay pipeline for this cycle's trace function key), dispatched in a single message. The subagent — spawned via `Agent(subagent_type="general-purpose")` with a self-contained brief (key, root signature, import path, existing/target replay script path, Replay non-negotiables, SDK `#replay` URL) — generates its code in parallel with the main agent's. This is the key shift: parallel `Edit` calls alone only overlap millisecond file writes, whereas a subagent overlaps the seconds-to-minutes of token generation. The replay subagent is skipped for Go-only projects (Go does not support replay). The trace plan's `Files changed:` list covers both halves, including the new/edited replay script path. The Replay phase therefore typically runs as a sweep that confirms everything is already wired up; it still exists to catch pre-existing trace function keys (added outside the skill or before this step was parallelized) and to verify Replay Output Contract compliance, including that every script emits the full `ReplayResult` (with per-item `durationMs`/`duration_ms`, `tokens`, `model`) as a single JSON block.
 
-14. **Step 13 is a mandatory AskUserQuestion stop, and the only caller of `search_traces`.** The skill never silently transitions from Instrument to Replay; an empty `search_traces` result means "offer option A," not "skip." Replay does not check for traces — scripts are created from trace function keys in code.
+14. **Step 13 is a mandatory AskUserQuestion stop. Option A delegates the wait to `dist/commands/waitForTrace.js`** — a Node CLI (shared via `bitfab-plugin-lib`) that polls Bitfab every 10s until the first trace lands or a ~10 min timeout fires, then prints one JSON line (`found` / `timeout` / `interrupted`) and exits. The agent invokes it with a single long-timeout `Bash` call, so no agent tokens are burned during the wait — same pattern as `login.js` / `startDataset.js`. The skill never silently transitions from Instrument to Replay; only option D exits the loop. Replay does not check for traces — scripts are created from trace function keys in code.
 
 15. **One trace function and one direction per Modify cycle.** Modify step 2 picks exactly one trace function; Modify step 4 picks exactly one of the five directions (add context / increase depth / reduce depth / move root upstream / move root downstream). Mixing directions or batching trace functions is forbidden — the user loops via the Modify step 9 menu if they want more.
 
