@@ -97,9 +97,10 @@ flowchart TD
         P5RehydrateGate -- Yes --> P5Step1
         P5Fork["Fork independent experiments<br/>to subagents via Agent tool<br/>(isolation: worktree)"] --> P5Step1[/"Step 1: AskUserQuestion<br/>explain change, get confirmation"/]
         P5Step1 --> P5Edit["Edit iteration target<br/>(prompt, code, params, BAML)"]
-        P5Edit --> P5Step2["Step 2: Replay against dataset<br/>replay script --trace-ids id1,id2,..."]
+        P5Edit --> P5Step2["Step 2: Replay against dataset<br/>replay script --trace-ids id1,id2,...<br/>★ capture testRunId for each replay"]
         P5Step2 --> P5Step3["Step 3: Evaluate vs labels & annotations<br/>fail: did fix address annotation?<br/>pass: did it regress?"]
-        P5Step3 --> P5Step4[/"Step 4: Share results<br/>show full table, highlight best,<br/>recommend continue / replan / stop"/]
+        P5Step3 --> P5StepView["Step 4: node openExperiments.js id1,id2,...<br/>opens viewer, exits immediately<br/>(non-blocking, parallel review)"]
+        P5StepView --> P5Step4[/"Step 5: Share results<br/>show full table, highlight best,<br/>recommend continue / replan / stop"/]
         P5Step4 --> P5Outcome{Outcome}
         P5Outcome -- "Improved + no regressions:<br/>continue iterating" --> P5Step1
         P5Outcome -- "Regressions or no improvement:<br/>new experiment plan" --> P4Step3
@@ -145,7 +146,9 @@ flowchart TD
 
 9. **Sub-mode focus.** `dataset` enters at Phase 3 and exits after Phase 3 — the labeled dataset is the deliverable. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:improve dataset <key>` first. Sub-modes always require the trace function key as the argument because Phase 1 is skipped.
 
-10. **No hallucinated function descriptions in Phase 1.** The list shown to the user uses only data returned by `list_trace_functions` (keys, trace counts, last activity). Claude never invents a description from the key name — key names are often ambiguous or misleading and guessed descriptions confuse the user. Each returned key is additionally cross-checked against the local codebase via `grep`, and each entry is marked ✅ instrumented here (with path) or ⚠️ not found in this repo so the user can see ground truth before picking.
+10. **Experiment viewer is non-blocking.** Phase 5 Step 4 (`openExperiments.js`) opens a browser window and exits immediately. Unlike `startDataset.js` in Phase 3, there's no handoff back to the CLI. The viewer is a parallel review surface for the human; the agent's textual summary in Step 5 is still required and is not optional.
+
+11. **No hallucinated function descriptions in Phase 1.** The list shown to the user uses only data returned by `list_trace_functions` (keys, trace counts, last activity). Claude never invents a description from the key name — key names are often ambiguous or misleading and guessed descriptions confuse the user. Each returned key is additionally cross-checked against the local codebase via `grep`, and each entry is marked ✅ instrumented here (with path) or ⚠️ not found in this repo so the user can see ground truth before picking.
 
 ## Legend
 
