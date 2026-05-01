@@ -1,6 +1,6 @@
 ---
 description: Set up Bitfab tracing — authenticate, instrument, modify, and create replay scripts
-argument-hint: [all|login|login headless|instrument|modify|replay]
+argument-hint: "[all|login|login headless|instrument|modify|replay]"
 allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "WebFetch", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_bitfab_api_key", "mcp__plugin_bitfab_Bitfab__create_trace_plan", "mcp__plugin_bitfab_Bitfab__get_trace_plan"]
 ---
 

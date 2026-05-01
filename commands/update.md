@@ -1,6 +1,6 @@
 ---
 description: Update Bitfab plugin and SDK to the latest versions
-argument-hint: [plugin|sdk|all]
+argument-hint: "[plugin|sdk|all]"
 allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "AskUserQuestion"]
 ---
 

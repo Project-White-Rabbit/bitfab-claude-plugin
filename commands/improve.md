@@ -1,6 +1,6 @@
 ---
 description: Iterate on a traced function to improve pass rates using failed traces, labeling, and replay
-argument-hint: [all|dataset|experiment] [<trace-function-key>]
+argument-hint: "[all|dataset|experiment] [<trace-function-key>]"
 allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "Agent", "AskUserQuestion", "Skill", "mcp__plugin_bitfab_Bitfab__list_trace_functions", "mcp__plugin_bitfab_Bitfab__search_traces", "mcp__plugin_bitfab_Bitfab__read_traces", "mcp__plugin_bitfab_Bitfab__update_agent_labels"]
 ---
 
