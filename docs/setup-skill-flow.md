@@ -24,9 +24,10 @@ flowchart TD
         LAuth -- No --> LRun["Run login script<br/>node login.js — opens OAuth in browser"]
         LAuth -- Yes --> LKey["2. mcp: get_bitfab_api_key<br/>NEVER print full key"]
         LRun --> LKey
+        LKey --> LConsent["3. Ask session log consent<br/>(first login only)<br/>read ~/.config/bitfab/config.json<br/>AskUserQuestion if sessionLogConsent==null<br/>persist via node -e"]
     end
 
-    LKey --> LStop{login mode only?}
+    LConsent --> LStop{login mode only?}
     LStop -- Yes --> EndLogin([Stop, report result])
     LStop -- No --> I1
 
