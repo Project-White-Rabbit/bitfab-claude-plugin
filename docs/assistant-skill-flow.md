@@ -87,24 +87,28 @@ flowchart TD
         P4Buckets --> P4Plan[/"AskUserQuestion:<br/>present categorized plan,<br/>get confirmation"/]
     end
 
-    P4Plan --> P5Fork
+    P4Plan --> P5OpenStudio
 
     %% ============ PHASE 5 ============
     subgraph Phase5["PHASE 5 — Iterate with Replay"]
         direction TB
+        P5OpenStudio["Step 0: Open Studio<br/>openStudio.js (background)<br/>capture sessionId"] --> P5Fork
+        P5OpenStudio --> P5Rehydrate
         P5Rehydrate["Rehydrate (experiment mode only):<br/>grep code for key<br/>search_traces validated:true<br/>read_traces scope:full"] --> P5RehydrateGate{≥1 validated<br/>failing label?}
-        P5RehydrateGate -- No --> EndNoDataset([Stop — recommend /bitfab:assistant dataset key])
+        P5RehydrateGate -- No --> P5CloseStudio2["Close Studio<br/>(kill background)"]
+        P5CloseStudio2 --> EndNoDataset([Stop — recommend /bitfab:assistant dataset key])
         P5RehydrateGate -- Yes --> P5Step1
         P5Fork["Fork independent experiments<br/>to subagents via Agent tool<br/>(isolation: worktree)"] --> P5Step1[/"Step 1: AskUserQuestion<br/>explain change, get confirmation"/]
         P5Step1 --> P5Edit["Edit iteration target<br/>(prompt, code, params, BAML)"]
         P5Edit --> P5Step2["Step 2: Replay against dataset<br/>replay script --trace-ids id1,id2,...<br/>★ capture testRunId for each replay"]
         P5Step2 --> P5Step3["Step 3: Evaluate vs labels & annotations<br/>fail: did fix address annotation?<br/>pass: did it regress?"]
-        P5Step3 --> P5StepView["Step 4: node openExperiments.js id1,id2,...<br/>opens viewer, exits immediately<br/>(non-blocking, parallel review)"]
+        P5Step3 --> P5StepView["Step 4: navigateStudio.js sessionId path<br/>navigates Studio to experiments page<br/>(non-blocking, parallel review)"]
         P5StepView --> P5Step4[/"Step 5: Share results<br/>show full table, highlight best,<br/>recommend continue / replan / stop"/]
         P5Step4 --> P5Outcome{Outcome}
         P5Outcome -- "Improved + no regressions:<br/>continue iterating" --> P5Step1
         P5Outcome -- "Regressions or no improvement:<br/>new experiment plan" --> P4Step3
-        P5Outcome -- "Stop iterating" --> P6Step1
+        P5Outcome -- "Stop iterating" --> P5CloseStudio
+        P5CloseStudio["Close Studio<br/>(kill background)"] --> P6Step1
     end
 
     %% ============ PHASE 6 ============
@@ -118,7 +122,7 @@ flowchart TD
     classDef question fill:#fae8ff,stroke:#86198f,color:#000
     classDef constraint fill:#fee2e2,stroke:#b91c1c,color:#000
 
-    class EndStop1,EndStop2,EndDataset,EndNoDataset,P6End terminal
+    class EndStop1,EndStop2,EndDataset,EndNoDataset,P5CloseStudio2,P6End terminal
     class P1Ask,P2InstAsk,P2RepAsk,P3Step3,P3Approve,P4Plan,P5Step1,P5Step4 question
     class P3Step4,P3Gate,P4Buckets constraint
 ```
@@ -146,7 +150,7 @@ flowchart TD
 
 9. **Sub-mode focus.** `dataset` enters at Phase 3 and exits after Phase 3 — the labeled dataset is the deliverable. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. Sub-modes always require the trace function key as the argument because Phase 1 is skipped.
 
-10. **Experiment viewer is non-blocking.** Phase 5 Step 4 (`openExperiments.js`) opens a browser window and exits immediately. Unlike `startDataset.js` in Phase 3, there's no handoff back to the CLI. The viewer is a parallel review surface for the human; the agent's textual summary in Step 5 is still required and is not optional.
+10. **Studio lifecycle wraps Phase 5.** The Studio opens at the start of Phase 5 (`openStudio.js`, background) and closes at the end (`close-studio` step kills the background process). The experiment viewer in Step 4 uses `navigateStudio.js` to navigate the already-open Studio, not a new window. If the user closes the Studio early (`session-ended` event), the improve loop continues but skips navigation calls. The agent's textual summary in Step 5 is still required and is not optional.
 
 11. **No hallucinated function descriptions in Phase 1.** The list shown to the user uses only data returned by `list_trace_functions` (keys, trace counts, last activity). Claude never invents a description from the key name — key names are often ambiguous or misleading and guessed descriptions confuse the user. Each returned key is additionally cross-checked against the local codebase via `grep`, and each entry is marked ✅ instrumented here (with path) or ⚠️ not found in this repo so the user can see ground truth before picking.
 
