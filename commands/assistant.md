@@ -273,7 +273,7 @@ In `dataset` mode this phase is the entry point — Phase 1 (function picker) an
 
 ## Phase 5: Iterate with Replay
 
-Run an iterative improvement loop. If experiments are independent, fork them to subagents in parallel using the **Agent tool** with `isolation: "worktree"`. Each iteration:
+Run an iterative improvement loop. Each iteration:
 
 **Studio mode:** If `studioMode` is true, the Studio is already open (launched in the `studio/open` step at the start of the flow). Use the `sessionId` captured there for all `navigateStudio.js` calls. If the Studio was closed early (`session-ended` event), skip navigation calls but continue the improve loop normally.
 **Non-Studio mode:** Skip all `navigateStudio.js` calls in this phase. Experiment results are reported in chat only.
@@ -289,13 +289,37 @@ Run an iterative improvement loop. If experiments are independent, fork them to 
 
    - **no datasets exist for this function (`list_datasets` returned empty), or the picked dataset has no validated failing labels** — tell the user the function has no usable dataset yet and recommend running `/bitfab:assistant dataset <key>` first; if `studioMode` is true, kill the Studio background process; then stop the flow
    - **dataset loaded (≥1 validated failing label)** — summarize the dataset for the user (counts of pass/fail) and the failure annotations. Pick a first experiment from the failure patterns and continue
-2. **Run only when mode is `all` or `experiment`.**
+2. **Run only when mode is `experiment`.**
+
+   **Decide once: parallel worktree subagents, or serial in this main agent.** The check is whether subagent worktree sessions would inherit bypass permissions.
+
+   `.claude/settings.local.json` is gitignored and does NOT propagate into subagent worktrees, so it can't grant bypass. The two locations that DO propagate are committed `.claude/settings.json` and user-global `~/.claude/settings.json`. Run:
+
+   ```bash
+   python3 -c "
+   import json, os
+   def has_bypass(p):
+       if not os.path.exists(p): return False
+       try: d = json.load(open(p))
+       except Exception: return False
+       return (d.get('permissions') or {}).get('defaultMode') == 'bypassPermissions'
+   p = has_bypass('.claude/settings.json')
+   g = has_bypass(os.path.expanduser('~/.claude/settings.json'))
+   print('parallel' if (p or g) else 'serial')
+   "
+   ```
+
+   Hold the chosen mode in working context. Every iteration below (`make-change`, `replay-against-dataset`, `evaluate-results`) honors it.
+
+   - **bash output is `parallel` (bypass found in committed or user-global settings)** — **Parallel mode.** For each independent experiment, fork to a subagent using the Agent tool with `isolation: "worktree"` and `subagent_type: "general-purpose"`. The subagent edits its worktree, runs replay, returns its scored items + `testRunId` to this main agent
+   - **bash output is `serial` (no bypass found)** — **Serial mode.** Iterate experiments one at a time in this main agent. Subagent worktrees wouldn't inherit bypass permissions, so their Edit tool would be denied
+3. **Run only when mode is `all` or `experiment`.**
 
    **Make the change.**
 
    - Use `AskUserQuestion` to explain what you're changing and why, and confirm before editing
    - Edit the iteration target (prompt, code, tools, parameters)
-3. **Run only when mode is `all` or `experiment`.**
+4. **Run only when mode is `all` or `experiment`.**
 
    **Replay against the dataset.** Collect the trace IDs from the labeled dataset (built in Phase 3 in `all` mode, or rehydrated at the start of this phase in `experiment` mode). Run the replay script with those specific traces.
 
@@ -337,7 +361,7 @@ Run an iterative improvement loop. If experiments are independent, fork them to 
    - `total` — `result.items.length`; `0` or non-zero exit code = whole-replay crash
 
    If `completed === 0`, do not score pass/fail on an empty set — branch to `check-replay-health`.
-4. **Run only when mode is `all` or `experiment`.**
+5. **Run only when mode is `all` or `experiment`.**
 
    **Route on the counts and exit code.** Goal: keep infra noise out of evaluation. Read a sample of `item.error` strings (and stderr on crash) first to identify the DB-shaped pattern (missing record, FK / unique constraint, write rejected, connection refused, missing env).
 
@@ -354,7 +378,7 @@ Run an iterative improvement loop. If experiments are independent, fork them to 
    - **every item errored (completed is 0 but total is non-zero)** — systemic infra failure (usually env mismatch). Diagnose, confirm a script fix with the user, loop back
    - **high infra error rate (over half of items errored)** — signal is noisy. Flag the rate and ask the user whether to fix the env and retry, or proceed with the partial signal
    - **healthy or mixed run (at least one completed item, infra errors at most half of total)** — proceed. Carry `infraErrored` forward — surface as its own bucket in share-results, never folded into pass/fail
-5. **Run only when mode is `all` or `experiment`.**
+6. **Run only when mode is `all` or `experiment`.**
 
    **Evaluate against labels & annotations.** Score only items where `item.error` is unset. Items with `item.error` set are unreplayable (already classified) and go in their own bucket — never pass, fail, or regression.
 
@@ -363,8 +387,8 @@ Run an iterative improvement loop. If experiments are independent, fork them to 
    - **fail**-labeled: does the new output address the annotation? Use it as acceptance criteria.
    - **pass**-labeled: preserved or regressed?
    - Spill to a tmp file if context gets big. Keep the `unreplayable` list (trace ID + error string) alongside pass/fail for `share-results`.
-   - Return results to the main agent if you're a subagent.
-6. **Run only when mode is `all` or `experiment`.**
+   - **If you're a worktree subagent** (parallel mode from `pick-execution-mode`): return your scored items + `testRunId` + unreplayable list to the main agent and exit. The main agent collects results from all parallel experiments before `open-experiments`.
+7. **Run only when mode is `all` or `experiment`.**
 
    **Open experiment viewer.** If no `testRunId`s were captured (e.g. the replay script didn't print them), skip this step and continue, but flag it to the user in `share-results` so the script can be fixed before the next iteration.
 
@@ -385,7 +409,7 @@ Run an iterative improvement loop. If experiments are independent, fork them to 
    The command opens a browser window and exits immediately.
 
    The user reviews the viewer alongside your `share-results` summary before deciding whether to iterate.
-7. **Run only when mode is `all` or `experiment`.**
+8. **Run only when mode is `all` or `experiment`.**
 
    **Share results to the user.**
 
