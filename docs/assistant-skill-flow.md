@@ -5,15 +5,16 @@ Edit the Mermaid block below to keep this in sync with the skill.
 
 ## Entry modes
 
-The skill has three entry modes. `all` walks every phase; the two sub-modes do one focused thing each. Both sub-modes require the trace function key as the argument because they skip the function picker.
+The skill has four entry modes. `all` walks every phase; the three sub-modes do one focused thing each. `dataset` and `experiment` require the trace function key as the argument because they skip the function picker; `investigate` does its own function lookup, so the key is optional.
 
 | Invocation | Enters at | Stops after |
 |---|---|---|
 | `/bitfab:assistant` or `/bitfab:assistant all` | Phase 1 | Phase 6 |
+| `/bitfab:assistant investigate [<key>]` | Phase Investigate | Phase Investigate (chat summary or analysis report) or Phase 3 (if the user picks "Build a dataset") |
 | `/bitfab:assistant dataset <key>` | Phase 3 | Phase 3 (dataset built) |
 | `/bitfab:assistant experiment <key>` | Phase 5 (rehydrate step) | Phase 6 |
 
-In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay verification) are skipped — the agent greps the codebase for the key directly. In `experiment` mode, Phases 1–4 are skipped — Phase 5 starts with a rehydrate step that fetches the existing validated dataset and locates the code.
+In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay verification) are skipped — the agent greps the codebase for the key directly. In `experiment` mode, Phases 1–4 are skipped — Phase 5 starts with a rehydrate step that fetches the existing validated dataset and locates the code. In `investigate` mode, Phases 1, 2, 4, 5, 6 are skipped — Phase Investigate gathers context (function key + code path), explores the issue free-form via search / read traces + code, then branches on the user's choice (stop, write report, or hand off to Phase 3 for dataset building).
 
 ## Full flow
 
@@ -21,6 +22,7 @@ In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay
 flowchart TD
     Start([User invokes /bitfab:assistant [mode] [traceFunctionKey]]) --> ModeCheck{Mode?}
     ModeCheck -- all --> ArgCheck{Arg provided?}
+    ModeCheck -- investigate --> PIGather
     ModeCheck -- dataset --> P3Start
     ModeCheck -- experiment --> P5Rehydrate
     ArgCheck -- Yes --> P1Use[Use provided key]
@@ -35,6 +37,18 @@ flowchart TD
 
     P1Use --> P2Inst
     P1Ask --> P2Inst
+
+    %% ============ PHASE INVESTIGATE ============
+    subgraph PhaseInvestigate["PHASE INVESTIGATE — Free-form Investigation"]
+        direction TB
+        PIGather["Gather context:<br/>read user's message<br/>if key passed → list_trace_functions + grep<br/>if no key → list_trace_functions,<br/>match against user's description or ask"] --> PIExplore["Explore issue (free-form):<br/>search_traces / read_traces with filters<br/>matching the user's concern<br/>read code (function + call chain + BAML)<br/>quantify if asked"]
+        PIExplore --> PIPresent[/"AskUserQuestion (present findings inline first):<br/>• A — Stop here (chat summary only)<br/>• B — Write analysis report<br/>• C — Build a labeled dataset (Recommended when failures are reproducible)"/]
+        PIPresent -- "A — Stop" --> EndInvestigateStop([Stop])
+        PIPresent -- "B — Write report" --> PIWrite["Write .bitfab/analysis/&lt;key&gt;-&lt;ts&gt;.md<br/>(findings, hypotheses, next steps)"]
+        PIWrite --> EndInvestigateReport([Stop — report written])
+    end
+
+    PIPresent -- "C — Build dataset" --> P3Start
 
     %% ============ PHASE 2 ============
     subgraph Phase2["PHASE 2 — Verify Instrumentation & Replay"]
@@ -76,6 +90,7 @@ flowchart TD
 
     P3Hold --> P3ModeGate{Mode?}
     P3ModeGate -- "dataset" --> EndDataset([Stop — dataset built])
+    P3ModeGate -- "investigate" --> EndDataset
     P3ModeGate -- "all" --> P4Step1
 
     %% ============ PHASE 4 ============
@@ -124,8 +139,8 @@ flowchart TD
     classDef question fill:#fae8ff,stroke:#86198f,color:#000
     classDef constraint fill:#fee2e2,stroke:#b91c1c,color:#000
 
-    class EndStop1,EndStop2,EndDataset,EndNoDataset,P5CloseStudio2,P6End terminal
-    class P1Ask,P2InstAsk,P2RepAsk,P3Step3,P3Approve,P4Plan,P5Step1,P5Step4 question
+    class EndStop1,EndStop2,EndDataset,EndNoDataset,EndInvestigateStop,EndInvestigateReport,P5CloseStudio2,P6End terminal
+    class P1Ask,P2InstAsk,P2RepAsk,P3Step3,P3Approve,P4Plan,P5Step1,P5Step4,PIPresent question
     class P3Step4,P3Gate,P4Buckets,P5HealthGate constraint
 ```
 
@@ -150,7 +165,7 @@ flowchart TD
 
 8. **Replan loop from Phase 5 → Phase 4.** If experiments improved nothing or introduced regressions, the loop returns to Phase 4 Step 3 (re-categorize) rather than Phase 5 Step 1 (re-run the same experiment).
 
-9. **Sub-mode focus.** `dataset` enters at Phase 3 and exits after Phase 3 — the labeled dataset is the deliverable. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. Sub-modes always require the trace function key as the argument because Phase 1 is skipped.
+9. **Sub-mode focus.** `dataset` enters at Phase 3 and exits after Phase 3 — the labeled dataset is the deliverable. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. `investigate` enters at Phase Investigate, does its own function lookup + code grep, then branches on the user's choice: stop with a chat summary, write a markdown analysis report to `.bitfab/analysis/`, or hand off to Phase 3 to build a labeled dataset (after which it stops, like `dataset` mode). `dataset` and `experiment` require the trace function key as an argument because Phase 1 is skipped; `investigate` makes the key optional and figures out the function from what the user described when it isn't passed.
 
 10. **Studio lifecycle wraps Phase 5.** The Studio opens at the start of Phase 5 (`openStudio.js`, background) and closes at the end (`close-studio` step kills the background process). The experiment viewer in Step 4 uses `navigateStudio.js` to navigate the already-open Studio, not a new window. If the user closes the Studio early (`session-ended` event), the improve loop continues but skips navigation calls. The agent's textual summary in Step 5 is still required and is not optional.
 
