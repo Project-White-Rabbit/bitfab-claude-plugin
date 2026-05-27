@@ -12,7 +12,7 @@ function buildPluginUpdateCommands(scopes) {
 }
 export const platform = {
     authPath: "claude",
-    loginHint: "/bitfab:login",
+    loginHint: "/bitfab:setup login",
     setupHint: "/bitfab:setup",
     updateHint: "/bitfab:update",
     repo: "Project-White-Rabbit/bitfab-claude-plugin",
