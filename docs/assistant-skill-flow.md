@@ -10,11 +10,11 @@ The skill has four entry modes. `all` walks every phase; the three sub-modes do 
 | Invocation | Enters at | Stops after |
 |---|---|---|
 | `/bitfab:assistant` or `/bitfab:assistant all` | Phase 1 | Phase 6 |
-| `/bitfab:assistant investigate [<key>]` | Phase Investigate | Phase Investigate (chat summary or analysis report) or Phase 3 (if the user picks "Build a dataset") |
-| `/bitfab:assistant dataset <key>` | Phase 3 | Phase 3 (dataset built) |
+| `/bitfab:assistant investigate [<key>]` | Phase Investigate | Phase Investigate (chat summary or analysis report), or Phase 6 (if the user picks "Build a dataset", continues through experiments) |
+| `/bitfab:assistant dataset <key>` | Phase 3 | Phase 6 (continues through diagnose + experiments after dataset is built) |
 | `/bitfab:assistant experiment <key>` | Phase 5 (rehydrate step) | Phase 6 |
 
-In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay verification) are skipped — the agent greps the codebase for the key directly. In `experiment` mode, Phases 1–4 are skipped — Phase 5 starts with a rehydrate step that fetches the existing validated dataset and locates the code. In `investigate` mode, Phases 1, 2, 4, 5, 6 are skipped — Phase Investigate gathers context (function key + code path), explores the issue free-form via search / read traces + code, then branches on the user's choice (stop, write report, or hand off to Phase 3 for dataset building).
+In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay verification) are skipped — the agent greps the codebase for the key directly, then continues through Phase 4 (diagnose) and Phase 5 (experiments) after the dataset is built. In `experiment` mode, Phases 1-4 are skipped — Phase 5 starts with a rehydrate step that fetches the existing validated dataset and locates the code. In `investigate` mode, Phase Investigate gathers context (function key + code path), explores the issue free-form via search / read traces + code, then branches on the user's choice (stop, write report, or hand off to Phase 3 for dataset building). If the user picks dataset building, the flow continues through Phase 4 and Phase 5 (experiments) rather than stopping.
 
 ## Full flow
 
@@ -88,10 +88,7 @@ flowchart TD
         P3Approve -- Approve --> P3Hold["9. Hold dataset in-context<br/>(benchmark for Phase 5)"]
     end
 
-    P3Hold --> P3ModeGate{Mode?}
-    P3ModeGate -- "dataset" --> EndDataset([Stop — dataset built])
-    P3ModeGate -- "investigate" --> EndDataset
-    P3ModeGate -- "all" --> P4Step1
+    P3Hold --> P4Step1
 
     %% ============ PHASE 4 ============
     subgraph Phase4["PHASE 4 — Diagnose & Plan"]
@@ -139,7 +136,7 @@ flowchart TD
     classDef question fill:#fae8ff,stroke:#86198f,color:#000
     classDef constraint fill:#fee2e2,stroke:#b91c1c,color:#000
 
-    class EndStop1,EndStop2,EndDataset,EndNoDataset,EndInvestigateStop,EndInvestigateReport,P5CloseStudio2,P6End terminal
+    class EndStop1,EndStop2,EndNoDataset,EndInvestigateStop,EndInvestigateReport,P5CloseStudio2,P6End terminal
     class P1Ask,P2InstAsk,P2RepAsk,P3Step3,P3Approve,P4Plan,P5Step1,P5Step4,PIPresent question
     class P3Step4,P3Gate,P4Buckets,P5HealthGate constraint
 ```
@@ -165,7 +162,7 @@ flowchart TD
 
 8. **Replan loop from Phase 5 → Phase 4.** If experiments improved nothing or introduced regressions, the loop returns to Phase 4 Step 3 (re-categorize) rather than Phase 5 Step 1 (re-run the same experiment).
 
-9. **Sub-mode focus.** `dataset` enters at Phase 3 and exits after Phase 3 — the labeled dataset is the deliverable. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. `investigate` enters at Phase Investigate, does its own function lookup + code grep, then branches on the user's choice: stop with a chat summary, write a markdown analysis report to `.bitfab/analysis/`, or hand off to Phase 3 to build a labeled dataset (after which it stops, like `dataset` mode). `dataset` and `experiment` require the trace function key as an argument because Phase 1 is skipped; `investigate` makes the key optional and figures out the function from what the user described when it isn't passed.
+9. **Sub-mode continuation.** `dataset` enters at Phase 3, builds the labeled dataset, then continues through Phase 4 (diagnose) and Phase 5 (experiments) to Phase 6. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. `investigate` enters at Phase Investigate, does its own function lookup + code grep, then branches on the user's choice: stop with a chat summary, write a markdown analysis report to `.bitfab/analysis/`, or hand off to Phase 3 to build a labeled dataset (which then continues through Phase 4 and Phase 5 to Phase 6). `dataset` and `experiment` require the trace function key as an argument because Phase 1 is skipped; `investigate` makes the key optional and figures out the function from what the user described when it isn't passed.
 
 10. **Studio lifecycle wraps Phase 5.** The Studio opens at the start of Phase 5 (`openStudio.js`, background) and closes at the end (`close-studio` step kills the background process). The experiment viewer in Step 4 uses `navigateStudio.js` to navigate the already-open Studio, not a new window. If the user closes the Studio early (`session-ended` event), the improve loop continues but skips navigation calls. The agent's textual summary in Step 5 is still required and is not optional.
 
