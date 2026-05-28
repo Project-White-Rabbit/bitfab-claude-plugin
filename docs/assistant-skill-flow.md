@@ -64,12 +64,19 @@ flowchart TD
 
         P2NoteLoc --> P2Replay["Check replay script:<br/>scripts/replay.* + SDK replay imports"]
         P2Replay --> P2RepFound{Script covers<br/>this key?}
-        P2RepFound -- Yes --> P3Start
+        P2RepFound -- Yes --> P2DetectCaps
         P2RepFound -- No --> P2RepAsk[/"AskUserQuestion:<br/>• Create replay now (Recommended)<br/>• Pick different function<br/>• Stop"/]
         P2RepAsk -- "Create replay" --> P2InvokeReplay["Skill: /bitfab:setup replay"]
-        P2InvokeReplay --> P3Start
+        P2InvokeReplay --> P2DetectCaps
         P2RepAsk -- "Pick different" --> P1List
         P2RepAsk -- "Stop" --> EndStop2([Stop])
+
+        P2DetectCaps["Detect replay capabilities:<br/>grep script for code-change,<br/>experiment-group-id, traceId"] --> P2CapsGate{All 3 flags<br/>present?}
+        P2CapsGate -- Yes --> P3Start
+        P2CapsGate -- No --> P2CapsAsk[/"AskUserQuestion:<br/>list missing capabilities<br/>• A: Upgrade replay script (Recommended)<br/>• B: Continue without"/]
+        P2CapsAsk -- "A — Upgrade" --> P2Upgrade["Upgrade SDK + invoke<br/>setup replay to regenerate<br/>script, re-grep flags"]
+        P2Upgrade --> P3Start
+        P2CapsAsk -- "B — Continue" --> P3Start
     end
 
     %% ============ PHASE 3 ============
@@ -99,7 +106,7 @@ flowchart TD
         P4Buckets --> P4Plan[/"AskUserQuestion:<br/>present categorized plan,<br/>get confirmation"/]
     end
 
-    P4Plan --> P5OpenStudio
+    P4Plan --> P5DetectCaps
 
     %% ============ PHASE 5 ============
     subgraph Phase5["PHASE 5 — Iterate with Replay"]
@@ -111,7 +118,7 @@ flowchart TD
         P5CloseStudio2 --> EndNoDataset([Stop — recommend /bitfab:assistant dataset key])
         P5RehydrateGate -- Yes --> P5DetectCaps
 
-        P5DetectCaps["Detect replay capabilities:<br/>grep script for code-change,<br/>experiment-group-id, traceId"] --> P5CapsGate{All 3 flags<br/>present?}
+        P5DetectCaps["Detect replay capabilities<br/>(skip if already ran in Phase 2):<br/>grep script for code-change,<br/>experiment-group-id, traceId"] --> P5CapsGate{All 3 flags<br/>present?}
         P5CapsGate -- Yes --> P5Fork
         P5CapsGate -- No --> P5CapsAsk[/"AskUserQuestion:<br/>list missing capabilities<br/>• A: Upgrade replay script (Recommended)<br/>• B: Continue without"/]
         P5CapsAsk -- "A — Upgrade" --> P5Upgrade["Upgrade SDK + invoke<br/>setup replay to regenerate<br/>script, re-grep flags"]
@@ -178,7 +185,7 @@ flowchart TD
 
 12. **Replay-health gate before evaluation (HARD RULE).** Phase 5 Step 3 (`check-replay-health`) runs between replay execution and evaluation. Items where `item.error` is set are unreplayable (infra failure: stale DB row, FK violation, rejected write, env mismatch) — NOT failing outputs. A whole-replay crash or an all-errored run loops back to fix the replay script; healthy/mixed runs carry the `infraErrored` count forward as its own bucket. Pass/fail is computed only over items with no `item.error`, and the unreplayable count is never folded into the pass-rate denominator.
 
-13. **Replay capability detection runs once per session.** Phase 5's `detect-replay-capabilities` step greps the replay script for three flags (`code-change`, `experiment-group-id`, `traceId`) before the first experiment. If any are missing, the user chooses to upgrade (SDK update + `setup replay` regeneration) or continue without. The iteration loop (`share-results` back to `make-change`) skips this step on subsequent iterations because capabilities don't change mid-session.
+13. **Replay capability detection runs in both Phase 2 and Phase 5.** Phase 2's `detect-replay-capabilities` step greps the replay script for three flags (`code-change`, `experiment-group-id`, `traceId`) right after confirming the replay script exists. Phase 5 has the same step, which skips if Phase 2 already ran it. This dual placement means `experiment` mode (which skips Phase 2) still gets capability detection before the first experiment, while `all`/`dataset`/`investigate` modes get it early during instrumentation verification. If any flags are missing, the user chooses to upgrade (SDK update + `setup replay` regeneration) or continue without. The iteration loop (`share-results` back to `make-change`) skips this step on subsequent iterations because capabilities don't change mid-session.
 
 14. **Reactive trace-plan opening, not a flow phase.** Opening a trace plan is a cross-cutting capability of this skill, not a primitive (`/bitfab:plan` was removed). Trigger only when the user asks ("show me what's captured," "open the plan for X") or context clearly implies it. Never auto-open as part of normal phase routing, the assistant flow does not detour through plan-opening between phases. When triggered, run two sequential calls (step 2 needs the planId from step 1, so they can't be batched): `get_trace_plan({ traceFunctionKey })` returns the plan id, then `openStudioTo.js "/studio/trace-plan/<planId>"` (substituting that id). The plan renders in the open Studio tab in-place (Studio chrome stays mounted around the trace plan content via the `/studio/trace-plan/[id]` route, which re-uses the `TracePlanView` component from the canonical `/trace-plan/[id]` page). No new tab pops up. If no plan exists for the key, say so in one line and offer `/bitfab:setup modify <key>` to build one.
 
