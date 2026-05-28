@@ -104,7 +104,7 @@ flowchart TD
     %% ============ PHASE 5 ============
     subgraph Phase5["PHASE 5 — Iterate with Replay"]
         direction TB
-        P5OpenStudio["Step 0: Open Studio<br/>openStudio.js (background)<br/>capture sessionId"] --> P5DetectCaps
+        P5OpenStudio["Step 0: Open Studio<br/>openStudioTo.js (background)"] --> P5DetectCaps
         P5OpenStudio --> P5Rehydrate
         P5Rehydrate["Rehydrate (experiment mode only):<br/>grep code for key<br/>search_traces validated:true<br/>read_traces scope:full"] --> P5RehydrateGate{≥1 validated<br/>failing label?}
         P5RehydrateGate -- No --> P5CloseStudio2["Close Studio<br/>(kill background)"]
@@ -124,7 +124,7 @@ flowchart TD
         P5Step2 --> P5HealthGate{"Step 3: Check replay health<br/>(crash? all errored? high infra rate?)"}
         P5HealthGate -- "Crash or all errored" --> P5Edit
         P5HealthGate -- "Healthy or mixed" --> P5Step3
-        P5Step3["Step 4: Evaluate vs labels & annotations<br/>(only items with no item.error)<br/>fail: did fix address annotation?<br/>pass: did it regress?<br/>★ unreplayable is its own bucket"] --> P5StepView["Step 5: navigateStudio.js sessionId path<br/>navigates Studio to experiments page<br/>(non-blocking, parallel review)"]
+        P5Step3["Step 4: Evaluate vs labels & annotations<br/>(only items with no item.error)<br/>fail: did fix address annotation?<br/>pass: did it regress?<br/>★ unreplayable is its own bucket"] --> P5StepView["Step 5: openStudioTo.js path<br/>navigates Studio to experiments page<br/>(non-blocking, parallel review)"]
         P5StepView --> P5Step4[/"Step 6: Share results<br/>show full table + unreplayable count,<br/>highlight best, recommend continue / replan / stop"/]
         P5Step4 --> P5Outcome{Outcome}
         P5Outcome -- "Improved + no regressions:<br/>continue iterating" --> P5Step1
@@ -172,7 +172,7 @@ flowchart TD
 
 9. **Sub-mode continuation.** `dataset` enters at Phase 3, builds the labeled dataset, then continues through Phase 4 (diagnose) and Phase 5 (experiments) to Phase 6. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. `investigate` enters at Phase Investigate, does its own function lookup + code grep, then branches on the user's choice: stop with a chat summary, write a markdown analysis report to `.bitfab/analysis/`, or hand off to Phase 3 to build a labeled dataset (which then continues through Phase 4 and Phase 5 to Phase 6). `dataset` and `experiment` require the trace function key as an argument because Phase 1 is skipped; `investigate` makes the key optional and figures out the function from what the user described when it isn't passed.
 
-10. **Studio lifecycle wraps Phase 5.** The Studio opens at the start of Phase 5 (`openStudio.js`, background) and closes at the end (`close-studio` step kills the background process). The experiment viewer in Step 4 uses `navigateStudio.js` to navigate the already-open Studio, not a new window. If the user closes the Studio early (`session-ended` event), the improve loop continues but skips navigation calls. The agent's textual summary in Step 5 is still required and is not optional.
+10. **Studio lifecycle wraps Phase 5.** The Studio opens at the start of Phase 5 (`openStudioTo.js`, background) and closes at the end (`close-studio` step kills the background process). The experiment viewer in Step 4 uses `openStudioTo.js` to navigate the existing Studio or open a new one. The agent's textual summary in Step 5 is still required and is not optional.
 
 11. **No hallucinated function descriptions in Phase 1.** The list shown to the user uses only data returned by `list_trace_functions` (keys, trace counts, last activity). Claude never invents a description from the key name — key names are often ambiguous or misleading and guessed descriptions confuse the user. Each returned key is additionally cross-checked against the local codebase via `grep`, and each entry is marked ✅ instrumented here (with path) or ⚠️ not found in this repo so the user can see ground truth before picking.
 
@@ -180,7 +180,7 @@ flowchart TD
 
 13. **Replay capability detection runs once per session.** Phase 5's `detect-replay-capabilities` step greps the replay script for three flags (`code-change`, `experiment-group-id`, `traceId`) before the first experiment. If any are missing, the user chooses to upgrade (SDK update + `setup replay` regeneration) or continue without. The iteration loop (`share-results` back to `make-change`) skips this step on subsequent iterations because capabilities don't change mid-session.
 
-14. **Reactive trace-plan opening, not a flow phase.** Opening a trace plan is a cross-cutting capability of this skill, not a primitive (`/bitfab:plan` was removed). Trigger only when the user asks ("show me what's captured," "open the plan for X") or context clearly implies it. Never auto-open as part of normal phase routing — the assistant flow does not detour through plan-opening between phases. When triggered, run two sequential calls (step 2 needs the planId from step 1, so they can't be batched): `get_trace_plan({ traceFunctionKey })` returns the plan id, then `navigateStudio.js <sessionId> "/studio/trace-plan/<planId>"` (substituting that id). The plan renders in the open Studio tab in-place (Studio chrome stays mounted around the trace plan content via the `/studio/trace-plan/[id]` route, which re-uses the `TracePlanView` component from the canonical `/trace-plan/[id]` page). No new tab pops up. If no plan exists for the key, say so in one line and offer `/bitfab:setup modify <key>` to build one.
+14. **Reactive trace-plan opening, not a flow phase.** Opening a trace plan is a cross-cutting capability of this skill, not a primitive (`/bitfab:plan` was removed). Trigger only when the user asks ("show me what's captured," "open the plan for X") or context clearly implies it. Never auto-open as part of normal phase routing, the assistant flow does not detour through plan-opening between phases. When triggered, run two sequential calls (step 2 needs the planId from step 1, so they can't be batched): `get_trace_plan({ traceFunctionKey })` returns the plan id, then `openStudioTo.js "/studio/trace-plan/<planId>"` (substituting that id). The plan renders in the open Studio tab in-place (Studio chrome stays mounted around the trace plan content via the `/studio/trace-plan/[id]` route, which re-uses the `TracePlanView` component from the canonical `/trace-plan/[id]` page). No new tab pops up. If no plan exists for the key, say so in one line and offer `/bitfab:setup modify <key>` to build one.
 
 ## Legend
 
