@@ -28,7 +28,7 @@ flowchart TD
     end
 
     LConsent --> LStop{login mode only?}
-    LStop -- Yes --> EndLogin([Stop, report result])
+    LStop -- Yes --> CleanupClose
     LStop -- No --> I1
 
     %% ============ INSTRUMENT PHASE ============
@@ -59,7 +59,7 @@ flowchart TD
         IAdd -- No --> I10Post["10b. mcp: create_trace_plan<br/>build TracePlanTree (rootId + nodes),<br/>capturedNodeIds = recommendation,<br/>pre-populate samples per node"]
         I10Post --> I10Open["Bash: node dist/commands/openTracePlan.js &lt;planId&gt;<br/>opens browser via loopback + ticket race;<br/>blocks (up to 30 min) until user confirms/cancels;<br/>poll the live exec session per Blocking-process rule"]
         I10Open --> IExit{JSONL on exit?}
-        IExit -- "event: cancelled" --> ICancelInstr([Stop, redirect])
+        IExit -- "event: cancelled" --> ICancelInstr["Stop, redirect"]
         IExit -- "non-zero exit / timeout" --> ICancelInstr
         IExit -- "event: confirmed" --> I10Get["mcp: get_trace_plan(planId from JSONL)<br/>read authoritative capturedNodeIds<br/>(planId may differ from original if<br/>mid-session create_trace_plan ran)"]
         I10Get --> I11Split{{"11. ★ PARALLEL GENERATION ★<br/>single message: main-agent Edits (11a) +<br/>Agent() subagent call (11b)<br/>subagent overlaps token generation,<br/>not just file writes<br/>(use browser-confirmed capturedNodeIds)"}}
@@ -75,16 +75,17 @@ flowchart TD
         INext -- B --> I8
         INext -- C --> I8
         INext -- D --> IStop
+        ICancelInstr --> CleanupClose
     end
 
-    IStop{instrument mode only?} -- Yes --> EndInstr([Stop])
+    IStop{instrument mode only?} -- Yes --> CleanupClose
     IStop -- No --> R1
 
     %% ============ MODIFY PHASE ============
     subgraph ModifyPhase["MODIFY PHASE"]
         direction TB
         M1["1. Gather existing trace functions<br/>grep getFunction / get_function / etc."] --> MExists{Any<br/>existing keys?}
-        MExists -- No --> MNone([Tell user to run<br/>/bitfab:setup instrument, stop])
+        MExists -- No --> MNone["Tell user to run<br/>/bitfab:setup instrument"]
         MExists -- Yes --> M2["2. ★ Pick exactly ONE trace function ★<br/>AskUserQuestion with existing keys"]
         M2 --> M3Bootstrap["3a. mcp: get_trace_plan(traceFunctionKey)<br/>fetch the latest confirmed plan for this key —<br/>response includes the full tree as JSON,<br/>used as the 'before' TracePlanTree"]
         M3Bootstrap --> M3Found{Prior plan<br/>found?}
@@ -101,17 +102,18 @@ flowchart TD
         MExit -- "event: cancelled" --> M5Modify[/"AskUserQuestion: 'What would you like to change?'<br/>(answer feeds back into step 4;<br/>re-running openTracePlan.js reuses the Studio tab)"/]
         MExit -- "non-zero exit / timeout" --> M5Fallback[/"Inline fallback AskUserQuestion:<br/>Proceed / Expand / Modifications / Abort entirely"/]
         M5Modify --> M4Build
-        M5Fallback -- Abort --> MCancel([Stop])
+        M5Fallback -- Abort --> CleanupClose
         M5Fallback -- Modifications --> M4Build
         M5Fallback -- Expand --> M5Fallback
         M5Fallback -- Proceed --> M6
         M5Get --> M6["6. Apply changes — purely additive<br/>removing withSpan wrapper is the only<br/>structural edit allowed; key from step 2<br/>is preserved (no rename); batch edits in parallel"]
         M6 --> MNext[/"7. Tell user how to run app — do NOT run yourself<br/>★ MANDATORY STOP ★ AskUserQuestion:<br/>A) Generate trace<br/>B) Modify another trace function<br/>C) Done"/]
         MNext -- B --> M2
+        MNone --> CleanupClose
     end
 
-    MNext -- A --> EndModify([Stop])
-    MNext -- C --> EndModify
+    MNext -- A --> CleanupClose
+    MNext -- C --> CleanupClose
 
     %% ============ REPLAY PHASE ============
     %% Note: most keys already have pipelines from Instrument step 11b
@@ -120,22 +122,34 @@ flowchart TD
         direction TB
         R1["1. Gather all trace function keys<br/>grep getFunction / get_function / etc.<br/>(most already wired up by step 11b)"] --> R2["2. Search for existing replay scripts<br/>scripts/replay.* and SDK replay imports"]
         R2 --> RCov{Coverage}
-        RCov -- "Exists,<br/>all keys covered" --> EndUpToDate([Report up to date, stop])
+        RCov -- "Exists,<br/>all keys covered" --> EndUpToDate["Report up to date"]
         RCov -- "Exists,<br/>missing keys" --> R4
         RCov -- "None exist" --> R4
         R4["4. Create replay script<br/>per language, --limit, --trace-ids,<br/>per-pipeline replay fns importing actual functions<br/>(factory patterns: mock runtime context)<br/>Output contract: emit full ReplayResult as one<br/>JSON block (incl. durationMs, tokens, model)"] --> R5Check{"5. Safety net: legacy function<br/>slipped past step-6 gate<br/>and can't be invoked?"}
-        R5Check -- No --> EndDone([Done])
+        R5Check -- No --> EndDone["Done"]
         R5Check -- Yes --> RAskRefactor[/"AskUserQuestion:<br/>Move boundary inward<br/>/ Refactor pure core (Recommended)<br/>/ Leave as-is (document)"/]
         RAskRefactor -- "Move / Refactor" --> R5Reinstrument["Return to step 6<br/>and re-instrument"] --> EndDone
         RAskRefactor -- Leave --> R5Document["Add infra header comment,<br/>flag that script will rot"] --> EndDone
+        EndUpToDate --> CleanupClose
+        EndDone --> CleanupClose
     end
+
+    %% ============ CLEANUP PHASE ============
+    subgraph CleanupPhase["CLEANUP PHASE"]
+        direction TB
+        CleanupClose["Cleanup: close Studio<br/>(no-op if no session was opened)"]
+    end
+
+    CleanupClose --> EndFinal([Done])
 
     %% Styling
     classDef terminal fill:#dcfce7,stroke:#166534,color:#000
     classDef question fill:#fae8ff,stroke:#86198f,color:#000
     classDef constraint fill:#fee2e2,stroke:#b91c1c,color:#000
+    classDef cleanup fill:#f0f9ff,stroke:#0369a1,color:#000
 
-    class EndLogin,EndInstr,EndUpToDate,EndDone,EndModify,MNone,MCancel,ICancelInstr terminal
+    class EndFinal terminal
+    class CleanupClose cleanup
     class IAskMore,INext,RAskRefactor,I8Resolve,I8RefactorPlan,M5Fallback,M5Modify,MNext,I10Ask question
     class I8,I10Build,IRestructure,I11Split,I11Instr,I11Replay,M2,M4Build,MInvalid,M6 constraint
 ```
@@ -164,7 +178,7 @@ flowchart TD
 
 5c. **Modify bootstraps the `before` tree from the prior plan.** Modify step 3a calls `get_trace_plan` with `{ traceFunctionKey }` (no `planId`) to fetch the latest *confirmed* plan for the chosen key. The MCP response includes the full tree as JSON, which becomes the `before` tree directly — no code-reading needed. Step 3b is a fallback for keys with no prior confirmed plan (created outside the skill, or first Modify cycle that predates the `traceFunctionKey` column). The `traceFunctionKey` is persisted on every `create_trace_plan` call (Instrument step 10 + Modify step 6a) so the next Modify cycle can find it.
 
-6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `all` mode flows through login → instrument → replay (Modify is **not** part of `all`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay.
+6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `all` mode flows through login → instrument → replay (Modify is **not** part of `all`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay. All modes end at the Cleanup phase before the final `Done`.
 
 7. **Replay coverage is computed before action.** The Replay phase reads the current state first (existing keys + existing scripts), then takes one of three branches: all covered → stop, missing keys → add, none exist → create. No user prompt on any branch.
 
@@ -190,6 +204,8 @@ flowchart TD
 
 18. **Trace function key is preserved across Modify cycles.** Modify never renames the key — the key from step 2 carries through step 5's `create_trace_plan` and step 6's edits unchanged. Historical traces continue to aggregate under the same key, and the next Modify cycle bootstraps from the persisted plan via `get_trace_plan({ traceFunctionKey })`.
 
+19. **Universal Studio cleanup.** Every terminal exit routes through the `cleanup/close-studio` step. If a Studio session was opened (any command that emitted `session-ready`), the step closes it via `closeStudio.js <sessionId>`. If no session was opened, it is a no-op. This is enforced structurally by the flow (every `next: null` points to `cleanup/close-studio`), not by a behavioral instruction the agent must remember.
+
 ## Legend
 
 | Shape | Meaning |
@@ -202,6 +218,7 @@ flowchart TD
 | Red fill | Hard constraint — violating this is a bug |
 | Purple fill | User interaction point |
 | Green fill | Successful exit |
+| Blue fill | Cleanup step |
 
 ## How to update
 

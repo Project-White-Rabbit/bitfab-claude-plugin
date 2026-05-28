@@ -43,9 +43,9 @@ flowchart TD
         direction TB
         PIGather["Gather context:<br/>read user's message<br/>if key passed → list_trace_functions + grep<br/>if no key → list_trace_functions,<br/>match against user's description or ask"] --> PIExplore["Explore issue (free-form):<br/>search_traces / read_traces with filters<br/>matching the user's concern<br/>read code (function + call chain + BAML)<br/>quantify if asked"]
         PIExplore --> PIPresent[/"AskUserQuestion (present findings inline first):<br/>• A — Stop here (chat summary only)<br/>• B — Write analysis report<br/>• C — Build a labeled dataset (Recommended when failures are reproducible)"/]
-        PIPresent -- "A — Stop" --> EndInvestigateStop([Stop])
+        PIPresent -- "A — Stop" --> CleanupClose
         PIPresent -- "B — Write report" --> PIWrite["Write .bitfab/analysis/&lt;key&gt;-&lt;ts&gt;.md<br/>(findings, hypotheses, next steps)"]
-        PIWrite --> EndInvestigateReport([Stop — report written])
+        PIWrite --> CleanupClose
     end
 
     PIPresent -- "C — Build dataset" --> P3Start
@@ -60,7 +60,7 @@ flowchart TD
         P2InvokeSetup --> P2NoteLoc
         P2InstAsk -- "Continue anyway" --> P3Start
         P2InstAsk -- "Pick different" --> P1List
-        P2InstAsk -- "Stop" --> EndStop1([Stop])
+        P2InstAsk -- "Stop" --> CleanupClose
 
         P2NoteLoc --> P2Replay["Check replay script:<br/>scripts/replay.* + SDK replay imports"]
         P2Replay --> P2RepFound{Script covers<br/>this key?}
@@ -69,7 +69,7 @@ flowchart TD
         P2RepAsk -- "Create replay" --> P2InvokeReplay["Skill: /bitfab:setup replay"]
         P2InvokeReplay --> P2DetectCaps
         P2RepAsk -- "Pick different" --> P1List
-        P2RepAsk -- "Stop" --> EndStop2([Stop])
+        P2RepAsk -- "Stop" --> CleanupClose
 
         P2DetectCaps["Detect replay capabilities:<br/>grep script for code-change,<br/>experiment-group-id, traceId"] --> P2CapsGate{All 3 flags<br/>present?}
         P2CapsGate -- Yes --> P3Start
@@ -115,7 +115,7 @@ flowchart TD
         P5OpenStudio --> P5Rehydrate
         P5Rehydrate["Rehydrate (experiment mode only):<br/>grep code for key<br/>search_traces validated:true<br/>read_traces scope:full"] --> P5RehydrateGate{≥1 validated<br/>failing label?}
         P5RehydrateGate -- No --> P5CloseStudio2["Close Studio<br/>(kill background)"]
-        P5CloseStudio2 --> EndNoDataset([Stop — recommend /bitfab:assistant dataset key])
+        P5CloseStudio2 --> CleanupClose
         P5RehydrateGate -- Yes --> P5DetectCaps
 
         P5DetectCaps["Detect replay capabilities<br/>(skip if already ran in Phase 2):<br/>grep script for code-change,<br/>experiment-group-id, traceId"] --> P5CapsGate{All 3 flags<br/>present?}
@@ -143,7 +143,13 @@ flowchart TD
     %% ============ PHASE 6 ============
     subgraph Phase6["PHASE 6 — Validate & Wrap Up"]
         direction TB
-        P6Step1[/"Summary AskUserQuestion:<br/>failed traces fixed,<br/>pass rate, files changed"/] --> P6End([Done — changes uncommitted in working tree])
+        P6Step1[/"Summary AskUserQuestion:<br/>failed traces fixed,<br/>pass rate, files changed"/] --> CleanupClose
+    end
+
+    %% ============ CLEANUP ============
+    subgraph Cleanup["CLEANUP"]
+        direction TB
+        CleanupClose["Cleanup: close Studio<br/>(no-op if no session was opened)"] --> EndFinal([Done])
     end
 
     %% Styling
@@ -151,7 +157,7 @@ flowchart TD
     classDef question fill:#fae8ff,stroke:#86198f,color:#000
     classDef constraint fill:#fee2e2,stroke:#b91c1c,color:#000
 
-    class EndStop1,EndStop2,EndNoDataset,EndInvestigateStop,EndInvestigateReport,P5CloseStudio2,P6End terminal
+    class EndFinal terminal
     class P1Ask,P2InstAsk,P2RepAsk,P3Step3,P3Approve,P4Plan,P5CapsAsk,P5Step1,P5Step4,PIPresent question
     class P3Step4,P3Gate,P4Buckets,P5HealthGate constraint
 ```
@@ -179,7 +185,7 @@ flowchart TD
 
 9. **Sub-mode continuation.** `dataset` enters at Phase 3, builds the labeled dataset, then continues through Phase 4 (diagnose) and Phase 5 (experiments) to Phase 6. `experiment` enters at Phase 5's rehydrate step (which fetches the existing validated dataset and locates the code), then runs the iterate-with-replay loop through Phase 6 — no Phase 4 categorization runs. If `experiment` finds no validated failing labels, it stops and recommends running `/bitfab:assistant dataset <key>` first. `investigate` enters at Phase Investigate, does its own function lookup + code grep, then branches on the user's choice: stop with a chat summary, write a markdown analysis report to `.bitfab/analysis/`, or hand off to Phase 3 to build a labeled dataset (which then continues through Phase 4 and Phase 5 to Phase 6). `dataset` and `experiment` require the trace function key as an argument because Phase 1 is skipped; `investigate` makes the key optional and figures out the function from what the user described when it isn't passed.
 
-10. **Studio lifecycle wraps Phase 5.** The Studio opens at the start of Phase 5 (`openStudioTo.js`, background) and closes at the end (`close-studio` step kills the background process). The experiment viewer in Step 4 uses `openStudioTo.js` to navigate the existing Studio or open a new one. The agent's textual summary in Step 5 is still required and is not optional.
+10. **Studio lifecycle and universal cleanup.** Phase 5 opens Studio at the start (`openStudioTo.js`, background) and kills the background process at the end. Additionally, every terminal exit in the flow routes through the `cleanup/close-studio` step, which closes the Studio browser tab via `closeStudio.js <sessionId>` if a session was opened, or is a no-op if not. This is enforced structurally by the flow (every `next: null` points to `cleanup/close-studio`), not by a behavioral instruction. The experiment viewer in Step 4 uses `openStudioTo.js` to navigate the existing Studio or open a new one. The agent's textual summary in Step 5 is still required and is not optional.
 
 11. **No hallucinated function descriptions in Phase 1.** The list shown to the user uses only data returned by `list_trace_functions` (keys, trace counts, last activity). Claude never invents a description from the key name — key names are often ambiguous or misleading and guessed descriptions confuse the user. Each returned key is additionally cross-checked against the local codebase via `grep`, and each entry is marked ✅ instrumented here (with path) or ⚠️ not found in this repo so the user can see ground truth before picking.
 
@@ -200,6 +206,14 @@ flowchart TD
 | Red fill | Hard constraint — violating this is a bug |
 | Purple fill | User interaction point |
 | Green fill | Successful exit |
+
+## CLI commands referenced
+
+| Command | Phase | Purpose |
+|---|---|---|
+| `openStudioTo.js <path>` | Phase 5 (Step 0, Step 5) | Opens Studio in background or navigates existing tab to path |
+| `startDataset.js <traceId...>` | Phase 3 (Step 5) | Opens labeling UI; blocks until user finishes |
+| `closeStudio.js <sessionId>` | Cleanup | Closes the Studio browser tab opened during the session; no-op if no session was opened |
 
 ## How to update
 
