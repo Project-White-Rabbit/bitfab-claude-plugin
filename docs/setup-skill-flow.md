@@ -1,6 +1,6 @@
 # `/bitfab:setup` Skill Flow
 
-Visual reference for the four phases of the Bitfab setup skill (`commands/setup.md`).
+Visual reference for the phases of the Bitfab setup skill (`commands/setup.md`).
 Edit the Mermaid block below to keep this in sync with the skill.
 
 ## Full flow
@@ -13,6 +13,8 @@ flowchart TD
     ModeCheck -->|instrument| I1
     ModeCheck -->|modify| M1
     ModeCheck -->|replay| R1
+    ModeCheck -->|explain| X1
+    ModeCheck -->|inspect| N1
 
     %% ============ PREAMBLE ============
     P0["0. Preamble<br/>render CODE→TRACES→DATASETS→IMPROVE block verbatim<br/>no AskUserQuestion, no confirmation"] --> L1
@@ -134,6 +136,27 @@ flowchart TD
         EndDone --> CleanupClose
     end
 
+    %% ============ EXPLAIN PHASE (read-only) ============
+    subgraph ExplainPhase["EXPLAIN PHASE (read-only)"]
+        direction TB
+        X1["1. Render overview verbatim<br/>CODE→TRACES→DATASETS→IMPROVE + primitives<br/>+ what each mode does<br/>no auth, no code scan, no Studio"]
+    end
+    X1 --> CleanupClose
+
+    %% ============ INSPECT PHASE (diagnostic + optional fix) ============
+    subgraph InspectPhase["INSPECT PHASE (diagnostic + optional fix)"]
+        direction TB
+        N1["1. Status check<br/>node status.js — auth + connection + plugin version"] --> N2["2. Find what's instrumented here<br/>grep SDK patterns; SDK installed?<br/>BITFAB_API_KEY set? shim?"]
+        N2 --> N3["3. Check traces arriving<br/>mcp: list_trace_functions + search_traces<br/>mark ✅ / ⚠️ / ❓ per key"]
+        N3 --> N4["4. Check freshness<br/>node update.js sdk → bitfab-sdk-status;<br/>plugin version; glob scripts/replay.* coverage"]
+        N4 --> N5["5. Report diagnosis<br/>auth, plugin, SDK, instrumented, replay, arrival"]
+        N5 --> N6[/"6. AskUserQuestion: Apply fixes?<br/>(skipped when nothing is stale)"/]
+        N6 -- "Just report / nothing stale" --> CleanupClose
+        N6 -- "Review & apply" --> N7["7. Apply fixes ONE AT A TIME (confirm each)<br/>plugin / SDK per workspace / rename (preview sites);<br/>setup replay refreshes scripts"]
+        N7 --> CleanupClose
+    end
+    class N6 question
+
     %% ============ CLEANUP PHASE ============
     subgraph CleanupPhase["CLEANUP PHASE"]
         direction TB
@@ -156,7 +179,7 @@ flowchart TD
 
 ## Key invariants the diagram enforces
 
-0. **Preamble runs once, only in `wizard` mode.** The explanation block (CODE → TRACES → DATASETS → IMPROVE, primitives, phase summary) renders verbatim at the start of `/bitfab:setup` / `/bitfab:setup wizard`, then flows directly into Login. No confirmation step, no marker file — sub-modes (`login`, `instrument`, `replay`) skip it entirely because the user has already chosen a phase.
+0. **Preamble runs once, only in `wizard` mode.** The explanation block (CODE → TRACES → DATASETS → IMPROVE, primitives, phase summary) renders verbatim at the start of `/bitfab:setup` / `/bitfab:setup wizard`, then flows directly into Login. No confirmation step, no marker file — sub-modes (`explain`, `login`, `instrument`, `inspect`, `replay`) skip it entirely because the user has already chosen a phase.
 
 1. **One workflow per Instrument cycle.** Step 8 takes exactly one workflow. The "next workflow" loop from step 13 always returns to step 8 — never to a parallel branch. This means one trace function, one trace plan, one set of code changes per cycle.
 
@@ -178,7 +201,7 @@ flowchart TD
 
 5c. **Modify bootstraps the `before` tree from the prior plan.** Modify step 3a calls `get_trace_plan` with `{ traceFunctionKey }` (no `planId`) to fetch the latest *confirmed* plan for the chosen key. The MCP response includes the full tree as JSON, which becomes the `before` tree directly — no code-reading needed. Step 3b is a fallback for keys with no prior confirmed plan (created outside the skill, or first Modify cycle that predates the `traceFunctionKey` column). The `traceFunctionKey` is persisted on every `create_trace_plan` call (Instrument step 10 + Modify step 6a) so the next Modify cycle can find it.
 
-6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `wizard` mode flows through login → instrument → replay (Modify is **not** part of `wizard`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay. All modes end at the Cleanup phase before the final `Done`.
+6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `wizard` mode flows through login → instrument → replay (Modify is **not** part of `wizard`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay. `explain` mode renders the read-only overview and ends. `inspect` mode runs the diagnostic, offers to apply fixes, and ends (natural-language "debug my tracing setup" routes here too — it's not a separate mode token). All modes end at the Cleanup phase before the final `Done`. (The skill also exposes `session-logs`, `view`, and `templates` modes, not drawn here.)
 
 7. **Replay coverage is computed before action.** The Replay phase reads the current state first (existing keys + existing scripts), then takes one of three branches: all covered → stop, missing keys → add, none exist → create. No user prompt on any branch.
 
@@ -204,7 +227,11 @@ flowchart TD
 
 18. **Trace function key is preserved across Modify cycles.** Modify never renames the key — the key from step 2 carries through step 5's `create_trace_plan` and step 6's edits unchanged. Historical traces continue to aggregate under the same key, and the next Modify cycle bootstraps from the persisted plan via `get_trace_plan({ traceFunctionKey })`.
 
-19. **Universal Studio cleanup.** Every terminal exit routes through the `cleanup/close-studio` step. If a Studio session was opened (any command that emitted `session-ready`), the step closes it via `closeStudio.js <sessionId>`. If no session was opened, it is a no-op. This is enforced structurally by the flow (every `next: null` points to `cleanup/close-studio`), not by a behavioral instruction the agent must remember.
+19. **Universal Studio cleanup.** Every terminal exit routes through the `cleanup/close-studio` step. If a Studio session was opened (any command that emitted `session-ready`), the step closes it via `closeStudio.js <sessionId>`. If no session was opened, it is a no-op. This is enforced structurally by the flow (every phase's terminal step points to `cleanup/close-studio`), not by a behavioral instruction the agent must remember — the `explain` and `inspect` modes route here too even though they never open Studio, exactly as `session-logs` does.
+
+20. **`explain` is purely informational.** `explain` mode renders the product/mode overview verbatim (the same CODE → TRACES → DATASETS → IMPROVE block as the preamble, plus a one-line description of each mode) and then stops. It never authenticates, scans the codebase, opens Studio, or asks a question. It exists so a user can ask "what is Bitfab" / "explain Bitfab" without starting setup.
+
+21. **`inspect` is a setup diagnostic + one-shot remediator, distinct from `assistant`.** (Natural-language "debug my tracing setup" / "debug-setup" routes to `inspect` — scoped to setup health, vs `assistant`'s output-quality "debug my agent". There is no separate `debug-setup` mode token.) `inspect` reports trace *delivery and setup health*: auth/connection (`status`, including the plugin-version line), what's instrumented in this repo (grep SDK patterns; SDK installed?; `BITFAB_API_KEY` set?), plugin/SDK freshness (reuses the `update.js` `<bitfab-sdk-status>` check — the canonical version logic lives in `sdkUpdates.ts`, not in `assistant`), replay-script coverage (Glob/Grep, the same check `assistant` runs in its Phase 2), and whether traces are actually arriving (`list_trace_functions` + `search_traces`, marking each key ✅ arriving / ⚠️ instrumented-but-no-traces / ❓ in-org-but-not-in-repo). It then **offers to apply the fixes, each confirmed individually** (one decision per question — nothing is applied blanket): update the plugin + SDK (the same per-workspace commands as `bitfab:update`) and refresh replay scripts (delegates to `setup replay`). The legacy-package rename previews the `from "bitfab"` / `require("bitfab")` sites it would rewrite before touching code. It opens no Studio. Improving the *quality* of a traced function's outputs (pass rates, failing cases) stays in `bitfab:assistant`.
 
 ## Legend
 
