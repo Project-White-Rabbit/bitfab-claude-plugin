@@ -5,11 +5,11 @@ Edit the Mermaid block below to keep this in sync with the skill.
 
 ## Entry modes
 
-The skill has four entry modes. `all` walks every phase; the three sub-modes do one focused thing each. `dataset` and `experiment` require the trace function key as the argument because they skip the function picker; `investigate` does its own function lookup, so the key is optional.
+The skill has four entry modes. `wizard` walks every phase; the three sub-modes do one focused thing each. `dataset` and `experiment` require the trace function key as the argument because they skip the function picker; `investigate` does its own function lookup, so the key is optional.
 
 | Invocation | Enters at | Stops after |
 |---|---|---|
-| `/bitfab:assistant` or `/bitfab:assistant all` | Phase 1 | Phase 6 |
+| `/bitfab:assistant` or `/bitfab:assistant wizard` | Phase 1 | Phase 6 |
 | `/bitfab:assistant investigate [<key>]` | Phase Investigate | Phase Investigate (chat summary or analysis report), or Phase 6 (if the user picks "Build a dataset", continues through experiments) |
 | `/bitfab:assistant dataset <key>` | Phase 3 | Phase 6 (continues through diagnose + experiments after dataset is built) |
 | `/bitfab:assistant experiment <key>` | Phase 5 (rehydrate step) | Phase 6 |
@@ -21,7 +21,7 @@ In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay
 ```mermaid
 flowchart TD
     Start([User invokes /bitfab:assistant [mode] [traceFunctionKey]]) --> ModeCheck{Mode?}
-    ModeCheck -- all --> ArgCheck{Arg provided?}
+    ModeCheck -- wizard --> ArgCheck{Arg provided?}
     ModeCheck -- investigate --> PIGather
     ModeCheck -- dataset --> P3Start
     ModeCheck -- experiment --> P5Rehydrate
@@ -191,7 +191,7 @@ flowchart TD
 
 12. **Replay-health gate before evaluation (HARD RULE).** Phase 5 Step 3 (`check-replay-health`) runs between replay execution and evaluation. Items where `item.error` is set are unreplayable (infra failure: stale DB row, FK violation, rejected write, env mismatch) — NOT failing outputs. A whole-replay crash or an all-errored run loops back to fix the replay script; healthy/mixed runs carry the `infraErrored` count forward as its own bucket. Pass/fail is computed only over items with no `item.error`, and the unreplayable count is never folded into the pass-rate denominator.
 
-13. **Replay capability detection runs in both Phase 2 and Phase 5.** Phase 2's `detect-replay-capabilities` step greps the replay script for three flags (`code-change`, `experiment-group-id`, `traceId`) right after confirming the replay script exists. Phase 5 has the same step, which skips if Phase 2 already ran it. This dual placement means `experiment` mode (which skips Phase 2) still gets capability detection before the first experiment, while `all`/`dataset`/`investigate` modes get it early during instrumentation verification. If any flags are missing, the user chooses to upgrade (SDK update + `setup replay` regeneration) or continue without. The iteration loop (`share-results` back to `make-change`) skips this step on subsequent iterations because capabilities don't change mid-session.
+13. **Replay capability detection runs in both Phase 2 and Phase 5.** Phase 2's `detect-replay-capabilities` step greps the replay script for three flags (`code-change`, `experiment-group-id`, `traceId`) right after confirming the replay script exists. Phase 5 has the same step, which skips if Phase 2 already ran it. This dual placement means `experiment` mode (which skips Phase 2) still gets capability detection before the first experiment, while `wizard`/`dataset`/`investigate` modes get it early during instrumentation verification. If any flags are missing, the user chooses to upgrade (SDK update + `setup replay` regeneration) or continue without. The iteration loop (`share-results` back to `make-change`) skips this step on subsequent iterations because capabilities don't change mid-session.
 
 14. **Reactive trace-plan opening, not a flow phase.** Opening a trace plan is a cross-cutting capability of this skill, not a primitive (`/bitfab:plan` was removed). Trigger only when the user asks ("show me what's captured," "open the plan for X") or context clearly implies it. Never auto-open as part of normal phase routing, the assistant flow does not detour through plan-opening between phases. When triggered, run two sequential calls (step 2 needs the planId from step 1, so they can't be batched): `get_trace_plan({ traceFunctionKey })` returns the plan id, then `openStudioTo.js "/studio/trace-plan/<planId>"` (substituting that id). The plan renders in the open Studio tab in-place (Studio chrome stays mounted around the trace plan content via the `/studio/trace-plan/[id]` route, which re-uses the `TracePlanView` component from the canonical `/trace-plan/[id]` page). No new tab pops up. If no plan exists for the key, say so in one line and offer `/bitfab:setup modify <key>` to build one.
 

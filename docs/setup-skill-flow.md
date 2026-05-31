@@ -8,7 +8,7 @@ Edit the Mermaid block below to keep this in sync with the skill.
 ```mermaid
 flowchart TD
     Start([User invokes /bitfab:setup mode]) --> ModeCheck{Mode}
-    ModeCheck -->|all| P0
+    ModeCheck -->|wizard| P0
     ModeCheck -->|login| L1
     ModeCheck -->|instrument| I1
     ModeCheck -->|modify| M1
@@ -156,7 +156,7 @@ flowchart TD
 
 ## Key invariants the diagram enforces
 
-0. **Preamble runs once, only in `all` mode.** The explanation block (CODE → TRACES → DATASETS → IMPROVE, primitives, phase summary) renders verbatim at the start of `/bitfab:setup` / `/bitfab:setup all`, then flows directly into Login. No confirmation step, no marker file — sub-modes (`login`, `instrument`, `replay`) skip it entirely because the user has already chosen a phase.
+0. **Preamble runs once, only in `wizard` mode.** The explanation block (CODE → TRACES → DATASETS → IMPROVE, primitives, phase summary) renders verbatim at the start of `/bitfab:setup` / `/bitfab:setup wizard`, then flows directly into Login. No confirmation step, no marker file — sub-modes (`login`, `instrument`, `replay`) skip it entirely because the user has already chosen a phase.
 
 1. **One workflow per Instrument cycle.** Step 8 takes exactly one workflow. The "next workflow" loop from step 13 always returns to step 8 — never to a parallel branch. This means one trace function, one trace plan, one set of code changes per cycle.
 
@@ -178,7 +178,7 @@ flowchart TD
 
 5c. **Modify bootstraps the `before` tree from the prior plan.** Modify step 3a calls `get_trace_plan` with `{ traceFunctionKey }` (no `planId`) to fetch the latest *confirmed* plan for the chosen key. The MCP response includes the full tree as JSON, which becomes the `before` tree directly — no code-reading needed. Step 3b is a fallback for keys with no prior confirmed plan (created outside the skill, or first Modify cycle that predates the `traceFunctionKey` column). The `traceFunctionKey` is persisted on every `create_trace_plan` call (Instrument step 10 + Modify step 6a) so the next Modify cycle can find it.
 
-6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `all` mode flows through login → instrument → replay (Modify is **not** part of `all`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay. All modes end at the Cleanup phase before the final `Done`.
+6. **Skill mode gates.** `login` mode stops after the Login phase. `instrument` mode stops after the Instrument loop completes. `wizard` mode flows through login → instrument → replay (Modify is **not** part of `wizard`). `modify` mode jumps straight to Modify and does not auto-continue to Replay. `replay` mode jumps straight to Replay. All modes end at the Cleanup phase before the final `Done`.
 
 7. **Replay coverage is computed before action.** The Replay phase reads the current state first (existing keys + existing scripts), then takes one of three branches: all covered → stop, missing keys → add, none exist → create. No user prompt on any branch.
 
@@ -190,7 +190,7 @@ flowchart TD
 
 11. **Refactors require a plan + second confirmation, and are labeled by flavor.** When the user picks "refactor" (or any option that modifies existing functions/call sites), the skill must first present a refactor plan labeled as **visibility** (extract + export, logic unchanged — most cases) or **structural** (new pure-core fn with serializable inputs — rare overall, common for realtime/streaming/browser apps). The plan lists source fn, extracted fn signature, trace wrap location, every rewritten call site. Then AskUserQuestion (`Apply` / `Cancel`) before touching code; Cancel returns to the originating AskUserQuestion. Does NOT apply to step 11a's purely-additive instrumentation or step 11b's new-file replay pipeline writes — only to paths that modify existing code.
 
-12. **Replay is unconditional in `all` mode, and non-interactive once entered.** After Instrument step 13 option D in `all` mode, Replay always runs as a coverage-verification/backfill sweep. Replay does not depend on traces existing — it reads trace function keys from code. Once inside Replay, there is no "Skip" branch: missing scripts get added and absent scripts get created without asking. The only Replay terminal state besides completion is "scripts exist and cover all keys, stop."
+12. **Replay is unconditional in `wizard` mode, and non-interactive once entered.** After Instrument step 13 option D in `wizard` mode, Replay always runs as a coverage-verification/backfill sweep. Replay does not depend on traces existing — it reads trace function keys from code. Once inside Replay, there is no "Skip" branch: missing scripts get added and absent scripts get created without asking. The only Replay terminal state besides completion is "scripts exist and cover all keys, stop."
 
 13. **Instrumentation and replay pipeline are generated concurrently via subagent delegation.** Step 11 fans out into 11a (main agent: instrumentation edits) and 11b (subagent: replay pipeline for this cycle's trace function key), dispatched in a single message. The subagent — spawned via `Agent(subagent_type="general-purpose")` with a self-contained brief (key, root signature, import path, existing/target replay script path, Replay non-negotiables, SDK `#replay` URL) — generates its code in parallel with the main agent's. This is the key shift: parallel `Edit` calls alone only overlap millisecond file writes, whereas a subagent overlaps the seconds-to-minutes of token generation. The replay subagent is skipped for Go-only projects (Go does not support replay). The trace plan's `Files changed:` list covers both halves, including the new/edited replay script path. The Replay phase therefore typically runs as a sweep that confirms everything is already wired up; it still exists to catch pre-existing trace function keys (added outside the skill or before this step was parallelized) and to verify Replay Output Contract compliance, including that every script emits the full `ReplayResult` (with per-item `durationMs`/`duration_ms`, `tokens`, `model`) as a single JSON block.
 
