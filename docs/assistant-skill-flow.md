@@ -5,7 +5,7 @@ Edit the Mermaid block below to keep this in sync with the skill.
 
 ## Entry modes
 
-The skill has four entry modes. `wizard` walks every phase; the three sub-modes do one focused thing each. `dataset` and `experiment` require the trace function key as the argument because they skip the function picker; `investigate` does its own function lookup, so the key is optional.
+The skill has six entry modes. `wizard` walks every phase; the five sub-modes do one focused thing each. `dataset` and `experiment` require the trace function key as the argument because they skip the function picker; `investigate` does its own function lookup, so the key is optional; `benchmark` enters at Phase 5's replay step and stops at a scorecard; `add-trace` resolves the function key from the trace itself when it isn't supplied and attaches the trace(s) to a dataset. Studio opens for every mode except `benchmark` and `add-trace`.
 
 | Invocation | Enters at | Stops after |
 |---|---|---|
@@ -13,8 +13,9 @@ The skill has four entry modes. `wizard` walks every phase; the three sub-modes 
 | `/bitfab:assistant investigate [<key>]` | Phase Investigate | Phase Investigate (chat summary or analysis report), or Phase 6 (if the user picks "Build a dataset", continues through experiments) |
 | `/bitfab:assistant dataset <key>` | Phase 3 | Phase 6 (continues through diagnose + experiments after dataset is built) |
 | `/bitfab:assistant experiment <key>` | Phase 5 (rehydrate step) | Phase 6 |
+| `/bitfab:assistant add-trace <key> <trace-id...> [<dataset-id>]` | Phase Add | Phase Add (attach raw to dataset; no Studio, diagnose, or experiments) |
 
-In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay verification) are skipped — the agent greps the codebase for the key directly, then continues through Phase 4 (diagnose) and Phase 5 (experiments) after the dataset is built. In `experiment` mode, Phases 1-4 are skipped — Phase 5 starts with a rehydrate step that fetches the existing validated dataset and locates the code. In `investigate` mode, Phase Investigate gathers context (function key + code path), explores the issue free-form via search / read traces + code, then branches on the user's choice (stop, write report, or hand off to Phase 3 for dataset building). If the user picks dataset building, the flow continues through Phase 4 and Phase 5 (experiments) rather than stopping.
+In `dataset` mode, Phase 1 (function picker) and Phase 2 (instrumentation/replay verification) are skipped — the agent greps the codebase for the key directly, then continues through Phase 4 (diagnose) and Phase 5 (experiments) after the dataset is built. In `experiment` mode, Phases 1-4 are skipped — Phase 5 starts with a rehydrate step that fetches the existing validated dataset and locates the code. In `investigate` mode, Phase Investigate gathers context (function key + code path), explores the issue free-form via search / read traces + code, then branches on the user's choice (stop, write report, or hand off to Phase 3 for dataset building). If the user picks dataset building, the flow continues through Phase 4 and Phase 5 (experiments) rather than stopping. In `add-trace` mode (Phase Add), the skill never greps the codebase — it resolves the trace's function key via `read_traces` when not supplied, picks or creates a dataset, attaches the trace(s) raw (no labels), and stops — it never opens Studio (no browser, no plugin CLI commands); the user labels and approves the traces later wherever they review datasets.
 
 ## Full flow
 
@@ -25,6 +26,10 @@ flowchart TD
     ModeCheck -- investigate --> PIGather
     ModeCheck -- dataset --> P3Start
     ModeCheck -- experiment --> P5Rehydrate
+    ModeCheck -- add-trace --> PAddResolve["add-trace mode:<br/>resolve trace IDs + function key<br/>(read_traces if key absent)"]
+    PAddResolve --> PAddPick["Pick or create dataset<br/>list_datasets / create_dataset"]
+    PAddPick --> PAddAttach["mcp: add_traces_to_dataset<br/>(raw, no labels)"]
+    PAddAttach --> PAddStop([Stop: lightweight; no Studio, diagnose, or experiments])
     ArgCheck -- Yes --> P1Use[Use provided key]
     ArgCheck -- No --> P1List
 
