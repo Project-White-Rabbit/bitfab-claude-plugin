@@ -1,6 +1,6 @@
 # `/bitfab:assistant` Skill Flow
 
-Visual reference for the six phases of the Bitfab assistant skill (`commands/assistant.md`).
+Visual reference for the six phases of the Bitfab assistant skill (`skills/assistant/SKILL.md`).
 Edit the Mermaid block below to keep this in sync with the skill.
 
 ## Entry modes
@@ -222,6 +222,6 @@ flowchart TD
 
 ## How to update
 
-When `commands/assistant.md` changes (steps added, removed, reordered, branches changed, MCP tools swapped, hard rules added/removed), update the Mermaid block above and re-render to verify. The diagram and the skill must agree — they document the same flow.
+When `skills/assistant/SKILL.md` changes (steps added, removed, reordered, branches changed, MCP tools swapped, hard rules added/removed), update the Mermaid block above and re-render to verify. The diagram and the skill must agree — they document the same flow.
 
 Same edits should be mirrored to `bitfab-cursor-plugin/skills/bitfab-assistant/SKILL.md` and `bitfab-codex-plugin/skills/assistant/SKILL.md` per the CLAUDE.md plugin sync rule. The codex skill carries platform-specific extras (`BITFAB_PLUGIN_DIR` resolution, Blocking-process polling rule) that stay codex-only.
