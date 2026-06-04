@@ -36,14 +36,7 @@ Update the Bitfab Claude Code plugin and/or every workspace's SDK in the current
    - **Plugin phase** (`all` or `plugin`) — updates the plugin if a newer version is available.
    - **SDK phase** (`all` or `sdk`) — queries the registry for the latest SDK version and prints a `<bitfab-sdk-status>` block with one JSON entry per `(workspace, language)` pair. Falls back to the baked snapshot (set `remoteCheckFailed: true`) if the registry lookup fails.
 
-## Update plugin
+   **Next:**
 
-**Run only when mode is `all` or `plugin`.**
-
-Invoke the `update-plugin` skill, then return here.
-
-## Update SDK
-
-**Run only when mode is `all` or `sdk`.**
-
-Invoke the `update-sdk` skill, then return here.
+   - Mode `all` or `plugin`: invoke the `update-plugin` skill with the current mode (`all` or `plugin`).
+   - Mode `sdk`: invoke the `update-sdk` skill with mode `sdk`.
