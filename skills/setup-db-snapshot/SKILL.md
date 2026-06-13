@@ -1,17 +1,17 @@
 ---
-name: setup-db-branching
-description: DB Branching phase of the Bitfab Setup flow. Invoked by the setup flow; not run directly
+name: setup-db-snapshot
+description: DB Snapshot phase of the Bitfab Setup flow. Invoked by the setup flow; not run directly
 user-invocable: false
 allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "WebFetch", "mcp__plugin_bitfab_Bitfab__get_database_connection_status", "Skill"]
 ---
 
-# Bitfab Setup: DB Branching
+# Bitfab Setup: DB Snapshot
 
-**Run only when mode is `db-branching`.**
+**Run only when mode is `db-snapshot`.**
 
-Set up **per-trace database branching for replay** so the team can re-run a historical trace against the database state that existed *when the trace was captured*, not today's data. This is what makes replay trustworthy for any code that reads stored state (a refund decision over a since-cancelled order, a retrieval step over last week's rows). Triggered explicitly by `/bitfab:setup db-branching`, never reached from `wizard`.
+Set up **per-trace database snapshots for replay** so the team can re-run a historical trace against the database state that existed *when the trace was captured*, not today's data. This is what makes replay trustworthy for any code that reads stored state (a refund decision over a since-cancelled order, a retrieval step over last week's rows). Triggered explicitly by `/bitfab:setup db-snapshot`, never reached from `wizard`.
 
-**Available for TypeScript, Python, and Ruby** (the SDKs with `ReplayEnvironment`). Go has no replay, so DB-branching replay does not apply, if the project is Go, say so and stop.
+**Available for TypeScript, Python, and Ruby** (the SDKs with `ReplayEnvironment`). Go has no replay, so DB-snapshot replay does not apply, if the project is Go, say so and stop.
 
 **Capture is automatic, there is nothing to turn on.** Every root trace already pins the wall-clock instant it ran (no client config required), so any trace can later be replayed against its historical DB state. Setup is therefore just two pieces:
 1. **Connect the database once** in the Bitfab dashboard. The source database can be **any Postgres**: Bitfab provisions a branchable managed copy from it. A one-time, dashboard-side step.
@@ -19,7 +19,7 @@ Set up **per-trace database branching for replay** so the team can re-run a hist
 
 **Source of truth:** read https://docs.bitfab.ai/db-branching (the end-to-end, per-language setup) and your SDK's reference (`/reference/typescript`, `/reference/python`, `/reference/ruby`) for the exact `ReplayEnvironment` / `replay` signatures before editing any code. The construction call, the replay option, and the accessors differ per SDK, do not improvise from memory.
 
-1. **Confirm the SDK language.** DB-branching replay is available for **TypeScript, Python, and Ruby**. If the project is **Go**, tell the user Go has no replay so this doesn't apply, and route to cleanup.
+1. **Confirm the SDK language.** DB-snapshot replay is available for **TypeScript, Python, and Ruby**. If the project is **Go**, tell the user Go has no replay so this doesn't apply, and route to cleanup.
 
    **Check authentication.** Run:
 
@@ -29,11 +29,11 @@ Set up **per-trace database branching for replay** so the team can re-run a hist
 
    If it reports not authenticated, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/login.js"` (blocks until the browser login completes), then continue.
 
-   **Locate the replay script(s)** you'll edit later: search for files importing/calling the SDK's `replay` (commonly under `scripts/`). If there are **no** replay scripts yet, tell the user to run `/bitfab:setup replay` first to create them, then come back (route to cleanup), DB-branching augments an existing replay script, it does not create one from scratch. No client-config edit is needed: snapshot capture is always on, so there is nothing to add to `new Bitfab({ ... })`.
+   **Locate the replay script(s)** you'll edit later: search for files importing/calling the SDK's `replay` (commonly under `scripts/`). If there are **no** replay scripts yet, tell the user to run `/bitfab:setup replay` first to create them, then come back (route to cleanup), DB-snapshot augments an existing replay script, it does not create one from scratch. No client-config edit is needed: snapshot capture is always on, so there is nothing to add to `new Bitfab({ ... })`.
 
    **Next:**
 
-   - The project is Go, or there are no replay scripts to augment yet (mode `db-branching`): invoke the `setup-cleanup` skill with mode `db-branching`.
+   - The project is Go, or there are no replay scripts to augment yet (mode `db-snapshot`): invoke the `setup-cleanup` skill with mode `db-snapshot`.
 2. Call `mcp__plugin_bitfab_Bitfab__get_database_connection_status` once to read the current state:
    - **`connected`**: the database is already connected and provisioned. Tell the user, and continue to the next step.
    - **`none`**: no database is connected yet. The tool's response includes the exact **Integrations** URL. Relay it to the user and ask them to open it, go to the **Database** section, and paste their Postgres connection string. Provisioning the branchable copy takes a few minutes.
@@ -107,4 +107,4 @@ Set up **per-trace database branching for replay** so the team can re-run a hist
 
    **Next:**
 
-   - Mode `db-branching`: invoke the `setup-cleanup` skill with mode `db-branching`.
+   - Mode `db-snapshot`: invoke the `setup-cleanup` skill with mode `db-snapshot`.
