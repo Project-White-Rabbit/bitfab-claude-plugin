@@ -11,8 +11,8 @@ Update the Bitfab Claude Code plugin and/or every workspace's SDK in the current
 | Invocation | What runs |
 |---|---|
 | `/bitfab:update` or `/bitfab:update all` | Plugin update **and** SDK update per workspace |
-| `/bitfab:update plugin` | Plugin update only — skips all SDK steps |
-| `/bitfab:update sdk` | SDK update only — skips the plugin check |
+| `/bitfab:update plugin` | Plugin update only, skips all SDK steps |
+| `/bitfab:update sdk` | SDK update only, skips the plugin check |
 
 **CLI commands** available via Bash (all paths relative to `${CLAUDE_PLUGIN_ROOT}/dist/commands/`):
 
@@ -33,8 +33,8 @@ Update the Bitfab Claude Code plugin and/or every workspace's SDK in the current
    - For `/bitfab:update` or `/bitfab:update all`, run with no argument (or `all`).
 
    The script does up to two things depending on mode:
-   - **Plugin phase** (`all` or `plugin`) — updates the plugin if a newer version is available.
-   - **SDK phase** (`all` or `sdk`) — queries the registry for the latest SDK version and prints a `<bitfab-sdk-status>` block with one JSON entry per `(workspace, language)` pair. Falls back to the baked snapshot (set `remoteCheckFailed: true`) if the registry lookup fails.
+   - **Plugin phase** (`all` or `plugin`), updates the plugin if a newer version is available.
+   - **SDK phase** (`all` or `sdk`), queries the registry for the latest SDK version and prints a `<bitfab-sdk-status>` block with one JSON entry per `(workspace, language)` pair. Falls back to the baked snapshot (set `remoteCheckFailed: true`) if the registry lookup fails.
 
    **Next:**
 
