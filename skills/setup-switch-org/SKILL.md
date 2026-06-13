@@ -46,11 +46,18 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
 
    The command prints one JSON line; act on it:
    - `{"event":"switched","status":"switched"|"already-aligned","clerkOrganizationId":"...","organizationName":"...","apiKey":"..."}`: success. The plugin now reads and writes that org and its API key has been replaced locally. Tell the user in one line: the plugin is now connected to **<organizationName>**. Then add that their **already-open browser tabs won't switch on their own**; to see the new org in Studio they re-open it from a plugin action (an experiments or dataset flow) or use the in-app org switcher. Hold on to the `apiKey` value from this JSON; the next step uses it to sync the app's local key, and you must never echo that value to the user.
-   - `{"event":"not-member","clerkOrganizationId":"..."}`: the user isn't a member of that org. Report it and stop; do not retry.
-   - `{"event":"error","reason":"..."}`: report the reason and stop.
+   - `{"event":"not-member","clerkOrganizationId":"..."}`: the user isn't a member of that org. Report it; do not retry.
+   - `{"event":"error","reason":"..."}`: report the reason.
 
    Do not print or ask for the API key, and do not surface the `apiKey` value to the user; the command replaces the plugin's copy for you and hands you that value solely for the next step.
-4. **Only run this step if the previous step reported `{"event":"switched"}`.** If the switch returned `not-member` or `error` you already stopped, the plugin key was not replaced, and there is nothing to sync, so skip this step entirely.
+
+   - **the command printed `{"event":"switched"}` (or `"already-aligned"`)**: sync the app's local API key next → step 4
+   - **the command printed `{"event":"not-member"}` or `{"event":"error"}`**: the plugin key was not replaced, so there is nothing local to sync → the `setup-cleanup` skill
+
+   **Next:**
+
+   - The command printed `{"event":"not-member"}` or `{"event":"error"}` (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`.
+4. This step is reached only when the switch reported `{"event":"switched"}` (or `"already-aligned"`); a `not-member` or `error` result already routed to cleanup with nothing to sync.
 
    The switch replaced the **plugin's** key (in `~/.config/bitfab/credentials.json`). It did **not** touch the `BITFAB_API_KEY` your own application reads at runtime, so traces your code sends still land in the **old** org until that key is updated too.
 

@@ -49,18 +49,23 @@ Replay scripts let the team regression-test any trace function against productio
    - **Follow the docs' Replay Output Contract**: capture the full `ReplayResult` (items + `testRunId` + `testRunUrl`, including `durationMs`/`duration_ms`, `tokens`, and `model` per item) into one variable and emit it as a single JSON object to stdout via `JSON.stringify(result, null, 2)` (TS), `json.dumps(result, indent=2, default=str)` (Python), or `JSON.pretty_generate(result)` (Ruby). A subagent reading the output must be able to `JSON.parse` / `json.loads` one contiguous block, do not replace the JSON dump with per-field log lines, counts, lengths, hashes, or previews. Writing the same JSON to `scripts/replay-result.json` in parallel is optional but encouraged.
    - Print a short human-readable summary (total replayed, same, changed, errors) and the test run URL ahead of the JSON dump
    - Live in a `scripts/` directory (or the project's existing scripts location)
-5. **Safety net for legacy instrumentation.** If an already-instrumented function (introduced before Instrument's trace-boundary serializability gate, or via another path) can't be invoked from the replay script, most commonly because it isn't exported, is defined inline in a route handler, or takes unserializable inputs, use `AskUserQuestion` offering Instrument's trace-boundary resolutions:
+5. **Safety net for legacy instrumentation.** First decide whether any instrumented trace function can't be invoked from the replay script, most commonly because it isn't exported, is defined inline in a route handler, or takes unserializable inputs (such a function was introduced before Instrument's trace-boundary serializability gate, or via another path). Reason from each function's signature and visibility; do not execute the script to detect this.
 
    **Handler-instrumented keys are not a safety-net case.** A key registered only via a framework handler has no decorated function by design; create its pipeline with the key-based replay pattern from step 4 instead of offering these resolutions.
+
+   - **every instrumented function is invocable from the replay script (no safety-net case applies)**: nothing to resolve → the `setup-cleanup` skill
+
+   If one or more functions can't be invoked, use `AskUserQuestion` offering Instrument's trace-boundary resolutions:
 
    > A) **Move trace boundary inward** → the `setup-cleanup` skill
    > B) **Refactor** *(recommended)* → the `setup-cleanup` skill
    > C) **Leave as-is**: add a header comment noting why the function isn't callable and flag that the script will rot → the `setup-cleanup` skill
 
-   Reason from the function's signature and visibility; do not execute the script to detect this. **If the user picks "Refactor" (or a boundary move that requires rewriting callers), apply the "Refactor confirmation" rule below, present a refactor plan labeled as *visibility* or *structural* and get a second confirmation before modifying code.**
+   **If the user picks "Refactor" (or a boundary move that requires rewriting callers), apply the "Refactor confirmation" rule below, present a refactor plan labeled as *visibility* or *structural* and get a second confirmation before modifying code.**
 
    **Next:**
 
+   - Every instrumented function is invocable from the replay script (no safety-net case applies) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`).
    - Option A (Move trace boundary inward) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`).
    - Option B (Refactor) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`).
    - Option C (Leave as-is) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`).
