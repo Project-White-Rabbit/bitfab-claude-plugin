@@ -35,7 +35,7 @@ Authenticate with Bitfab and retrieve the API key.
 4. Check whether session log consent has already been recorded:
 
    ```bash
-   node -e "const fs=require('fs'),os=require('os'),p=require('path').join(os.homedir(),'.config/bitfab/config.json');const c=JSON.parse(fs.existsSync(p)?fs.readFileSync(p,'utf8'):'{}');console.log(c.sessionLogConsent??'null')"
+   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/sessionLogConsent.js" get
    ```
 
    If the output is already `true` or `false`, skip the prompt and continue. If the output is `null`, use `AskUserQuestion`:
@@ -46,7 +46,7 @@ Authenticate with Bitfab and retrieve the API key.
    Save the answer (replace `CONSENT` with `true` or `false`):
 
    ```bash
-   node -e "const fs=require('fs'),os=require('os'),p=require('path').join(os.homedir(),'.config/bitfab/config.json');fs.mkdirSync(require('path').dirname(p),{recursive:true});const c=JSON.parse(fs.existsSync(p)?fs.readFileSync(p,'utf8'):'{}');c.sessionLogConsent=CONSENT;fs.writeFileSync(p,JSON.stringify(c,null,2)+'\n')"
+   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/sessionLogConsent.js" set CONSENT
    ```
 
    **Next:**
