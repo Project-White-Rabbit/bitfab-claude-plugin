@@ -17,7 +17,7 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
 1. **Connect the database once** in the Bitfab dashboard. The source database can be **any Postgres**: Bitfab provisions a branchable managed copy from it. A one-time, dashboard-side step.
 2. **Wire replay** to read the per-trace branch URL: pass a `ReplayEnvironment` to the replay call and, inside the replayed function, connect using the environment's branch URL instead of your live `DATABASE_URL`.
 
-**Source of truth:** read https://docs.bitfab.ai/db-branching (the end-to-end, per-language setup) and your SDK's reference (`/reference/typescript`, `/reference/python`, `/reference/ruby`) for the exact `ReplayEnvironment` / `replay` signatures before editing any code. The construction call, the replay option, and the accessors differ per SDK, do not improvise from memory.
+**Source of truth:** read https://docs.bitfab.ai/db-branching.md (the end-to-end, per-language setup) and your SDK's reference (`/reference/typescript.md`, `/reference/python.md`, `/reference/ruby.md`) for the exact `ReplayEnvironment` / `replay` signatures before editing any code. The construction call, the replay option, and the accessors differ per SDK, do not improvise from memory.
 
 1. **Confirm the SDK language.** DB-snapshot replay is available for **TypeScript, Python, and Ruby**. If the project is **Go**, tell the user Go has no replay so this doesn't apply, and route to cleanup.
 
@@ -48,7 +48,7 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
    - **status is none or failed**: not connected yet, re-surface the Integrations URL, then re-check → step 3
 
    When the status is `checking`, wait ~15 seconds before calling the tool again, do not hammer it. When it is `none` or `failed`, the user hasn't finished connecting (or it errored); re-surface the Integrations URL, give them a moment, then re-check. Only proceed once it reports `connected`.
-4. Update the replay script(s) from step 1 so the replayed function connects to the per-trace branch. Ground every edit in https://docs.bitfab.ai/db-branching and your SDK's `ReplayEnvironment` / `replay` reference, fetch the page for the project's language first; the construction call, the replay option, and the accessors differ per SDK.
+4. Update the replay script(s) from step 1 so the replayed function connects to the per-trace branch. Ground every edit in https://docs.bitfab.ai/db-branching.md and your SDK's `ReplayEnvironment` / `replay` reference, fetch the page for the project's language first; the construction call, the replay option, and the accessors differ per SDK.
 
    1. **Create one replay environment** and pass it to the replay call. Use the form for the project's language:
 
