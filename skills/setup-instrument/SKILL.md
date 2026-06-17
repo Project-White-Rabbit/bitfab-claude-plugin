@@ -15,6 +15,8 @@ Instrument the codebase with Bitfab tracing. Requires authentication (run Login 
 
 Bitfab captures every AI function call, inputs, outputs, and errors, so you can see exactly what your AI is doing and discover what's going wrong. The goal is to have enough context in each trace to tell whether a call succeeded or failed, and why.
 
+**Detection and search below are mechanical: run the probes and report what you found, without narrating each command. Combine related read-only checks into one command (separate them with `;`, not `&&`, since a no-match `grep` exits non-zero and would abort an `&&` chain) and read multiple files in a single batch; adaptive follow-up greps that depend on a prior result are expected. A risk, ambiguity, or unexpected finding (unserializable inputs, a shim with lazy init, an ambiguous root) is never the narration to suppress: raise it immediately, even mid-probe.**
+
 1. **Detect the project language** (TypeScript, Python, Ruby, or Go). In a monorepo, identify which directories are **applications** (services, APIs, agents) vs **libraries** (SDKs, shared packages). Focus on application directories. Also scan imports and package manifests for supported framework signals, and note which framework each application directory uses, step 5 fetches the matching framework page alongside the language reference:
    - **LangGraph / LangChain**: TS: `@langchain/langgraph`, `@langchain/core`; Python: `langgraph`, `langchain`, `langchain_core`
    - **OpenAI Agents SDK**: TS: `@openai/agents`, `setTraceProcessors`; Python: `agents` (`from agents import ...`)
