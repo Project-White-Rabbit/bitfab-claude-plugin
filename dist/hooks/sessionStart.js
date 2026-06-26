@@ -5,5 +5,5 @@ import { getVersion } from "../version.js";
 const input = readHookStdin();
 await Promise.all([
     runSessionStart(getVersion(), platform, PLUGIN_ROOT, import.meta.url, input?.session_id),
-    runCaptureHook("SessionStart", "claude-code", input).catch(() => { }),
+    runCaptureHook("SessionStart", "claude-code", input, getVersion()).catch(() => { }),
 ]);

@@ -17,5 +17,7 @@ await Promise.all([
     import.meta.url,
     input?.session_id,
   ),
-  runCaptureHook("SessionStart", "claude-code", input).catch(() => {}),
+  runCaptureHook("SessionStart", "claude-code", input, getVersion()).catch(
+    () => {},
+  ),
 ])
