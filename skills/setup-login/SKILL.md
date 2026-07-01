@@ -7,9 +7,9 @@ allowed-tools: ["Bash", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_bitfa
 
 # Bitfab Setup: Login
 
-**Mode:** you were dispatched with a mode (`wizard` or `login`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `login` or `instrument`); the gates and Next routing below depend on it.
 
-**Run only when mode is `wizard` or `login`.**
+**Run only when mode is `wizard`, `login` or `instrument`.**
 
 Authenticate with Bitfab and retrieve the API key.
 
@@ -30,7 +30,7 @@ Authenticate with Bitfab and retrieve the API key.
 
    **Next:**
 
-   - Login fails, errors, or times out (mode `wizard` or `login`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `login`).
+   - Login fails, errors, or times out (mode `wizard` or `login` or `instrument`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `login` or `instrument`).
 3. Call `mcp__plugin_bitfab_Bitfab__get_bitfab_api_key` to retrieve the API key, **NEVER print or log the full key**. Stored at `~/.config/bitfab/credentials.json`, used for the `BITFAB_API_KEY` environment variable.
 4. Check whether session log consent has already been recorded:
 
@@ -51,5 +51,5 @@ Authenticate with Bitfab and retrieve the API key.
 
    **Next:**
 
-   - Mode `wizard`: invoke the `setup-instrument` skill with mode `wizard`.
+   - Mode `wizard` or `instrument`: invoke the `setup-instrument` skill with the current mode (`wizard` or `instrument`).
    - Mode `login`: invoke the `setup-cleanup` skill with mode `login`.

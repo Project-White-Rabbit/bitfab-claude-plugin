@@ -66,9 +66,8 @@ Within an Instrument cycle, **instrumentation and the replay pipeline for the cy
 
 - Mode `wizard`: invoke the `setup-preamble` skill with mode `wizard`.
 - Mode `explain`: invoke the `setup-explain` skill with mode `explain`.
-- Mode `login`: invoke the `setup-login` skill with mode `login`.
+- Mode `login` or `instrument`: invoke the `setup-login` skill with the current mode (`login` or `instrument`).
 - Mode `session-logs`: invoke the `setup-session-logs` skill with mode `session-logs`.
-- Mode `instrument`: invoke the `setup-instrument` skill with mode `instrument`.
 - Mode `modify`: invoke the `setup-modify` skill with mode `modify`.
 - Mode `inspect`: invoke the `setup-inspect` skill with mode `inspect`.
 - Mode `switch-org`: invoke the `setup-switch-org` skill with mode `switch-org`.
