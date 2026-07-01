@@ -46,6 +46,8 @@ Templates control how a span's input / output renders in the Bitfab UI. They are
 
    Run this with `run_in_background: true` on the Bash tool. **Do NOT append `&` to the command string** (the `run_in_background` parameter handles backgrounding; `&` causes the shell to return immediately and kills the process). The harness returns a task id and an output file path, and will deliver a `<task-notification>` with `status: completed` automatically when the process exits. Capture both: you'll need the output file path to poll between edit rounds.
 
+   If stdout emits `{"event":"window-opened","url":"..."}`, immediately tell the user `Studio opened: <url>` in a normal chat message before continuing to poll.
+
    The command **blocks until the user clicks Done in Studio**, then exits 0 with a single line like `Template preview closed [via studio]`. If the user instead just closes the browser tab without clicking Close, the process keeps running until the 30-minute timeout. The page auto-redirects to the most recent trace for the function and renders it with the org's current templates; it subscribes to SSE `template:updated` events and re-renders the affected span automatically, so the user does NOT need to refresh after each edit.
 
    🚨 **Stdout is a mixed JSONL + free-form stream.** Two event shapes flow over the same channel as the user interacts with the live preview:

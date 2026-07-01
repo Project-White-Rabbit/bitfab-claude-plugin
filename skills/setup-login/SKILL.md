@@ -25,8 +25,12 @@ Authenticate with Bitfab and retrieve the API key.
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/dist/commands/login.js"
    ```
+   Run with 600000ms (10 minute) timeout. This opens Studio to the sign-in page and polls the server until the user completes authentication in the browser. The process exits when authentication succeeds or the 10-minute timeout fires.
 
-   This opens Studio for sign-in and polls until authentication completes. Run with 600000ms timeout (10 minutes). If the command **exits with an error** or **times out**, report the error to the user and stop.
+   **If the browser fails to open**, `login.js` prints the Studio sign-in URL. Surface it to the user verbatim so they can open it manually; do not rely on shell/tool output being visible. The polling loop stays active for the full 10-minute timeout regardless of whether auto-launch worked.
+
+
+   If `login.js` exits non-zero or the 10-minute timeout elapsed, report the error to the user and stop.
 
    **Next:**
 

@@ -60,7 +60,7 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
    node "${CLAUDE_PLUGIN_ROOT}/dist/commands/openTracePlan.js" <planId>
    ```
 
-   (`${CLAUDE_PLUGIN_ROOT}` resolves to the plugin directory; `<planId>` is the id returned by `mcp__plugin_bitfab_Bitfab__create_trace_plan`.) The script navigates Studio to the trace plan page and **blocks** until the user clicks **Confirm** or **Cancel**.
+   (`${CLAUDE_PLUGIN_ROOT}` resolves to the plugin directory; `<planId>` is the id returned by `mcp__plugin_bitfab_Bitfab__create_trace_plan`.) The script navigates Studio to the trace plan page and **blocks** until the user clicks **Confirm** or **Cancel**. If it emits `{"event":"window-opened","url":"..."}`, immediately tell the user `Studio opened: <url>` in a normal chat message before continuing to poll.
 
    3. **On exit, parse the final JSONL line and route:**
       - `{"event":"confirmed","planId":"<uuid>"}`, call `mcp__plugin_bitfab_Bitfab__get_trace_plan` with the returned `planId` (which may differ from the original if a mid-session `create_trace_plan` created a new plan; `openTracePlan.js` auto-tracks the latest plan via `tracePlan:created` events) to read the authoritative `capturedNodeIds` (the user may have toggled `pure` context nodes into the captured set or removed previously-captured nodes in the UI). Reconcile your edit plan with what's now in `capturedNodeIds`, drop manual `●` wraps no longer captured, add wraps for any newly captured nodes, then take branch **A** (Proceed).
