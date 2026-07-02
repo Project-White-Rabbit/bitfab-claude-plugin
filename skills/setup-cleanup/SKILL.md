@@ -7,7 +7,7 @@ allowed-tools: ["Bash"]
 
 # Bitfab Setup: Cleanup
 
-**Mode:** you were dispatched with a mode (`wizard` or `explain` or `login` or `session-logs` or `instrument` or `modify` or `inspect` or `switch-org` or `view` or `replay` or `db-snapshot` or `templates`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `explain` or `login` or `session-logs` or `instrument` or `modify` or `inspect` or `switch-org` or `view` or `replay` or `db-snapshot` or `templates` or `analyze-repo`); the gates and Next routing below depend on it.
 
 1. Close Studio. Run this unconditionally: it resolves the active session from disk, closes the Studio tab (the daemon ends the session and stops appending to the event file), and exits quietly (`{"event":"no-active-studio"}`) when nothing was opened:
 
