@@ -50,7 +50,7 @@ Within an Instrument cycle, **instrumentation and the replay pipeline for the cy
 | `/bitfab:setup db-snapshot` | Set up per-trace database snapshots so replay runs against the DB state at trace time (TypeScript, Python, Ruby) |
 | `/bitfab:setup session-logs` | Opt in or out of session log collection (no login required) |
 | `/bitfab:setup templates [<key>]` | Iterate on the span-rendering templates for one trace function |
-| `/bitfab:setup analyze-repo` | Non-interactively scan the repo, pick the top ~5 workflows to trace, and upload a draft trace plan for each (no prompts, no code changes) |
+| `/bitfab:setup analyze-repo [limit=<n>]` | Non-interactively scan the repo, pick the top workflows to trace (default 5, or `limit=<n>`), and upload a draft trace plan for each (no prompts, no code changes) |
 
 **CLI commands** available via Bash (all paths relative to `${CLAUDE_PLUGIN_ROOT}/dist/commands/`):
 
