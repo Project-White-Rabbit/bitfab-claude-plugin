@@ -67,7 +67,7 @@ Replay scripts let the team regression-test any trace function against productio
    - Option B (Refactor) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`).
    - Option C (Leave as-is) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`).
 
-## Refactor confirmation (applies to Instrument's workflow-selection step and Replay's safety-net step)
+## Refactor confirmation (applies to Instrument's workflow-selection step, Replay's safety-net step, and any write-instrumentation step that turns out non-additive)
 
 Whenever the user picks "refactor to extract a pure core" (or any option that modifies existing functions/call sites, not just adds new wrappers), you must:
 
@@ -84,4 +84,4 @@ Whenever the user picks "refactor to extract a pure core" (or any option that mo
    - **"Apply refactor"**: proceed to write the changes
    - **"Cancel"**: return to the previous AskUserQuestion (Instrument's workflow-selection (a)/(b)/(c), or Replay's safety-net three-option prompt) so the user can pick a different resolution
 
-Never modify existing code on a refactor path without completing this three-step confirmation. Adding new instrumentation wrappers to unchanged functions is not a refactor, this rule does not apply to Instrument's write-instrumentation step (purely-additive instrumentation).
+Never modify existing code on a refactor path without completing this three-step confirmation. Adding new instrumentation wrappers to unchanged functions is not a refactor and does not need this gate (purely-additive instrumentation). But if the write-instrumentation step itself turns out to require modifying, re-implementing, or hand-reconstructing an existing call to seat a root (the wrap is not actually additive), that IS a refactor: stop and run this three-step confirmation before touching the code.
