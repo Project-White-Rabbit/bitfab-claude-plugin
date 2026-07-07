@@ -1,0 +1,33 @@
+---
+name: assistant-fix
+description: Phase Fix: Capture the Failing Scenario phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
+user-invocable: false
+allowed-tools: ["Bash", "Read", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__search_traces", "mcp__plugin_bitfab_Bitfab__read_traces", "mcp__plugin_bitfab_Bitfab__set_human_labels", "Skill"]
+---
+
+# Bitfab Assistant: Phase Fix: Capture the Failing Scenario
+
+**Run only when mode is `fix`.**
+
+Reached only from `fix` mode. The user has a specific bug, a failing trace, and wants it fixed and saved in a dataset. This phase resolves THIS trace and its function and diagnoses the failure (deciding the acceptance criterion), then tails into the Phase 5 loop, where the fix itself is made and replayed against only the target trace first. **Nothing is added to a dataset here:** adding it to a dataset happens later (in `fix-add-to-dataset`), only after the fix proves the target trace green. The single-trace replay is still tagged with an experiment group so Studio can later show the before/after if the user asks, but Studio stays closed during this initial pass.
+
+1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Resolving the bug"`.
+
+   **Resolve what to fix.** The user invoked `/bitfab:assistant fix [<key>] <trace-id>` or phrased it in natural language ("fix this bug", "fix trace abc123", "this trace is wrong, make it pass"). A UUID is the **trace ID**; a non-UUID slug is the function key.
+
+   1. **Identify the trace ID.** **First, sanity-check the anchor:** if the request is an ordinary code bug with no Bitfab trace involved (nothing points at a traced function, no trace ID, no captured failure), this is the wrong skill, say so in one line and stop. Do not hunt for or invent a trace to justify entering, and do not treat a generic "fix this" as a trace. It's the UUID in the message (or the trace the conversation is about). If there is no UUID but the user gave a **smoking-gun description** ("find and fix the trace where <bad behavior happened>", "search <terms> and fix", "the trace where Peek remembered a random config value"), resolve that description into a target trace before asking: inspect the local instrumentation and repo terminology to infer the likely function key even if the user did not name one, call `mcp__plugin_bitfab_Bitfab__search_traces` with the descriptive terms and any inferred/named function key / recency / user / session anchors from the request, read the best candidates with `mcp__plugin_bitfab_Bitfab__read_traces` (`scope: "summary"` first, then `"full"` for the chosen trace), and pick the single trace whose output matches the described bad behavior. If multiple candidates match, present the trace IDs and one-line output summaries and use `AskUserQuestion` which one to fix. If none match, say what filters you searched and use `AskUserQuestion` for a trace ID or narrower search terms. If the user explicitly invoked `/bitfab:assistant fix` but gave neither a trace ID nor a descriptive trace anchor, use `AskUserQuestion` which trace and wait, do not guess.
+   2. **Read the trace.** Call `mcp__plugin_bitfab_Bitfab__read_traces` with the trace ID and `scope: "full"`. This is the failing scenario: hold its inputs, output, any existing label/annotation, and its `traceFunctionKey` in working context. **If the user gave only a trace ID and no function key, take the key from the trace itself**, don't ask.
+   3. **Locate the code.** Grep the codebase for the function key (`grep -r "<key>" --include="*.ts" --include="*.tsx" --include="*.py" --include="*.rb" --include="*.go" --include="*.baml"`) and note the file path. This is the code you'll fix in `make-change`.
+
+   4. **Diagnose the failure (no dataset yet).** From the trace + code you just read, decide the failure verdict and write a one-or-two-sentence `annotation` describing the bug: what the output got wrong and what correct behavior looks like. This annotation is the acceptance criterion the first replay will check. **Do not label the trace and do not touch any dataset yet.** Adding the trace to a dataset happens only after the fix proves it green (in `fix-add-to-dataset`), so nothing is added to a dataset until the fix has been tested.
+
+      **Confirm why the trace is wrong before editing.** If the trace already has a validated failing label/annotation, or the user already stated what is wrong in this conversation, use that as the starting acceptance criterion and say so. If the trace + code make the defect obvious (for example, an error span, malformed output, wrong tool args, or a clear mismatch between requested and returned content), state the specific trace evidence in one line and proceed. If you cannot confidently explain **why** the original trace is wrong, use `AskUserQuestion` with a short confirmation question: what is wrong, and what correct behavior should be? Then wait. Do not make a speculative code change, do not replay, and do not later call `mcp__plugin_bitfab_Bitfab__set_human_labels` until the acceptance criterion is concrete.
+
+      **If you can't find a real defect** (you read the trace and the code and the output actually looks correct for the inputs), do **not** invent a fix. use `AskUserQuestion` with a short question asking what specifically is wrong with this trace, the output they expected versus what they got, then wait. Only proceed once you have a concrete defect to target; if there genuinely isn't one, say the trace looks correct in one line and stop rather than editing code to "fix" a non-bug.
+   5. **Set the replay scope.** Hold `fixReplayScope = "single-trace"` and `fixSkipMakeChange = false` in working context (initialize both now so later steps never read `fixSkipMakeChange` unset). The first replay uses only this trace ID, not a dataset, and Studio stays closed.
+
+   Hold the trace ID, function key, code path, the failure annotation, and the trace's failure details in working context. Tell the user in one line what you'll do, and **the first time you mention "replay" to the user, explain it in one plain-English clause**: a replay re-runs the traced function on this trace's exact recorded inputs against your current code, so you can see whether your change fixes the captured output, without making a real production call. For example: "I'll fix the code and replay trace `<traceId>` (re-run it on its recorded inputs against the new code) to confirm the fix, then add it to a dataset once it passes." Then continue into the replay loop, where `make-change` is the fix.
+
+   **Next:**
+
+   - Mode `fix`: invoke the `assistant-load-dataset` skill with mode `fix`.

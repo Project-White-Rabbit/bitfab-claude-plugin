@@ -1,0 +1,33 @@
+---
+name: assistant-add-trace
+description: Phase Add: Attach a Trace to a Dataset phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
+user-invocable: false
+allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__update_agent_labels", "mcp__plugin_bitfab_Bitfab__list_datasets", "mcp__plugin_bitfab_Bitfab__create_dataset", "mcp__plugin_bitfab_Bitfab__add_traces_to_dataset"]
+---
+
+# Bitfab Assistant: Phase Add: Attach a Trace to a Dataset
+
+**Run only when mode is `add-trace`.**
+
+Reached only from `add-trace` mode. This is the lightweight path: attach one or more existing traces to a dataset (picking or creating one), then stop. No labeling, no diagnosis, no experiments, and **no Studio**: this mode never opens the Studio browser surface and runs no Studio commands (`openStudioTo.js` / `closeStudio.js`). It does still run the `readTracesBatched` CLI command to resolve trace function keys. The traces attach **raw**; the user labels and approves them later wherever they review datasets.
+
+1. **Resolve what to attach and where.** The user invoked `/bitfab:assistant add-trace`, either with the signature `add-trace [<key>] <trace-id...> [<dataset-id>]` (the leading `<key>` is optional) or in natural language (e.g. "add trace abc123 to a dataset"). **Tokens are typed, not positional:** a UUID is always a trace ID (or, only when the user explicitly calls it the dataset, the `<dataset-id>`); a non-UUID slug is the function key. So `add-trace <trace-uuid>` is a trace-only invocation, never treat a bare UUID as a function key, and never conclude "no trace IDs were given" just because no slug preceded them. Parse out three things:
+
+   - **Trace IDs**: one or more. Trace IDs are UUIDs. If you can't identify at least one, use `AskUserQuestion` for the trace ID(s) and wait, do not guess.
+   - **Trace function key**: the non-UUID slug, if the user gave one. Datasets are scoped per function, so the key is required and **all trace IDs in the batch must belong to the same function** (`mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` silently skips IDs whose function key doesn't match the dataset, so a mixed batch would partially fail with no obvious error). Resolve and verify the key up front:
+     - Run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/readTracesBatched.js" <trace-id...> --scope summary` **once** with **every** trace ID in the batch (not just the first). It fans the reads out in parallel batches of 10 and writes the combined result to a temp file; the command prints `{"status":"ok","outputFile":"..."}` as JSON, so `Read` that `outputFile` and pull each trace's `traceFunctionKey`. **Use this command here, not the `read_traces` MCP tool directly:** `read_traces` caps at 10 IDs, so calling it for this batch would re-introduce the serial per-batch fan-out `readTracesBatched` exists to replace.
+     - **If all traces share one key:** use it. (If the user also supplied a `<key>` and it disagrees with what the traces report, trust the traces' key and note the discrepancy in one line.)
+     - **If the traces span more than one function key:** stop and use `AskUserQuestion`, list the distinct keys and which trace IDs map to each, and ask the user which single function's traces to attach (the others are dropped this run, since one `add-trace` invocation targets one function's dataset). Do not attach a mixed batch.
+   - **Dataset ID**: optional. If the user named a specific dataset (a UUID they identify as the dataset, not a trace), hold it for the next step.
+
+   Hold the (single, verified) function key, the trace IDs that belong to it, and any dataset ID in working context. Do **not** grep the codebase, this mode never touches local code.
+2. **Pick or create the dataset to attach to.** If no dataset ID was supplied, call `mcp__plugin_bitfab_Bitfab__list_datasets` with the function key first. Hold the chosen `datasetId` in working context.
+
+   - **a dataset ID was supplied in the invocation**: use it directly, but first confirm it's scoped to the verified function key, call `mcp__plugin_bitfab_Bitfab__list_datasets` with the key and check the supplied id is in the result. If it is, continue to attach. If it isn't (the dataset belongs to a different function, so `mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` would skip every trace), stop and use `AskUserQuestion`, name the mismatch and offer to pick a correctly-scoped dataset instead → step 3
+   - **no datasets exist for this function (`list_datasets` returned empty)**: **don't ask**: silently call `mcp__plugin_bitfab_Bitfab__create_dataset` with `traceFunctionKey: <key>` and `name: <key>`. Hold the returned `datasetId` and continue → step 3
+   - **one or more datasets already exist**: present them via `AskUserQuestion`, one option per existing dataset (name · id · current trace count) plus a "Create new" option. Recommend the most recently used dataset that has traces. On an existing pick, hold its id. On "Create new", silently call `mcp__plugin_bitfab_Bitfab__create_dataset` with `name: "<key> #N"` (N one more than the existing count), don't ask for a name. Hold the id and continue → step 3
+3. **Attach raw, then stop.** Call `mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` once with the `datasetId` from the previous step and the full array of trace IDs. The call is idempotent, so re-attaching IDs already in the dataset is a safe no-op. Do **not** call `mcp__plugin_bitfab_Bitfab__update_agent_labels`, this mode attaches traces without labels.
+
+   **Report the tool's actual result, not the input count.** `mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` returns how many traces were added vs skipped (IDs not in the org, or not on the dataset's function, are silently skipped). Read those counts from the response and report the **added** count, not `N = trace-IDs-you-passed`. If any were skipped, say so in the same line (e.g. "2 added, 1 skipped, not on this function").
+
+   Then tell the user in one line, identifying the dataset by its `datasetId` (always known) and including its name only when you have one: "Added `<added>` trace(s) to dataset `<datasetId>``<skipped-note>`." (When a name is available, from `list_datasets`, or the `<key>`/`<key> #N` you just created it with, use "Added `<added>` trace(s) to dataset `<name>` (`<datasetId>`)." On the supplied-dataset-ID path you called `list_datasets` to validate scope, so its name is available too.) This is the end of the lightweight `add-trace` flow: no labeling, no diagnosis, no experiments, and **no Studio**. Do not open a browser or run any Studio command (`openStudioTo.js` / `closeStudio.js`).
