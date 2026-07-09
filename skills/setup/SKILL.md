@@ -70,7 +70,7 @@ Read `$ARGUMENTS` first. If its first token is exactly one of the mode names bel
 | `replay` | `replay` | Create or update replay scripts for instrumented workflows. |
 | `db-snapshot` | `db-snapshot` | Set up per-trace database snapshots so replay runs against the DB state at trace time (TypeScript, Python, Ruby). |
 | `templates` | `templates` | Iterate on the span-rendering templates for one trace function. |
-| `analyze-repo` | `analyze-repo` | Non-interactively scan the repo, pick the top workflows to trace (default 5, or `limit=<n>`), and upload a draft trace plan for each (no prompts, no code changes). |
+| `analyze-repo` | `analyze-repo` | Non-interactively scan the repo, pick the top workflows to trace (default 5, or `limit=<n>`; optional free-text `guidance:` steers what to focus on), and upload a draft trace plan for each (no prompts, no code changes). |
 
 ## Dispatch
 
