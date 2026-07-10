@@ -95,6 +95,8 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
 
    B returns to step 2. A and C exit the Modify loop to cleanup (Modify does not auto-continue to Replay, the user can invoke `/bitfab:setup replay` separately).
 
+   **Re-entry rule (applies after you leave this loop).** If, later in the conversation, the user asks to re-instrument or change another function's capture in plain language (`re-instrument <fn>`, `change what this span records`, `give me the updated trace plan for <fn>`), that is a fresh Modify (or Instrument) cycle: re-invoke `/bitfab:setup modify` (name the mode, so it goes straight to Modify rather than falling back to the full `wizard`) so it runs through the trace-plan UI. **Never satisfy such a request by hand-writing a trace plan or before/after diff as a chat message, that skips the Studio confirmation UI (`mcp__plugin_bitfab_Bitfab__create_trace_plan` + `openTracePlan`).**
+
    **Next:**
 
    - Option A (Generate a trace for the modified setup) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`).
