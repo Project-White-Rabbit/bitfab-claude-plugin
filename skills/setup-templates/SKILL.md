@@ -37,7 +37,7 @@ Templates control how a span's input / output renders in the Bitfab UI. They are
 
    **Next:**
 
-   - No traces yet for this function (mode `templates`): invoke the `setup-cleanup` skill with mode `templates`.
+   - No traces yet for this function (mode `templates`): invoke the `setup-cleanup` skill with mode `templates`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 5. Launch the preview command **in the background** so the agent can keep iterating while the page stays open:
 
    ```bash
@@ -84,5 +84,5 @@ Templates control how a span's input / output renders in the Bitfab UI. They are
 
    **Next:**
 
-   - Background process exited (user clicked Close) (mode `templates`): invoke the `setup-cleanup` skill with mode `templates`.
-   - User explicitly says they're done (mode `templates`): invoke the `setup-cleanup` skill with mode `templates`.
+   - Background process exited (user clicked Close) (mode `templates`): invoke the `setup-cleanup` skill with mode `templates`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - User explicitly says they're done (mode `templates`): invoke the `setup-cleanup` skill with mode `templates`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

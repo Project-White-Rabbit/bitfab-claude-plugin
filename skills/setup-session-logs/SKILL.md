@@ -32,4 +32,4 @@ Opt in or out of session log collection. Does not require authentication.
 
    **Next:**
 
-   - Mode `session-logs`: invoke the `setup-cleanup` skill with mode `session-logs`.
+   - Mode `session-logs`: invoke the `setup-cleanup` skill with mode `session-logs`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

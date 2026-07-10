@@ -48,5 +48,5 @@ Read `$ARGUMENTS` first. If its first token is exactly one of the mode names bel
 
    **Next:**
 
-   - Mode `all` or `plugin`: invoke the `update-plugin` skill with the current mode (`all` or `plugin`).
-   - Mode `sdk`: invoke the `update-sdk` skill with mode `sdk`.
+   - Mode `all` or `plugin`: invoke the `update-plugin` skill with the current mode (`all` or `plugin`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Mode `sdk`: invoke the `update-sdk` skill with mode `sdk`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

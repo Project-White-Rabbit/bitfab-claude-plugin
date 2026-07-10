@@ -19,7 +19,7 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
 
    **Next:**
 
-   - No instrumented trace functions exist (nothing to modify) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`).
+   - No instrumented trace functions exist (nothing to modify) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. **Pick exactly ONE trace function to modify.** Use `AskUserQuestion` with the list of existing keys. Recommend the one the user most recently instrumented (or the one most recently referenced in the current session) and explain why in one line.
 3. **Bootstrap the `before` `TracePlanTree` from the most recent confirmed trace plan for this trace function key**, falling back to reading the code only when no prior plan exists. The plan from the previous Instrument or Modify cycle is the source of truth for what's currently captured, re-deriving from code drops sample inputs/outputs and surrounding-context nodes the user previously confirmed.
 
@@ -84,7 +84,7 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
 
    **Next:**
 
-   - Option D (Abort entirely) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`).
+   - Option D (Abort entirely) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 6. **Apply the changes, purely additive to behavior.** Same rules as Instrument's write-instrumentation step: never change arguments, return values, error handling, variable names, types, control flow, or code structure. Removing a `withSpan`/`@span` wrapper is the only structural edit allowed, and only when it leaves the wrapped call, its arguments, and its return value untouched. The trace function key from step 2 stays the same, do not rename keys. Batch repetitive edits in parallel (one message, many Edit calls).
 7. Tell the user how to run the app to generate a trace with the modified setup, exact command(s). Do NOT run it yourself. Then **MANDATORY STOP**: use `AskUserQuestion`:
    > We recommend **A**: generate a trace with the modified setup so the diff is observable end-to-end.
@@ -99,8 +99,8 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
 
    **Next:**
 
-   - Option A (Generate a trace for the modified setup) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`).
-   - Option C (Done) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`).
+   - Option A (Generate a trace for the modified setup) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Done) (mode `wizard` or `instrument` or `modify`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `instrument` or `modify`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 
 ## Reference
 

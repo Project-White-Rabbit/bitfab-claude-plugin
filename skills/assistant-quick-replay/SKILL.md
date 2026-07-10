@@ -25,8 +25,8 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    **Next:**
 
-   - No replay script found for this function (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`.
-   - Trace not found or unreadable (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`.
+   - No replay script found for this function (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Trace not found or unreadable (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Running replay"`.
 
    **Run the replay against the one trace ID. No user interaction, no extra flags.**
@@ -55,5 +55,5 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    **Next:**
 
-   - Option B (Done) (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`.
+   - Option B (Done) (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 4. **Make another change before re-replaying.** Use `AskUserQuestion` to ask what to change, or let the user describe the fix. Edit the code, then loop back to run the replay again. If the user says they'll make the change themselves, wait for their message, then proceed.

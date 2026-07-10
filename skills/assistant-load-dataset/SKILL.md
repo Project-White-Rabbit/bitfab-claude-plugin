@@ -32,10 +32,10 @@ Entry for `experiment`, `cost-optimize`, and `benchmark` modes, which skip the f
 
    **Next:**
 
-   - No datasets exist for this function (`list_datasets` returned empty), or the picked dataset fails the mode's usability gate (experiment: no validated failing labels; benchmark / cost-optimize: no traces at all) (mode `experiment` or `cost-optimize` or `benchmark`): invoke the `assistant-cleanup` skill with the current mode (`experiment` or `cost-optimize` or `benchmark`).
+   - No datasets exist for this function (`list_datasets` returned empty), or the picked dataset fails the mode's usability gate (experiment: no validated failing labels; benchmark / cost-optimize: no traces at all) (mode `experiment` or `cost-optimize` or `benchmark`): invoke the `assistant-cleanup` skill with the current mode (`experiment` or `cost-optimize` or `benchmark`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Dataset loaded (experiment: ≥1 validated failing label; benchmark / cost-optimize: ≥1 trace) (mode `experiment`): continue below in this skill.
-   - Dataset loaded (experiment: ≥1 validated failing label; benchmark / cost-optimize: ≥1 trace) (mode `cost-optimize`): invoke the `assistant-cost` skill with mode `cost-optimize`.
-   - Dataset loaded (experiment: ≥1 validated failing label; benchmark / cost-optimize: ≥1 trace) (mode `benchmark`): invoke the `assistant-iterate` skill with mode `benchmark`.
+   - Dataset loaded (experiment: ≥1 validated failing label; benchmark / cost-optimize: ≥1 trace) (mode `cost-optimize`): invoke the `assistant-cost` skill with mode `cost-optimize`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Dataset loaded (experiment: ≥1 validated failing label; benchmark / cost-optimize: ≥1 trace) (mode `benchmark`): invoke the `assistant-iterate` skill with mode `benchmark`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. **Run only when mode is `experiment`, `cost-optimize` or `fix`.**
 
    **Decide once: parallel worktree subagents, or serial in this main agent.** The check is whether subagent worktree sessions would inherit bypass permissions.
@@ -63,5 +63,5 @@ Entry for `experiment`, `cost-optimize`, and `benchmark` modes, which skip the f
 
    **Next:**
 
-   - bash output is `parallel` (bypass found in committed or user-global settings) (mode `experiment` or `cost-optimize` or `fix`): invoke the `assistant-iterate` skill with the current mode (`experiment` or `cost-optimize` or `fix`).
-   - bash output is `serial` (no bypass found) (mode `experiment` or `cost-optimize` or `fix`): invoke the `assistant-iterate` skill with the current mode (`experiment` or `cost-optimize` or `fix`).
+   - bash output is `parallel` (bypass found in committed or user-global settings) (mode `experiment` or `cost-optimize` or `fix`): invoke the `assistant-iterate` skill with the current mode (`experiment` or `cost-optimize` or `fix`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - bash output is `serial` (no bypass found) (mode `experiment` or `cost-optimize` or `fix`): invoke the `assistant-iterate` skill with the current mode (`experiment` or `cost-optimize` or `fix`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

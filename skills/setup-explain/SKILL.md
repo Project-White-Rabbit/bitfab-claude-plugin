@@ -47,4 +47,4 @@ Explain what Bitfab is and how this skill is organized. Read-only, no authentica
 
    **Next:**
 
-   - Mode `explain`: invoke the `setup-cleanup` skill with mode `explain`.
+   - Mode `explain`: invoke the `setup-cleanup` skill with mode `explain`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

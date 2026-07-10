@@ -14,5 +14,5 @@ user-invocable: false
 
    **Next:**
 
-   - Mode `all`: invoke the `update-sdk` skill with mode `all`.
+   - Mode `all`: invoke the `update-sdk` skill with mode `all`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Mode `plugin`: stop here.

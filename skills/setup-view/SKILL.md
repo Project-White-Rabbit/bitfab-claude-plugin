@@ -17,7 +17,7 @@ Every View invocation targets **exactly one** trace function. The browser UI's C
 
    **Next:**
 
-   - No instrumented trace functions exist (nothing to view) (mode `view`): invoke the `setup-cleanup` skill with mode `view`.
+   - No instrumented trace functions exist (nothing to view) (mode `view`): invoke the `setup-cleanup` skill with mode `view`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. **Pick exactly ONE trace function to view.** Use `AskUserQuestion` with the list of existing keys. Recommend the one the user most recently instrumented (or the one most recently referenced in the current session) and explain why in one line.
 3. Call `mcp__plugin_bitfab_Bitfab__get_trace_plan` with `{ traceFunctionKey: "<chosen key>" }` (no `planId`). Two outcomes:
 
@@ -26,7 +26,7 @@ Every View invocation targets **exactly one** trace function. The browser UI's C
 
    **Next:**
 
-   - Option B (Stop) (mode `view`): invoke the `setup-cleanup` skill with mode `view`.
+   - Option B (Stop) (mode `view`): invoke the `setup-cleanup` skill with mode `view`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 4. Open the trace plan in the browser by running:
 
    ```bash
@@ -37,4 +37,4 @@ Every View invocation targets **exactly one** trace function. The browser UI's C
 
    **Next:**
 
-   - Mode `view`: invoke the `setup-cleanup` skill with mode `view`.
+   - Mode `view`: invoke the `setup-cleanup` skill with mode `view`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

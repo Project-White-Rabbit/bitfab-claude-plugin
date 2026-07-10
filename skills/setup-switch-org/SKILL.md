@@ -25,7 +25,7 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
 
    **Next:**
 
-   - Not authenticated (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`.
+   - Not authenticated (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. Call `mcp__plugin_bitfab_Bitfab__list_organizations` to list the organizations the signed-in user belongs to. Each entry has a name, the user's role, an `id:` (the `clerkOrganizationId`), and the org the plugin uses now is marked `[current]`.
 
    Choose the target org:
@@ -37,7 +37,7 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
 
    **Next:**
 
-   - The only org is the one already current (nothing to switch to) (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`.
+   - The only org is the one already current (nothing to switch to) (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 3. Switch to the chosen org by passing its `clerkOrganizationId`:
 
    ```bash
@@ -56,7 +56,7 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
 
    **Next:**
 
-   - The command printed `{"event":"not-member"}` or `{"event":"error"}` (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`.
+   - The command printed `{"event":"not-member"}` or `{"event":"error"}` (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 4. This step is reached only when the switch reported `{"event":"switched"}` (or `"already-aligned"`); a `not-member` or `error` result already routed to cleanup with nothing to sync.
 
    The switch replaced the **plugin's** key (in `~/.config/bitfab/credentials.json`). It did **not** touch the `BITFAB_API_KEY` your own application reads at runtime, so traces your code sends still land in the **old** org until that key is updated too.
@@ -69,4 +69,4 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
 
    **Next:**
 
-   - Mode `switch-org`: invoke the `setup-cleanup` skill with mode `switch-org`.
+   - Mode `switch-org`: invoke the `setup-cleanup` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

@@ -52,4 +52,4 @@ allowed-tools: ["Bash", "Skill"]
 
    **Next:**
 
-   - Mode `benchmark`: invoke the `assistant-cleanup` skill with mode `benchmark`.
+   - Mode `benchmark`: invoke the `assistant-cleanup` skill with mode `benchmark`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

@@ -30,4 +30,4 @@ Reached only from `fix` mode. The user has a specific bug, a failing trace, and 
 
    **Next:**
 
-   - Mode `fix`: invoke the `assistant-load-dataset` skill with mode `fix`.
+   - Mode `fix`: invoke the `assistant-load-dataset` skill with mode `fix`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

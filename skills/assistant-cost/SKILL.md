@@ -41,4 +41,4 @@ Reached only from `cost-optimize` mode, after `load-dataset/pick-dataset` has pi
 
    **Next:**
 
-   - Mode `cost-optimize`: invoke the `assistant-load-dataset` skill with mode `cost-optimize`.
+   - Mode `cost-optimize`: invoke the `assistant-load-dataset` skill with mode `cost-optimize`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

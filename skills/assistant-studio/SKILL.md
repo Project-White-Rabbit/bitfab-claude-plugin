@@ -72,7 +72,7 @@ The gate fires only when a recorded window went unreachable with **no close sign
 
    **Next:**
 
-   - Mode `wizard`: invoke the `assistant-identify-function` skill with mode `wizard`.
-   - Mode `dataset`: invoke the `assistant-dataset` skill with mode `dataset`.
-   - Mode `experiment` or `cost-optimize` or `benchmark`: invoke the `assistant-load-dataset` skill with the current mode (`experiment` or `cost-optimize` or `benchmark`).
-   - Mode `investigate`: invoke the `assistant-investigate` skill with mode `investigate`.
+   - Mode `wizard`: invoke the `assistant-identify-function` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Mode `dataset`: invoke the `assistant-dataset` skill with mode `dataset`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Mode `experiment` or `cost-optimize` or `benchmark`: invoke the `assistant-load-dataset` skill with the current mode (`experiment` or `cost-optimize` or `benchmark`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Mode `investigate`: invoke the `assistant-investigate` skill with mode `investigate`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

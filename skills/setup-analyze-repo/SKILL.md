@@ -69,7 +69,7 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "mcp__plugin_bitfab_Bitfab__get_
 
    **Next:**
 
-   - Mode `analyze-repo`: invoke the `setup-cleanup` skill with mode `analyze-repo`.
+   - Mode `analyze-repo`: invoke the `setup-cleanup` skill with mode `analyze-repo`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 
 ## Reference
 

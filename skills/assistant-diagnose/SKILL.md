@@ -54,4 +54,4 @@ allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__r
 
    **Next:**
 
-   - Mode `wizard` or `dataset` or `investigate`: invoke the `assistant-iterate` skill with the current mode (`wizard` or `dataset` or `investigate`).
+   - Mode `wizard` or `dataset` or `investigate`: invoke the `assistant-iterate` skill with the current mode (`wizard` or `dataset` or `investigate`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

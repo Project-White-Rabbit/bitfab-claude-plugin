@@ -117,7 +117,7 @@ Read `$ARGUMENTS` first. If its first token is exactly one of the mode names bel
 
 ## Dispatch
 
-- Mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `benchmark`: invoke the `assistant-studio` skill with the current mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `benchmark`).
-- Mode `add-trace`: invoke the `assistant-add-trace` skill with mode `add-trace`.
-- Mode `replay`: invoke the `assistant-quick-replay` skill with mode `replay`.
-- Mode `fix`: invoke the `assistant-fix` skill with mode `fix`.
+- Mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `benchmark`: invoke the `assistant-studio` skill with the current mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `benchmark`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `add-trace`: invoke the `assistant-add-trace` skill with mode `add-trace`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `replay`: invoke the `assistant-quick-replay` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `fix`: invoke the `assistant-fix` skill with mode `fix`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

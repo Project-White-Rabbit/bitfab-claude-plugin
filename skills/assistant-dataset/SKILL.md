@@ -149,7 +149,7 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
 
    **Next:**
 
-   - `event: session-ended` (mode `wizard` or `dataset` or `investigate`): invoke the `assistant-cleanup` skill with the current mode (`wizard` or `dataset` or `investigate`).
+   - `event: session-ended` (mode `wizard` or `dataset` or `investigate`): invoke the `assistant-cleanup` skill with the current mode (`wizard` or `dataset` or `investigate`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 11. **Modify loop: add or remove traces in chat**: The dataset page is still open in Studio and the user wants you to add or remove traces. Ask in plain chat:
 
    > What would you like to add or remove? You can describe by criteria (e.g. "drop empty-output traces", "add 5 more from last week with errors") or paste explicit trace IDs.
@@ -188,4 +188,4 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
 
    **Next:**
 
-   - Mode `wizard` or `dataset` or `investigate`: invoke the `assistant-diagnose` skill with the current mode (`wizard` or `dataset` or `investigate`).
+   - Mode `wizard` or `dataset` or `investigate`: invoke the `assistant-diagnose` skill with the current mode (`wizard` or `dataset` or `investigate`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

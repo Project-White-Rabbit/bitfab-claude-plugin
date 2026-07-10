@@ -295,7 +295,7 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
    **Next:**
 
    - Mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`: continue below in this skill.
-   - Mode `benchmark`: invoke the `assistant-benchmark` skill with mode `benchmark`.
+   - Mode `benchmark`: invoke the `assistant-benchmark` skill with mode `benchmark`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 10. **Run only when mode is `wizard`, `dataset`, `experiment`, `cost-optimize`, `investigate`, `benchmark` or `fix`.**
 
    **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Evaluating results"`.
@@ -394,7 +394,7 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
    **Next:**
 
    - `status: "ok"` AND `persistedTraceIds` (plus the unreplayable `item.error` bucket) account for every completed replay item (mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`): continue below in this skill.
-   - `status: "ok"` AND `persistedTraceIds` (plus the unreplayable `item.error` bucket) account for every completed replay item (mode `benchmark`): invoke the `assistant-benchmark` skill with mode `benchmark`.
+   - `status: "ok"` AND `persistedTraceIds` (plus the unreplayable `item.error` bucket) account for every completed replay item (mode `benchmark`): invoke the `assistant-benchmark` skill with mode `benchmark`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 12. **Run only when mode is `wizard`, `dataset`, `experiment`, `cost-optimize`, `investigate`, `benchmark` or `fix`.**
 
    **Open experiment viewer (fallback).** This step only runs when replay trace IDs are available (routed here from `check-trace-id-support`). If no `testRunId`s were captured, skip this step and continue to evaluate.
@@ -461,7 +461,7 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
 
    **Next:**
 
-   - Option D (Stop and wrap up) (mode `fix`): invoke the `assistant-wrap-up` skill with mode `fix`.
+   - Option D (Stop and wrap up) (mode `fix`): invoke the `assistant-wrap-up` skill with mode `fix`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 16. **Run only when mode is `fix`.**
 
    **Run only in `fix` mode when the user chose "Re-run the entire dataset" from `fix-single-trace-passed`.** The same already-made fix will replay across every trace in the dataset. Ask whether to watch it live in Studio or run it terminal-only (results reported in chat). Either way, set `fixReplayScope = "dataset"` and `fixSkipMakeChange = true` (the fix is already made; this re-runs it across the dataset without editing again), then route to `open-experiments-before-replay`, which honors `fixDatasetStudio`.
@@ -487,7 +487,7 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
 
    **Next:**
 
-   - Option D (Stop and wrap up) (mode `fix`): invoke the `assistant-wrap-up` skill with mode `fix`.
+   - Option D (Stop and wrap up) (mode `fix`): invoke the `assistant-wrap-up` skill with mode `fix`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 18. **Run only when mode is `fix`.**
 
    **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Saving the failing scenario"`.
@@ -506,7 +506,7 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
 
    **Next:**
 
-   - Mode `fix`: invoke the `assistant-wrap-up` skill with mode `fix`.
+   - Mode `fix`: invoke the `assistant-wrap-up` skill with mode `fix`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 19. **Run only when mode is `fix`.**
 
    **Run only when the user chose "Show in Studio" from a post-target-replay fix prompt.** Open Studio to the single-trace replay's experiment view so the user can inspect the original failing trace, the replay trace, the verdict, and the code-change before/after.
@@ -563,4 +563,4 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
 
    **Next:**
 
-   - Option B (Stop and wrap up) (mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`): invoke the `assistant-wrap-up` skill with the current mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`).
+   - Option B (Stop and wrap up) (mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`): invoke the `assistant-wrap-up` skill with the current mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

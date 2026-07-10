@@ -74,15 +74,15 @@ Read `$ARGUMENTS` first. If its first token is exactly one of the mode names bel
 
 ## Dispatch
 
-- Mode `wizard`: invoke the `setup-preamble` skill with mode `wizard`.
-- Mode `explain`: invoke the `setup-explain` skill with mode `explain`.
-- Mode `login` or `instrument`: invoke the `setup-login` skill with the current mode (`login` or `instrument`).
-- Mode `session-logs`: invoke the `setup-session-logs` skill with mode `session-logs`.
-- Mode `modify`: invoke the `setup-modify` skill with mode `modify`.
-- Mode `inspect`: invoke the `setup-inspect` skill with mode `inspect`.
-- Mode `switch-org`: invoke the `setup-switch-org` skill with mode `switch-org`.
-- Mode `view`: invoke the `setup-view` skill with mode `view`.
-- Mode `replay`: invoke the `setup-replay` skill with mode `replay`.
-- Mode `db-snapshot`: invoke the `setup-db-snapshot` skill with mode `db-snapshot`.
-- Mode `templates`: invoke the `setup-templates` skill with mode `templates`.
-- Mode `analyze-repo`: invoke the `setup-analyze-repo` skill with mode `analyze-repo`.
+- Mode `wizard`: invoke the `setup-preamble` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `explain`: invoke the `setup-explain` skill with mode `explain`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `login` or `instrument`: invoke the `setup-login` skill with the current mode (`login` or `instrument`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `session-logs`: invoke the `setup-session-logs` skill with mode `session-logs`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `modify`: invoke the `setup-modify` skill with mode `modify`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `inspect`: invoke the `setup-inspect` skill with mode `inspect`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `switch-org`: invoke the `setup-switch-org` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `view`: invoke the `setup-view` skill with mode `view`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `replay`: invoke the `setup-replay` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `db-snapshot`: invoke the `setup-db-snapshot` skill with mode `db-snapshot`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `templates`: invoke the `setup-templates` skill with mode `templates`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `analyze-repo`: invoke the `setup-analyze-repo` skill with mode `analyze-repo`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

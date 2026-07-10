@@ -47,8 +47,8 @@ Reached only from `investigate` mode. The user is describing an issue they want 
 
    **Next:**
 
-   - Option A (Stop here) (mode `investigate`): invoke the `assistant-cleanup` skill with mode `investigate`.
-   - Option C (Build a labeled dataset) (mode `investigate`): invoke the `assistant-dataset` skill with mode `investigate`.
+   - Option A (Stop here) (mode `investigate`): invoke the `assistant-cleanup` skill with mode `investigate`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Build a labeled dataset) (mode `investigate`): invoke the `assistant-dataset` skill with mode `investigate`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 4. Write a markdown report capturing the investigation. Path: `.bitfab/analysis/<traceFunctionKey>-<YYYY-MM-DD-HHmm>.md` (create the `.bitfab/analysis/` directory if missing; fall back to a path under the repo root or `os.tmpdir()` if the project root isn't writable). Use the `Write` tool with this structure:
 
    ```markdown
@@ -78,4 +78,4 @@ Reached only from `investigate` mode. The user is describing an issue they want 
 
    **Next:**
 
-   - Mode `investigate`: invoke the `assistant-cleanup` skill with mode `investigate`.
+   - Mode `investigate`: invoke the `assistant-cleanup` skill with mode `investigate`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

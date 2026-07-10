@@ -36,9 +36,9 @@ Bitfab captures every AI function call, inputs, outputs, and errors, so you can 
 
    **Next:**
 
-   - Option B (Modify an existing trace setup) (mode `wizard` or `instrument`): invoke the `setup-modify` skill with the current mode (`wizard` or `instrument`).
-   - Option C (Continue) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`.
-   - Option C (Continue) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`.
+   - Option B (Modify an existing trace setup) (mode `wizard` or `instrument`): invoke the `setup-modify` skill with the current mode (`wizard` or `instrument`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Continue) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Continue) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 3. Use the API key from the Login phase (or retrieve it now if already authenticated)
 4. **Install the SDK now.** Detect the project's package manager from its manifest (`pyproject.toml` → `uv`/`poetry`; `package.json` → `pnpm`/`npm`/`yarn`/`bun`; `Gemfile` → `bundle`; `go.mod` → `go get`; `requirements.txt` → edit file + `pip install -r`) and run its canonical add command, do NOT stop to ask about version pinning or dep groups. Prefer `uv add`/`poetry add` over bare `pip install` (bare `pip install` doesn't persist to pyproject.toml). In monorepos, scope to the correct workspace (e.g. `pnpm add --filter <pkg>`, or cd into the app directory first), running from the repo root will install into the wrong package. Default to a runtime dep for applications; a dev dep for libraries/SDKs where a runtime dep would propagate to downstream users. Then set the `BITFAB_API_KEY` environment variable.
 
@@ -199,8 +199,8 @@ Bitfab captures every AI function call, inputs, outputs, and errors, so you can 
 
    **Next:**
 
-   - Option D (Done instrumenting) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`.
-   - Option D (Done instrumenting) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`.
+   - Option D (Done instrumenting) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option D (Done instrumenting) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 16. Restate the run command from step 14 so the user can run it (or let you run it for them). Before starting the wait, tell the user verbatim: `Run your app now to produce a trace (or tell me to run it for you). I'll watch and report the first trace when it lands, up to ~10 min. Press Esc to cancel.` Then run with `Bash` (timeout: 660000ms):
 
    ```bash
@@ -222,8 +222,8 @@ Bitfab captures every AI function call, inputs, outputs, and errors, so you can 
 
    **Next:**
 
-   - Option C (Done instrumenting) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`.
-   - Option C (Done instrumenting) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`.
+   - Option C (Done instrumenting) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Done instrumenting) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 18. Run the exact replay command generated in step 14 for the current workflow, adding `--trace-ids <traceId>` for the trace id returned by step 16. Keep the command's normal env loader (for example `pnpm with-env`, `dotenv run`, or the project's equivalent). Do not substitute mocks or a different entrypoint.
 
    If the replay exits 0, summarize the test run URL and whether items passed, changed, or errored, then continue to the next-move prompt. If it exits non-zero, surface the failing command and the important stderr/stdout lines; make only high-confidence fixes to the replay script or instrumentation, rerun once, then continue to the next-move prompt. Do not run the broad Replay phase from here; this step is only the just-captured trace smoke test.
@@ -235,8 +235,8 @@ Bitfab captures every AI function call, inputs, outputs, and errors, so you can 
 
    **Next:**
 
-   - Option C (Done instrumenting) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`.
-   - Option C (Done instrumenting) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`.
+   - Option C (Done instrumenting) (mode `wizard`): invoke the `setup-replay` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Done instrumenting) (mode `instrument`): invoke the `setup-cleanup` skill with mode `instrument`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 
 ## Refactor confirmation (applies to Instrument's workflow-selection step, Replay's safety-net step, and any write-instrumentation step that turns out non-additive)
 

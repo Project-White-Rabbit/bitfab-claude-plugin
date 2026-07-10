@@ -35,10 +35,10 @@ Check that this trace function has both instrumentation and a replay script.
 
    **Next:**
 
-   - Option A (Instrument now) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`.
-   - Option B (Continue anyway) (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`.
-   - Option C (Pick a different function) (mode `wizard`): invoke the `assistant-identify-function` skill with mode `wizard`.
-   - Option D (Stop) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`.
+   - Option A (Instrument now) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option B (Continue anyway) (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Pick a different function) (mode `wizard`): invoke the `assistant-identify-function` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option D (Stop) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. Search for a replay script that covers this trace function:
 
    - Look for files matching `scripts/replay.*`, `scripts/*replay*`, or any file that imports `bitfab.replay` / `client.replay`
@@ -60,8 +60,8 @@ Check that this trace function has both instrumentation and a replay script.
 
    **Next:**
 
-   - Option B (Pick a different function) (mode `wizard`): invoke the `assistant-identify-function` skill with mode `wizard`.
-   - Option C (Stop) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`.
+   - Option B (Pick a different function) (mode `wizard`): invoke the `assistant-identify-function` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Stop) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 3. **Detect replay script capabilities.** Check what the replay script supports. These flags determine how experiment results are tracked and displayed in Phase 5. **If you already ran this step for the same trace function earlier in this session, skip it and continue. Re-run if the user switched functions via "Pick a different function".**
 
    **1. Use the replay script located in the previous step** (or grep for `scripts/replay.*` / files importing `bitfab.replay` / `client.replay`).
@@ -113,8 +113,8 @@ Check that this trace function has both instrumentation and a replay script.
 
    **Next:**
 
-   - All flags are true (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`.
-   - Option B (Continue without) (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`.
+   - All flags are true (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option B (Continue without) (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 4. **Upgrade the SDK and replay script.** The replay script references SDK APIs (`name`, `experimentGroupId`, `codeChangeDescription`, per-item `traceId`, `adaptInputs` / `adapt_inputs`) that require a recent SDK. Upgrade the SDK first, then regenerate the script.
 
    **1. Upgrade the SDK.** Run the capability probe to read the installed version and update status (skip if you still have its block from `detect-replay-capabilities`):
@@ -144,4 +144,4 @@ Check that this trace function has both instrumentation and a replay script.
 
    **Next:**
 
-   - Mode `wizard`: invoke the `assistant-dataset` skill with mode `wizard`.
+   - Mode `wizard`: invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

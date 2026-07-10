@@ -23,4 +23,4 @@ If a `traceFunctionKey` was provided as an argument, skip the listing and the us
 
    **Next:**
 
-   - Mode `wizard`: invoke the `assistant-verify-instrumentation` skill with mode `wizard`.
+   - Mode `wizard`: invoke the `assistant-verify-instrumentation` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

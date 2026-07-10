@@ -29,4 +29,4 @@ allowed-tools: ["Bash", "AskUserQuestion", "Skill"]
 
    **Next:**
 
-   - Mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`: invoke the `assistant-cleanup` skill with the current mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`).
+   - Mode `wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`: invoke the `assistant-cleanup` skill with the current mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

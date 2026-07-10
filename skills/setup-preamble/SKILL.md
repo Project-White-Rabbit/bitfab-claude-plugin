@@ -38,4 +38,4 @@ user-invocable: false
 
    **Next:**
 
-   - Mode `wizard`: invoke the `setup-login` skill with mode `wizard`.
+   - Mode `wizard`: invoke the `setup-login` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

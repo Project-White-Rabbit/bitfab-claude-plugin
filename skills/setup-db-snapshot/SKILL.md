@@ -33,7 +33,7 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
 
    **Next:**
 
-   - The project is Go, or there are no replay scripts to augment yet (mode `db-snapshot`): invoke the `setup-cleanup` skill with mode `db-snapshot`.
+   - The project is Go, or there are no replay scripts to augment yet (mode `db-snapshot`): invoke the `setup-cleanup` skill with mode `db-snapshot`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. Call `mcp__plugin_bitfab_Bitfab__get_database_connection_status` once to read the current state:
    - **`connected`**: the database is already connected and provisioned. Tell the user, and continue to the next step.
    - **`none`**: no database is connected yet. The tool's response includes the exact **Integrations** URL. Relay it to the user and ask them to open it, go to the **Database** section, and paste their Postgres connection string. Provisioning the branchable copy takes a few minutes.
@@ -107,4 +107,4 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
 
    **Next:**
 
-   - Mode `db-snapshot`: invoke the `setup-cleanup` skill with mode `db-snapshot`.
+   - Mode `db-snapshot`: invoke the `setup-cleanup` skill with mode `db-snapshot`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

@@ -74,8 +74,8 @@ This is about trace *delivery and setup health* (is the SDK wired up and current
 
    **Next:**
 
-   - Everything is already healthy (nothing to fix) (mode `inspect`): invoke the `setup-cleanup` skill with mode `inspect`.
-   - Option B (Just report) (mode `inspect`): invoke the `setup-cleanup` skill with mode `inspect`.
+   - Everything is already healthy (nothing to fix) (mode `inspect`): invoke the `setup-cleanup` skill with mode `inspect`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option B (Just report) (mode `inspect`): invoke the `setup-cleanup` skill with mode `inspect`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 7. **Apply fixes individually, confirm each before changing anything; never bundle them into one blanket change.** Go through only the items step 4 flagged as stale or missing, and for each, use `AskUserQuestion` (one decision per question) and apply only if the user approves. Skip any they decline and continue to the next.
 
    - **Plugin behind**: use `AskUserQuestion` to update; if yes, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/update.js" plugin` and remind the user to restart Claude Code so the new plugin loads.
@@ -87,4 +87,4 @@ This is about trace *delivery and setup health* (is the SDK wired up and current
 
    **Next:**
 
-   - Mode `inspect`: invoke the `setup-cleanup` skill with mode `inspect`.
+   - Mode `inspect`: invoke the `setup-cleanup` skill with mode `inspect`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
