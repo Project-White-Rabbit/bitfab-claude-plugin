@@ -30,7 +30,7 @@ Explain what Bitfab is and how this skill is organized. Read-only, no authentica
                  Turns production data into a ready-made regression test.
 
    What you can run
-     /bitfab:setup            Login, then instrument + replay (the full setup)
+     /bitfab:setup            Login, then instrument workflows until done
      /bitfab:setup explain    This overview (read-only)
      /bitfab:setup login      Authenticate with Bitfab
      /bitfab:setup instrument Wrap a new AI workflow with tracing

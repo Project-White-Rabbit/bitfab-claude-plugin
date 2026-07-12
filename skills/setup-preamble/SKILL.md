@@ -29,9 +29,7 @@ user-invocable: false
 
    Setup runs in two phases:
      1. LOGIN                , authenticate (15s, browser)
-     2. INSTRUMENT + REPLAY  , written together per workflow:
-        • INSTRUMENT         , wrap your workflows with tracing (purely additive)
-        • REPLAY             , generate a replay script for your trace functions
+     2. INSTRUMENT           , wrap workflows with tracing and generate their replay scripts
    ```
 
    Then proceed to Login.

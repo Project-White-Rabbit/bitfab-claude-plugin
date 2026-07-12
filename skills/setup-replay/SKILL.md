@@ -7,15 +7,13 @@ allowed-tools: ["Read", "Glob", "Grep", "Edit", "Write", "WebFetch", "AskUserQue
 
 # Bitfab Setup: Replay
 
-**Mode:** you were dispatched with a mode (`wizard` or `replay`); the gates and Next routing below depend on it.
-
-**Run only when mode is `wizard` or `replay`.**
+**Run only when mode is `replay`.**
 
 Create or update replay scripts for instrumented trace functions. Requires instrumentation in the codebase; does **not** require existing traces, replay scripts are created from trace function keys in the code, not captured trace data.
 
 Replay scripts let the team regression-test any trace function against production data with one command, they fetch historical traces, re-run them through the current code, and report old vs. new outputs side-by-side. Note: **Go does not support replay**: skip this phase if the project is Go-only.
 
-**Relationship to Instrument.** When Replay runs via `wizard` mode or directly after Instrument, most (often all) trace function keys already have pipelines because Instrument's write-instrumentation step writes them alongside the instrumentation edits in the same cycle. This phase is then a coverage + contract-compliance sweep. Run it standalone (`/bitfab:setup replay`) to catch pre-existing trace function keys that predate that step or were added outside the skill.
+**Relationship to Instrument.** Instrument's write-instrumentation step writes each replay pipeline alongside the instrumentation edits. Run this mode standalone (`/bitfab:setup replay`) to catch pre-existing trace function keys that predate that step or were added outside the skill.
 
 **Source of truth:** two pages, read both before creating or modifying a replay script. Do not improvise from memory.
 - **Canonical `replay` API signature, options, and return shape:** `/reference/typescript.md`, `/reference/python.md`, `/reference/ruby.md` (Go has no replay). Use this for the exact field names (`result` / `originalOutput` vs `original_output`), default `limit`, `maxConcurrency`/`max_concurrency`, error behavior.
@@ -64,10 +62,10 @@ Replay scripts let the team regression-test any trace function against productio
 
    **Next:**
 
-   - Every instrumented function is invocable from the replay script and its root is replayable (no safety-net case applies) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-   - Option A (Move trace boundary inward) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-   - Option B (Refactor) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-   - Option C (Leave as-is) (mode `wizard` or `replay`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `replay`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Every instrumented function is invocable from the replay script and its root is replayable (no safety-net case applies) (mode `replay`): invoke the `setup-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option A (Move trace boundary inward) (mode `replay`): invoke the `setup-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option B (Refactor) (mode `replay`): invoke the `setup-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Option C (Leave as-is) (mode `replay`): invoke the `setup-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 
 ## Refactor confirmation (applies to Instrument's workflow-selection step, Replay's safety-net step, and any write-instrumentation step that turns out non-additive)
 
