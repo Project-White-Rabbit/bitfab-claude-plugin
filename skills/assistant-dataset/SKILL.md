@@ -134,7 +134,7 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
 
    - `{"event":"return-to-agent",...}`, user clicked **Done**. Dataset review is complete.
    - `{"event":"edit-with-agent",...,"datasetId":"..."}`, user clicked **Edit with agent**. Go to the modify loop, then come back here.
-   - `{"event":"session-ended",...}`, user closed Studio entirely.
+   - `{"event":"session-ended",...}`, user closed Studio entirely. **Exception:** a `"reason":"never-connected"` field means the user did NOT close anything, the Studio window never actually opened. Tell them that, and offer to re-run the open (the stale session is auto-cleared, so the re-run opens a fresh window). Terminal events from the wrapper commands (`cancelled` from `startDataset.js`/`openTracePlan.js`, `ended` from the experiments commands) carry the same `reason` field and get the same treatment: never-connected is "window never opened, offer retry", not a user abort.
    - `{"event":"navigated",...}`, Studio navigated to a new page (informational).
    - `{"event":"element-clicked",...}` / `{"event":"focusChanged",...}`, user interaction events (used during template editing).
 
