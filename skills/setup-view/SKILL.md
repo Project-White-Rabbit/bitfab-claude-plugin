@@ -27,7 +27,10 @@ Every View invocation targets **exactly one** trace function. The browser UI's C
    **Next:**
 
    - Option B (Stop) (mode `view`): invoke the `setup-cleanup` skill with mode `view`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-4. Open the trace plan in the browser by running:
+4. **Render the trace plan inline as ASCII** from the plan fetched in step 3, using the "Trace Plan Format" reference section (default view: the captured spans, their types, and the tree as recorded). This is read-only, do not edit anything. Then use `AskUserQuestion` whether to open it in the browser or finish:
+
+   - **Done**: the inline ASCII was the view; report that the plan was viewed and stop.
+   - **View in browser**: open the plan in Studio for a richer read-only look, by running:
 
    ```bash
    node "${CLAUDE_PLUGIN_ROOT}/dist/commands/openTracePlan.js" <planId>

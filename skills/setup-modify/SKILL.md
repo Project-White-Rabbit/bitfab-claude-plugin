@@ -2,7 +2,7 @@
 name: setup-modify
 description: Modify phase of the Bitfab Setup flow. Invoked by the setup flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__create_trace_plan", "mcp__plugin_bitfab_Bitfab__get_trace_plan", "Skill"]
+allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__create_trace_plan", "mcp__plugin_bitfab_Bitfab__confirm_trace_plan", "mcp__plugin_bitfab_Bitfab__get_trace_plan", "Skill"]
 ---
 
 # Bitfab Setup: Modify
@@ -53,34 +53,29 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
    Mark every surrounding node with `kind: "pure"` (uncaptured), **do not** add their ids to `capturedNodeIds`, and still attach `analysis` to each one. They serve two ends: **legibility** (the captured set sits inside its surrounding code so the user sees what is and isn't traced) and **modification** (they are the levers in the UI for expanding capture deeper, broader, or sideways).
 
    When applying a requested modification, read the relevant signatures so the plan stays accurate: for added context, name the exact keys/values and the span they attach to; for new instrumented spans, read each callee's signature and pick a type annotation (`function`, `llm`, `tool`, `agent`, `handoff`); for span removals, list each by name and confirm the underlying call is left untouched; for a new upstream/downstream root, read the new function's signature and confirm it still covers the interesting LLM/tool activity (upstream) or remains a common ancestor of every LLM/tool span (downstream).
-5. **Send the modified plan straight to the trace plan UI, it is the user's primary surface for confirming or editing the change**, not the inline before/after diff. The user can adjust the captured set directly in the UI (selecting/deselecting any of the surrounding `pure` context nodes added in step 4). Confirm in the UI = apply the diff. Cancel = ask the user what they want to change. Same delivery pattern as Instrument's build-trace-plan step.
+5. **Post the modified plan, render it inline as ASCII, then use `AskUserQuestion` whether to review it in the browser or just continue**, same delivery pattern as Instrument's build-trace-plan step. The inline ASCII is what the user reviews in chat; Studio is the optional richer surface where they can adjust the captured set (selecting/deselecting any of the surrounding `pure` context nodes added in step 4). Continue (or Confirm in Studio) = apply the diff. Cancel in Studio = ask the user what they want to change.
 
-   1. **Post the modified plan and open the UI.** Call `mcp__plugin_bitfab_Bitfab__create_trace_plan` with `{ language, tree, capturedNodeIds, traceFunctionKey }` (and `stats` if you have a sample run from the existing trace function):
+   1. **Post the modified plan.** Call `mcp__plugin_bitfab_Bitfab__create_trace_plan` with `{ language, tree, capturedNodeIds, traceFunctionKey }` (and `stats` if you have a sample run from the existing trace function). Do NOT open Studio here, rendering (step 2) and the browser-or-continue ask (step 3) come next:
       - `tree`, the modified `after` `TracePlanTree` from step 4, with the ~10 surrounding callers / ~10 surrounding callees included as `pure` context nodes. Every node carries the `analysis` you set/carried-forward in that step, including uncaptured context nodes.
       - `capturedNodeIds`, your initial recommendation. Must form a connected sub-tree (selecting any descendant implies its ancestors). Surrounding `pure` context nodes are not included.
       - `traceFunctionKey`, the existing key from step 2. Persisting it lets the next Modify cycle bootstrap from this plan.
 
       The server derives the validation card (status pill + aggregate counts) from the per-node `analysis`, so you don't send a summary. The tool returns a plan id (and a `https://bitfab.ai/studio/trace-plan/<id>` URL).
 
-   2. **Open the trace plan in the browser** by running:
+   2. **Render the modified plan inline as ASCII** using the Default view template from the **Trace Plan Format** reference section (before/after framing: show the current capture and the modified capture, as fits the change). List the `Files changed:` footer (paths only, no annotations). This is what the user reviews in chat.
 
-   ```bash
-   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/openTracePlan.js" <planId>
-   ```
+   3. **Then use `AskUserQuestion`** what they want to do next. The primary choice is **View in browser** (open Studio, the richer surface for reviewing and toggling the captured set) or **Continue** (apply the diff using the plan as rendered). The full option set and routing:
 
-   (`${CLAUDE_PLUGIN_ROOT}` resolves to the plugin directory; `<planId>` is the id returned by `mcp__plugin_bitfab_Bitfab__create_trace_plan`.) The script navigates Studio to the trace plan page and **blocks** until the user clicks **Confirm** or **Cancel**. If it emits `{"event":"window-open-requested","url":"..."}`, immediately surface the URL in a normal chat message, e.g. `Opening Studio: <url> - click it if a window doesn't appear`, before continuing to poll. (This event means the open was *requested*, not that a window is confirmed on screen; the link is the reliable fallback when nothing surfaces.)
-
-   3. **On exit, parse the final JSONL line and route:**
-      - `{"event":"confirmed","planId":"<uuid>"}`, call `mcp__plugin_bitfab_Bitfab__get_trace_plan` with the returned `planId` (which may differ from the original if a mid-session `create_trace_plan` created a new plan; `openTracePlan.js` auto-tracks the latest plan via `tracePlan:created` events) to read the authoritative `capturedNodeIds` (the user may have toggled `pure` context nodes into the captured set or removed previously-captured nodes in the UI). Reconcile your edit plan with what's now in `capturedNodeIds`, drop manual `●` wraps no longer captured, add wraps for any newly captured nodes. Every node should already be classified; if a confirmed captured node somehow lacks `analysis`, classify it now with the same decision procedure before instrumenting, never wrap a captured span without a mock decision from the confirmed plan. Then take branch **A** (Proceed).
-      - `{"event":"cancelled","planId":"<uuid>"}`, the user cancelled from the browser. Take branch **C** (Modifications), use `AskUserQuestion`: what do they want to change? Their answer feeds back into step 4. When the loop re-runs `openTracePlan.js` with the new plan, the script reuses the existing Studio browser tab automatically. **Exception:** a `"reason":"never-connected"` field means the user did NOT cancel, the Studio window never actually opened. Say that instead, and offer to re-run `openTracePlan.js` (the stale session is auto-cleared, so the re-run opens a fresh window).
-      - non-zero exit (including `{"event":"timeout",...}`), surface the error to the user, then fall back to the inline AskUserQuestion below.
-
-   **Inline fallback** (use only if `mcp__plugin_bitfab_Bitfab__create_trace_plan` errors, e.g. offline or MCP unreachable, or `openTracePlan.js` exits non-zero): present an inline before/after diff using the Default view template from the **Trace Plan Format** reference section, list `Files changed:` (paths only, no annotations), and **STOP**: use `AskUserQuestion`:
-
-   > A) **Proceed**: apply the diff using the confirmed capture set *(recommended)* → step 6
-   > B) **Expand details**: re-render the inline diff in the expanded view (fallback only) → step 5
+   > A) **Continue**: apply the diff using the plan as rendered inline (or the browser-confirmed capture set) *(recommended)* → step 6
+   > B) **View in browser**: open the plan in Studio to review and toggle the captured set; Confirm applies the diff, Cancel asks what to change → step 6
    > C) **Modifications**: ask what the user wants to change, then return to building the modified plan → step 4
    > D) **Abort entirely**: drop this cycle without writing edits → the `setup-cleanup` skill
+   > E) **Expand details**: re-render the inline ASCII diff in the expanded view → step 5
+
+      - **View in browser**: run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/openTracePlan.js" <planId>` (`${CLAUDE_PLUGIN_ROOT}` resolves to the plugin directory; `<planId>` is the id from step 1). The script navigates Studio to the trace plan page and **blocks** until the user clicks **Confirm** or **Cancel**. If it emits `{"event":"window-open-requested","url":"..."}`, immediately surface the URL in a normal chat message, e.g. `Opening Studio: <url> - click it if a window doesn't appear`, before continuing to poll. On exit, parse the final JSONL line: `{"event":"confirmed",...}` routes to branch **A** (apply), `{"event":"cancelled",...}` routes to branch **C** (ask what to change, unless the line carries `"reason":"never-connected"`, which means the window never opened, say so and offer to re-run); a non-zero exit surfaces the error, then re-ask below. On `confirmed`, call `mcp__plugin_bitfab_Bitfab__get_trace_plan` with the returned `planId` (which may differ from the original if a mid-session `create_trace_plan` created a new plan; `openTracePlan.js` auto-tracks the latest via `tracePlan:created` events) to read the authoritative `capturedNodeIds` (the user may have toggled `pure` context nodes into the set or removed captured ones), reconcile your edit plan with it (drop `●` wraps no longer captured, add wraps for newly captured nodes), then take branch **A**.
+      - **Continue** (branch **A**): call `mcp__plugin_bitfab_Bitfab__confirm_trace_plan` with the plan id from step 1 and your recommended `capturedNodeIds` to persist the modified plan as *confirmed* (Studio's Confirm does this on the browser path; Continue MUST do it here, or a later `/bitfab:setup view`/`/bitfab:setup modify` for this key won't find it), then apply the diff using the authoritative `capturedNodeIds` and per-node mock decisions it returns. Every node should already be classified; if a captured node somehow lacks `analysis`, classify it now with the decision procedure from step 4 before instrumenting, never wrap a captured span without a mock decision.
+
+   **If `mcp__plugin_bitfab_Bitfab__create_trace_plan` itself errors** (offline or MCP unreachable, so there is no plan id or browser option): render the inline before/after ASCII from your in-memory tree, derive the mock decisions yourself, and **STOP**: use `AskUserQuestion` using the options above before writing edits.
 
    **Next:**
 
@@ -95,7 +90,7 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
 
    B returns to step 2. A and C exit the Modify loop to cleanup (Modify does not auto-continue to Replay, the user can invoke `/bitfab:setup replay` separately).
 
-   **Re-entry rule (applies after you leave this loop).** If, later in the conversation, the user asks to re-instrument or change another function's capture in plain language (`re-instrument <fn>`, `change what this span records`, `give me the updated trace plan for <fn>`), that is a fresh Modify (or Instrument) cycle: re-invoke `/bitfab:setup modify` (name the mode, so it goes straight to Modify rather than falling back to the full `wizard`) so it runs through the trace-plan UI. **Never satisfy such a request by hand-writing a trace plan or before/after diff as a chat message, that skips the Studio confirmation UI (`mcp__plugin_bitfab_Bitfab__create_trace_plan` + `openTracePlan`).**
+   **Re-entry rule (applies after you leave this loop).** If, later in the conversation, the user asks to re-instrument or change another function's capture in plain language (`re-instrument <fn>`, `change what this span records`, `give me the updated trace plan for <fn>`), that is a fresh Modify (or Instrument) cycle: re-invoke `/bitfab:setup modify` (name the mode, so it goes straight to Modify rather than falling back to the full `wizard`) so it runs through the trace-plan flow. **Never satisfy such a request by hand-writing a trace plan or before/after diff you made up as a chat message, that skips the `mcp__plugin_bitfab_Bitfab__create_trace_plan` + inline ASCII render (and optional Studio review) this flow runs.**
 
    **Next:**
 
@@ -262,9 +257,10 @@ Use this **only** when there is genuinely no work above, alongside, or below the
 
 #### Presentation step
 
-After building the plan according to the rules above, use `AskUserQuestion` with these three options:
-- **Proceed** (recommended), accept the default view as shown
-- **Expand details**: re-render using the expanded view template
+After building the plan and posting it with `mcp__plugin_bitfab_Bitfab__create_trace_plan`, render it inline as ASCII (rules above), then use `AskUserQuestion`:
+- **View in browser** (recommended), open the plan in Studio to review and adjust the captured set
+- **Continue**, accept the plan as rendered inline and proceed (no Studio round-trip)
+- **Expand details**: re-render the ASCII using the expanded view template
 - **Adjust**: user wants changes; ask what
 
 ### Trace Plan Accuracy

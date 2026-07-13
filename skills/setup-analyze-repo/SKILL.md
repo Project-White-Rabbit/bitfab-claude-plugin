@@ -231,9 +231,10 @@ Use this **only** when there is genuinely no work above, alongside, or below the
 
 #### Presentation step
 
-After building the plan according to the rules above, use `AskUserQuestion` with these three options:
-- **Proceed** (recommended), accept the default view as shown
-- **Expand details**: re-render using the expanded view template
+After building the plan and posting it with `mcp__plugin_bitfab_Bitfab__create_trace_plan`, render it inline as ASCII (rules above), then use `AskUserQuestion`:
+- **View in browser** (recommended), open the plan in Studio to review and adjust the captured set
+- **Continue**, accept the plan as rendered inline and proceed (no Studio round-trip)
+- **Expand details**: re-render the ASCII using the expanded view template
 - **Adjust**: user wants changes; ask what
 
 ### Trace Plan Accuracy
