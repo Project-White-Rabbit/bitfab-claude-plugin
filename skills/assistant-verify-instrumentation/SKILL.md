@@ -74,7 +74,7 @@ Check that this trace function has both instrumentation and a replay script.
    | `experiment-group-id` or `experiment_group_id` | `supportsExperimentGroups` | Live streaming of results in Studio as replay runs |
    | `dataset-id` or `dataset_id` | `supportsDatasetId` | Durable attribution of the experiment to its dataset (shows under the dataset's experiments) |
    | `--name` plus `name` / `name:` forwarded to `replay()` | `supportsExperimentNames` | Human-readable experiment/test-run names in the UI |
-   | `traceId` or `trace_id` in the output/print section | `supportsReplayTraceIds` (re-confirmed post-replay in `check-trace-id-support`) | Verdict persistence, cross-iteration comparison, Studio experiments page |
+   | `originalTraceId`/`traceId` (or `original_trace_id`/`trace_id`; `sourceTraceId`/`source_trace_id` is the deprecated alias) in the output/print section | `supportsReplayTraceIds` (re-confirmed post-replay in `check-verdict-persistence`) | Verdict persistence (keyed by `originalTraceId`), cross-iteration comparison, Studio experiments page |
 
    `supportsInputAdapters` is **not** a script-grep flag (the script gains an `adaptInputs` / `adapt_inputs` argument only after a signature actually drifts, in `adapt-replay-inputs`). It comes solely from the installed SDK in step 3.
 
@@ -87,7 +87,7 @@ Check that this trace function has both instrumentation and a replay script.
    Read the `<bitfab-replay-capabilities>` block. Each line is a JSON object for one detected SDK with `language`, `workspacePath`, `current` (resolved version), `versionResolved`, `updateAvailable`, `latest`, and a `capabilities` object holding `supportsExperimentGroups`, `supportsDatasetId`, `supportsCodeChanges`, `supportsReplayTraceIds`, `supportsInputAdapters`, `supportsExperimentNames`. Pick the line whose `language` (and `workspacePath`, in a monorepo) matches the replay script's project.
 
    - **Combine the two sources:** a flag is true only when the script forwards it (step 2) **and** that SDK's matching `capabilities.*` is true. Take `supportsInputAdapters` straight from `capabilities.supportsInputAdapters` (it has no script side).
-   - `supportsReplayTraceIds` from the probe is a definitive **pre-replay** signal; the later `check-trace-id-support` step still re-confirms from the actual replay output.
+   - `supportsReplayTraceIds` from the probe is a definitive **pre-replay** signal; the later `check-verdict-persistence` step still re-confirms from the actual replay output.
    - If `versionResolved` is `false`, the probe couldn't pin the installed version, so every capability defaulted false and is **unverified**. Check that one SDK by hand before relying on the flags (TypeScript: grep `node_modules/@bitfab/sdk/dist/index.d.ts` for the option names and `ReplayItem.traceId`; Python: the installed `bitfab/replay.py`; Ruby: the installed gem's `replay.rb`), or resolve the version and re-run.
 
    If the script has a flag but the SDK's `capabilities.*` is false, mark that flag **false**. Prioritize upgrading the SDK over using fallbacks: without replay trace IDs, verdict labels can't be persisted (benchmark/experiment results stay in-agent only).
