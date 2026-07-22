@@ -8,7 +8,7 @@ Use the local plugin MCP tools (`mcp__plugin_bitfab_Bitfab__list_trace_functions
 
 **MCP tools:** This skill uses `list_trace_functions`, `search_traces`, `read_traces`, `read_trace_labels`, `update_agent_labels`, `set_human_labels`, `list_datasets`, `create_dataset`, `add_traces_to_dataset`, `remove_traces_from_dataset`, `get_trace_plan`, `list_experiments`, and `get_experiment_traces` from the **local plugin MCP server** (bundled with this plugin). Do NOT use the remote Bitfab MCP tools (`mcp__Simforge__*` or `mcp__Bitfab__*`), use only the `mcp__plugin_bitfab_Bitfab__*` variants.
 
-**Always use** `AskUserQuestion` **when asking questions, reporting results, or presenting choices** (one exception: the `benchmark` scorecard is printed as Markdown tables directly in chat, not via `AskUserQuestion`, since tables don't render inside that UI, see Phase Benchmark). Never print a question as text and wait. Rules:
+**Always use** `AskUserQuestion` **when asking questions, reporting results, or presenting choices** (two exceptions, each a report with no decision to hand the user: the `benchmark` scorecard is printed as Markdown tables directly in chat, not via `AskUserQuestion`, since tables don't render inside that UI, see Phase Benchmark; and `share-results` reports the experiment outcome and then routes silently by the already-approved plan, see Phase 5, so it is a plain chat report and never an `AskUserQuestion`, using one there would re-introduce the post-experiment prompt this flow deliberately removed). Never print a question as text and wait. Rules:
 
 - Recommend an option first, explain why in one line
 - Present 2-5 concrete options
