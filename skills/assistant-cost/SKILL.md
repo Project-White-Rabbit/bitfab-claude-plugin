@@ -2,7 +2,7 @@
 name: assistant-cost
 description: Phase Cost: Diagnose Token Spend phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__read_traces", "Skill"]
+allowed-tools: ["Bash", "Read", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
 ---
 
 # Bitfab Assistant: Phase Cost: Diagnose Token Spend

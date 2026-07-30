@@ -2,7 +2,7 @@
 name: assistant-diagnose
 description: Phase 4: Diagnose & Plan phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__read_traces", "Skill"]
+allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
 ---
 
 # Bitfab Assistant: Phase 4: Diagnose & Plan
@@ -15,7 +15,7 @@ allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__r
 
    **Understand failures.** Using the failed traces you read in Phase 3 (or read them now if you haven't):
 
-   - Call `mcp__plugin_bitfab_Bitfab__read_traces` on 3–5 failed traces with `scope: "full"`
+   - Call `mcp__plugin_bitfab_Bitfab__get_traces` on 3–5 failed traces with `scope: "full"`
 
    Synthesize the failure patterns, what's going wrong, what the common threads are.
 2. **Read the code.**

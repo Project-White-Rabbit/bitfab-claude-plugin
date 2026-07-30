@@ -2,7 +2,7 @@
 name: assistant-investigate
 description: Phase Investigate: Free-form Investigation phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Read", "Glob", "Grep", "Write", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__list_trace_functions", "mcp__plugin_bitfab_Bitfab__search_traces", "mcp__plugin_bitfab_Bitfab__read_traces", "Skill"]
+allowed-tools: ["Read", "Glob", "Grep", "Write", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__list_trace_functions", "mcp__plugin_bitfab_Bitfab__search_traces", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
 ---
 
 # Bitfab Assistant: Phase Investigate: Free-form Investigation
@@ -19,7 +19,7 @@ Reached only from `investigate` mode. The user is describing an issue they want 
    Do NOT invent or infer descriptions of what each function does from its key name. Use only what `mcp__plugin_bitfab_Bitfab__list_trace_functions` returns plus what's in the codebase.
 2. Free-form investigation: use whatever combination of MCP and local tools fits the user's described concern, subject to the Trace-first debugging rule above. Typical moves:
 
-   - **Trace evidence:** call `mcp__plugin_bitfab_Bitfab__search_traces` with filters that match the user's description (failure shape, recency, label state, user / session if mentioned), then `mcp__plugin_bitfab_Bitfab__read_traces` with `scope: "summary"` or `scope: "full"` on the most informative ones.
+   - **Trace evidence:** call `mcp__plugin_bitfab_Bitfab__search_traces` with filters that match the user's description (failure shape, recency, label state, user / session if mentioned), then `mcp__plugin_bitfab_Bitfab__get_traces` with `scope: "summary"` or `scope: "full"` on the most informative ones.
    - **Code context:** read the instrumented function and its call chain. If BAML files, related prompts, or upstream / downstream functions matter to the question, read those too.
    - **Quantify if useful:** if the user asked something like "how often does X happen", run targeted `mcp__plugin_bitfab_Bitfab__search_traces` calls with different filters to count.
 

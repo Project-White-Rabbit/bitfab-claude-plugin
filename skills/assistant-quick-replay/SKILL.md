@@ -2,7 +2,7 @@
 name: assistant-quick-replay
 description: Phase Replay: Single-Trace Quick Replay phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__read_traces", "Skill"]
+allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
 ---
 
 # Bitfab Assistant: Phase Replay: Single-Trace Quick Replay
@@ -15,7 +15,7 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    **Both sub-steps run without user interaction. No questions, just execute.**
 
-   **1. Read the trace (and resolve the function key).** Call `mcp__plugin_bitfab_Bitfab__read_traces` with the trace ID argument and `scope: "full"`. Hold the trace's label, annotation, inputs, and output in context, these are the acceptance criteria for the verdict. **If the user gave only a trace ID and no function key** (common with free-form requests like "did my fix work on `<id>`"), take the trace function key from the trace itself, don't ask the user for it.
+   **1. Read the trace (and resolve the function key).** Call `mcp__plugin_bitfab_Bitfab__get_traces` with the trace ID argument and `scope: "full"`. Hold the trace's label, annotation, inputs, and output in context, these are the acceptance criteria for the verdict. **If the user gave only a trace ID and no function key** (common with free-form requests like "did my fix work on `<id>`"), take the trace function key from the trace itself, don't ask the user for it.
 
    **2. Find the replay script.** Search for files matching `scripts/replay.*`, `scripts/*replay*`, or any file importing `bitfab.replay` / `client.replay`, and confirm it covers that trace function key. (You don't need to grep for capability flags here, this minimal path doesn't use code-change payloads or experiment groups. It does persist the verdict in the `verdict` step, straight from the replay output's server trace id, with no extra script capability required.)
 
