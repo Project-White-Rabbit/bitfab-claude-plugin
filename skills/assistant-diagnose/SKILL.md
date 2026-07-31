@@ -7,7 +7,7 @@ allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__g
 
 # Bitfab Assistant: Phase 4: Diagnose & Plan
 
-**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `investigate`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `investigate`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `wizard`, `dataset` or `investigate`.**
 

@@ -9,7 +9,7 @@ allowed-tools: ["Bash", "Read", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_B
 
 **Run only when mode is `fix`.**
 
-Reached only from `fix` mode. The user has a specific bug, a failing trace, and wants it fixed and saved in a dataset. This phase resolves THIS trace and its function and diagnoses the failure (deciding the acceptance criterion), then tails into the Phase 5 loop, where the fix itself is made and replayed against only the target trace first. **Nothing is added to a dataset here:** adding it to a dataset happens later (in `fix-add-to-dataset`), only after the fix proves the target trace green. The single-trace replay is still tagged with an experiment group so Studio can later show the before/after if the user asks, but Studio stays closed during this initial pass.
+Reached only from `fix` mode. The user has a specific bug, a failing trace, and wants it fixed and saved in a dataset. This phase resolves THIS trace and its function and diagnoses the failure (deciding the acceptance criterion), then continues into the Phase 5 loop, where the fix itself is made and replayed against only the target trace first. **Nothing is added to a dataset here:** adding it to a dataset happens later (in `fix-add-to-dataset`), only after the fix proves the target trace green. The single-trace replay is still tagged with an experiment group so Studio can later show the before/after if the user asks, but Studio stays closed during this initial pass.
 
 1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Resolving the bug"`.
 

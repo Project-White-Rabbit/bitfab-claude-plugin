@@ -6,7 +6,7 @@ user-invocable: false
 
 # Bitfab Update: Update plugin
 
-**Mode:** you were dispatched with a mode (`all` or `plugin`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`all` or `plugin`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `all` or `plugin`.**
 

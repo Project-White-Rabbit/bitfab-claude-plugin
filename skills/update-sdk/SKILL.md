@@ -7,7 +7,7 @@ allowed-tools: ["Bash", "Read", "Grep", "Glob", "Edit", "AskUserQuestion"]
 
 # Bitfab Update: Update SDK
 
-**Mode:** you were dispatched with a mode (`all` or `sdk`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`all` or `sdk`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `all` or `sdk`.**
 

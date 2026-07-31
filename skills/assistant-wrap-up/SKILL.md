@@ -7,7 +7,7 @@ allowed-tools: ["Bash", "AskUserQuestion", "Skill"]
 
 # Bitfab Assistant: Phase 6: Validate & Wrap Up
 
-**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `fix`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `wizard`, `dataset`, `experiment`, `cost-optimize`, `investigate` or `fix`.**
 

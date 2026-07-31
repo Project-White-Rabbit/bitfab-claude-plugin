@@ -7,7 +7,7 @@ allowed-tools: ["Bash", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_bitfa
 
 # Bitfab Setup: Login
 
-**Mode:** you were dispatched with a mode (`wizard` or `login` or `instrument`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `login` or `instrument`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `wizard`, `login` or `instrument`.**
 

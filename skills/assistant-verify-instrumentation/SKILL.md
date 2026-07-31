@@ -78,7 +78,7 @@ Check that this trace function has both instrumentation and a replay script.
 
    `supportsInputAdapters` is **not** a script-grep flag (the script gains an `adaptInputs` / `adapt_inputs` argument only after a signature actually drifts, in `adapt-replay-inputs`). It comes solely from the installed SDK in step 3.
 
-   **3. Confirm the installed SDK supports each flag.** A flag the script forwards is silently ignored when the installed SDK predates it, so each flag is gated on the SDK too. Run the capability probe (it resolves the installed SDK version from the lockfile/manifest and gates every capability by version, with no dist-file grepping across package-manager layouts):
+   **3. Confirm the installed SDK supports each flag.** A flag the script forwards is silently ignored when the installed SDK predates it, so each flag also depends on the SDK. Run the capability probe (it resolves the installed SDK version from the lockfile/manifest and resolves every capability by version, with no dist-file grepping across package-manager layouts):
 
    ```bash
    cd <project-dir> && node "${CLAUDE_PLUGIN_ROOT}/dist/commands/detectCapabilities.js"

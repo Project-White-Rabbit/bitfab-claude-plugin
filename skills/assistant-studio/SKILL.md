@@ -7,27 +7,27 @@ allowed-tools: ["Bash", "AskUserQuestion", "Skill"]
 
 # Bitfab Assistant: Studio Lifecycle
 
-**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `benchmark`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `experiment` or `cost-optimize` or `investigate` or `benchmark`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `wizard`, `dataset`, `experiment`, `cost-optimize`, `investigate` or `benchmark`.**
 
-The Studio is the companion browser surface for the assistant flow. In every mode that uses it, it opens once at the start and stays open throughout all phases, with individual phases navigating it to the relevant page (dataset review, experiment viewer, etc.) using `openStudioTo.js`. **`benchmark` is the exception:** it opens Studio only when the run passed the `studio` opt-in. A terminal-only `benchmark` run (no `studio` keyword) opens no Studio at all, and the `open` step below self-skips for it.
+The Studio is the companion browser surface for the assistant flow. In every mode that uses it, it opens once at the start and stays open throughout all phases, with individual phases navigating it to the relevant page (dataset review, experiment viewer, etc.) using `openStudioTo.js`. **`benchmark` is the exception:** it opens Studio only when the run passed the `studio` opt-in. A terminal-only `benchmark` run (no `studio` keyword) opens no Studio at all, and the `open` step below does nothing for it.
 
 **`openStudioTo.js` handles session resolution automatically.** It takes a single `<path>` argument and reads auth from your local config. The active Studio session is the single source of truth on disk:
 1. If an active session is recorded, it navigates that window to the path and reuses it.
 2. If none is recorded, it opens a **new** Studio window at the path.
 
-It never opens a second window while a session is recorded: it either reuses it or gates. A clean tab close or a deliberate end clears the record, so the next open is simply a fresh window.
+It never opens a second window while a session is recorded: it either reuses it or stops. A clean tab close or a deliberate end clears the record, so the next open is simply a fresh window.
 
 Output events:
 - `{"event":"navigated","sessionId":"...","path":"..."}`, reused an existing session.
 - `{"event":"window-open-requested","url":"..."}`, a fresh Studio window open was *requested* (the browser launch was called), not confirmed on screen. Immediately surface the URL to the user in a normal chat message (for example, `Opening Studio: <url> - click it if a window doesn't appear`) so it is copyable from the transcript; on a remote/SSH session or with no supported browser nothing may surface, so the link is the reliable fallback.
 - `{"event":"started","sessionId":"..."}`, opened a new Studio window.
 - `{"event":"monitor","sessionId":"...","eventFile":"..."}`, the durable event stream path. Tail `eventFile` for the live in-session events (the daemon appends them there for the whole session, independent of any running command).
-- `{"event":"not-responding","sessionId":"..."}`, a recorded session exists but the window did not respond (the navigation retries via ping-pong before reporting this, so the tab was pinged twice and never answered). **Every** Studio-opening command emits this on a stale session (`openStudioTo.js` and the dataset/experiment/trace-plan commands alike), and none of them opens a duplicate window. **This is a gate.** Recommend the user refresh or reopen the Studio tab in their browser, then use `AskUserQuestion` with two options: **Try again** (re-run the command that gated, the record is still on disk, so a window that came back gets reused) or **Open a new Studio** (run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/clearStudioSession.js"` to drop the stale record, then re-run the command, which now opens a fresh window). Only clear the record after the user approves. Some commands (e.g. `login`) also expose a `--force` flag for a user at a terminal to force-clear a stale session; never run `--force` yourself, surface the recovery to the user instead.
+- `{"event":"not-responding","sessionId":"..."}`, a recorded session exists but the window did not respond (the navigation retries via ping-pong before reporting this, so the tab was pinged twice and never answered). **Every** Studio-opening command emits this on a stale session (`openStudioTo.js` and the dataset/experiment/trace-plan commands alike), and none of them opens a duplicate window. **Do not retry this blindly.** Recommend the user refresh or reopen the Studio tab in their browser, then use `AskUserQuestion` with two options: **Try again** (re-run the command that stopped, the record is still on disk, so a window that came back gets reused) or **Open a new Studio** (run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/clearStudioSession.js"` to drop the stale record, then re-run the command, which now opens a fresh window). Only clear the record after the user approves. Some commands (e.g. `login`) also expose a `--force` flag for a user at a terminal to force-clear a stale session; never run `--force` yourself, surface the recovery to the user instead.
 - `{"event":"open-failed","reason":"...","url":"..."}`, the browser process did not launch (e.g. `rate-limited`, `spawn-failed`), so no window opened. When a `url` is present, the Studio session is live and reachable, tell the user Studio couldn't open a browser (give the `reason`) and ask them to click the link to open it: `<url>`. The command keeps polling, so a manual click connects and the flow proceeds. (A bare `open-failed` with no `url` is a hard failure, surface the error.)
 
-The gate fires only when a recorded window went unreachable with **no close signal**: a crash, sleep, or a tab close no process witnessed. A cleanly closed or deliberately ended session leaves no record, so the next open just opens fresh (no handshake, no prompt).
+This stop happens only when a recorded window went unreachable with **no close signal**: a crash, sleep, or a tab close no process witnessed. A cleanly closed or deliberately ended session leaves no record, so the next open just opens fresh (no handshake, no prompt).
 
 **Never use Playwright, `open`, `chrome-testing`, or any other browser automation to open Studio pages.** Always use `openStudioTo.js` which handles auth and session management.
 

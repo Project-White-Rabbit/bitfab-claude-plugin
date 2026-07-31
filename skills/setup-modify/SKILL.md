@@ -7,7 +7,7 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "AskUserQuestion", "mcp_
 
 # Bitfab Setup: Modify
 
-**Mode:** you were dispatched with a mode (`wizard` or `instrument` or `modify`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `instrument` or `modify`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `wizard`, `instrument` or `modify`.**
 
@@ -66,10 +66,10 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
 
    3. **Then use `AskUserQuestion`** what they want to do next. The primary choice is **View in browser** (open Studio, the richer surface for reviewing and toggling the captured set) or **Continue** (apply the diff using the plan as rendered). The full option set and routing:
 
-   > A) **Continue**: apply the diff using the plan as rendered inline (or the browser-confirmed capture set) *(recommended)* → step 6
+   > A) **Continue**: apply the diff using the plan shown above (or the set you confirmed in the browser) *(recommended)* → step 6
    > B) **View in browser**: open the plan in Studio to review and toggle the captured set; Confirm applies the diff, Cancel asks what to change → step 6
-   > C) **Modifications**: ask what the user wants to change, then return to building the modified plan → step 4
-   > D) **Abort entirely**: drop this cycle without writing edits → the `setup-cleanup` skill
+   > C) **Modifications**: change something about this plan → step 4
+   > D) **Abort entirely**: discard this plan without writing any edits → the `setup-cleanup` skill
    > E) **Expand details**: re-render the inline ASCII diff in the expanded view → step 5
 
       - **View in browser**: run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/openTracePlan.js" <planId>` (`${CLAUDE_PLUGIN_ROOT}` resolves to the plugin directory; `<planId>` is the id from step 1). The script navigates Studio to the trace plan page and **blocks** until the user clicks **Confirm** or **Cancel**. If it emits `{"event":"window-open-requested","url":"..."}`, immediately surface the URL in a normal chat message, e.g. `Opening Studio: <url> - click it if a window doesn't appear`, before continuing to poll. On exit, parse the final JSONL line: `{"event":"confirmed",...}` routes to branch **A** (apply), `{"event":"cancelled",...}` routes to branch **C** (ask what to change, unless the line carries `"reason":"never-connected"`, which means the window never opened, say so and offer to re-run); a non-zero exit surfaces the error, then re-ask below. On `confirmed`, call `mcp__plugin_bitfab_Bitfab__get_trace_plan` with the returned `planId` (which may differ from the original if a mid-session `create_trace_plan` created a new plan; `openTracePlan.js` auto-tracks the latest via `tracePlan:created` events) to read the authoritative `capturedNodeIds` (the user may have toggled `pure` context nodes into the set or removed captured ones), reconcile your edit plan with it (drop `●` wraps no longer captured, add wraps for newly captured nodes), then take branch **A**.
@@ -85,7 +85,7 @@ Every Modify cycle targets **exactly one** trace function. Never batch multiple 
    > We recommend **A**: generate a trace with the modified setup so the diff is observable end-to-end.
 
    > A) **Generate a trace for the modified setup**: present the script to run; allow the user to let you run it *(recommended)* → the `setup-cleanup` skill
-   > B) **Modify another trace function**: returns to step 2 → step 2
+   > B) **Modify another trace function**: pick another traced function to adjust → step 2
    > C) **Done**: stop here → the `setup-cleanup` skill
 
    B returns to step 2. A and C exit the Modify loop to cleanup (Modify does not auto-continue to Replay, the user can invoke `/bitfab:setup replay` separately).

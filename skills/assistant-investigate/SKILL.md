@@ -41,7 +41,7 @@ Reached only from `investigate` mode. The user is describing an issue they want 
 
    > A) **Stop here**: the in-chat summary is enough; no further artifact → the `assistant-cleanup` skill
    > B) **Write an analysis report**: save the findings to a markdown file I can share or revisit later → step 4
-   > C) **Build a labeled dataset**: use these traces as seed candidates and label them so we can iterate against them later *(recommended)* → the `assistant-dataset` skill
+   > C) **Build a labeled dataset**: seed the dataset with these traces, label them, and iterate against them later *(recommended)* → the `assistant-dataset` skill
 
    Options A and B end at the cleanup step, which closes Studio. Option C continues through dataset building, diagnosis, and experiments, with Studio staying open throughout until cleanup at wrap-up.
 

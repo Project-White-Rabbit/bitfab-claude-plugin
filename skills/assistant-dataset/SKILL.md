@@ -7,7 +7,7 @@ allowed-tools: ["Bash", "Read", "Agent", "AskUserQuestion", "Monitor", "mcp__plu
 
 # Bitfab Assistant: Phase 3: Pick a Dataset and Label Traces
 
-**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `investigate`); the gates and Next routing below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `dataset` or `investigate`); which steps apply and where they route below depend on it.
 
 **Run only when mode is `wizard`, `dataset` or `investigate`.**
 
@@ -69,7 +69,7 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
 
    > A) **Define new criteria**: tell me what to find (failure pattern, customer reports, etc.) and I search unlabeled traces → step 5
    > B) **Reuse existing labels for this function**: seed the dataset with traces that already have validated labels, then optionally add more *(recommended)* → step 4
-   > C) **Open, you decide**: broad sample with no hypothesis; ignore prior labels for the search shape → step 6
+   > C) **Open, you decide**: broad sample with no hypothesis; ignore how earlier traces were labeled → step 6
 4. **Seed dataset from existing validated labels.** Reachable only when the user picked Option B in `ask-search-mode`. Pull traces that already have a validated label (human-authored, or agent-authored and human-approved) for this function, attach them to the picked dataset, and route on whether the user also wants to add more.
 
    1. Call `mcp__plugin_bitfab_Bitfab__search_traces` with `traceFunctionKey: <key>`, `validated: true`, and a generous `limit` (50 is the cap). Both `labelResult: true` and `labelResult: false` matter, failures are the hill-climbing signal, but passes anchor the regression boundary. If 50 isn't enough to cover the function's labeled history, run a second call with `labelResult: false` only to bias toward fails first, then a third with `labelResult: true`. De-dupe trace IDs across calls.
@@ -77,7 +77,7 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
    3. Call `mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` once with `datasetId` (the one picked in `list-datasets`) and the full deduped trace ID array. The call is idempotent, so re-attaching IDs already in the dataset is a safe no-op.
    4. Briefly summarize for the user: "Seeded the dataset with N reused labels (M fails, K passes). Want me to find more candidates to label, or is this set enough to move on?"
 
-   > A) **Find more candidates to label**: go through the regular intent + search + label flow on top of the reused set → step 5
+   > A) **Find more candidates to label**: search for more traces and label them, on top of the reused set → step 5
    > B) **Move on with just the reused set**: skip further labeling; the dataset page is already open with the reused traces streamed in *(recommended)* → step 10
 5. **Ask what kinds of traces to find**: The user picked "Define new criteria" (or arrived here from the reuse path wanting more). Find out what they're actually trying to surface. The trace function may have thousands of traces; "what should I label?" is the question that makes the rest of this phase useful.
 
@@ -104,7 +104,7 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
    **Scale the judging with fan-out when there are many items.** Per-item judging is embarrassingly parallel: each verdict depends only on that one item's own artifacts (plus the fixed rubric and any shared context you gather once below), never on the other items, and the judge only reasons and returns JSON, it never edits files. So pick serial or fan-out by the item count:
 
    - **At or below ~15-20 items: stay serial.** Judge every item yourself, inline in this agent, exactly as described above. Below that threshold the subagent spawn overhead outweighs the parallelism, so serial is faster.
-   - **Above ~15-20 items: fan out.** Split the items into batches (aim for one batch per subagent, roughly 8-12 items each, so even a large dataset resolves in a handful of subagents) and spawn one read-only subagent per batch with the Agent tool, `subagent_type: "general-purpose"`. Each subagent reasons over the payloads you hand it and returns its batch's verdicts as JSON. These judges only read and return data: do **NOT** pass `isolation: "worktree"` and do **NOT** depend on bypass permissions (that gating is only for the code-editing experiment fork in `pick-execution-mode`). A judge never edits files, runs replay, opens Studio, or calls MCP tools.
+   - **Above ~15-20 items: fan out.** Split the items into batches (aim for one batch per subagent, roughly 8-12 items each, so even a large dataset resolves in a handful of subagents) and spawn one read-only subagent per batch with the Agent tool, `subagent_type: "general-purpose"`. Each subagent reasons over the payloads you hand it and returns its batch's verdicts as JSON. These judges only read and return data: do **NOT** pass `isolation: "worktree"` and do **NOT** depend on bypass permissions (that is only for the code-editing experiment fork in `pick-execution-mode`). A judge never edits files, runs replay, opens Studio, or calls MCP tools.
 
    Make each subagent prompt fully self-contained: its batch's per-item payloads (each item carries its own artifacts, enumerated below), the fixed rubric, and any shared context you gathered once (so no subagent re-derives it or touches the repo). Tell it to return one verdict entry per item in the exact shape this step persists, and nothing else.
 
@@ -158,7 +158,7 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
 
    Then act on it:
 
-   - **Adding traces:** find candidates with `mcp__plugin_bitfab_Bitfab__search_traces` / `mcp__plugin_bitfab_Bitfab__get_traces`, then respect the labeling mode the user chose earlier in this phase (the ask-labeling-mode step). In **agent-first mode (Option A)**, label them yourself with `mcp__plugin_bitfab_Bitfab__save_agent_labels` (same rigor as label-self: every trace gets a verdict + annotation, grounded in the code) before attaching. In **manual mode (Option B)**, do NOT call `mcp__plugin_bitfab_Bitfab__save_agent_labels`. **If no labeling mode was selected** (the user took the Reuse → Move-on path that bypasses ask-labeling-mode, or find-unlabeled returned no candidates so ask-labeling-mode self-skipped), default to **agent-first mode (Option A)**: match the recommended default and label new candidates yourself before attaching. Either way, call `mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` to attach.
+   - **Adding traces:** find candidates with `mcp__plugin_bitfab_Bitfab__search_traces` / `mcp__plugin_bitfab_Bitfab__get_traces`, then respect the labeling mode the user chose earlier in this phase (the ask-labeling-mode step). In **agent-first mode (Option A)**, label them yourself with `mcp__plugin_bitfab_Bitfab__save_agent_labels` (same rigor as label-self: every trace gets a verdict + annotation, grounded in the code) before attaching. In **manual mode (Option B)**, do NOT call `mcp__plugin_bitfab_Bitfab__save_agent_labels`. **If no labeling mode was selected** (the user took the Reuse → Move-on path that bypasses ask-labeling-mode, or find-unlabeled returned no candidates so ask-labeling-mode did nothing), default to **agent-first mode (Option A)**: match the recommended default and label new candidates yourself before attaching. Either way, call `mcp__plugin_bitfab_Bitfab__add_traces_to_dataset` to attach.
    - **Removing traces:** call `mcp__plugin_bitfab_Bitfab__remove_traces_from_dataset` with the trace IDs to remove. The traces themselves aren't deleted, only their membership in the dataset.
 
    The dataset page reflects each add/remove live (SSE), so the user sees changes flow in as you make them. When you're done, summarize what changed in chat and **return to the await-event step to read the next event**. The user can click Edit with agent again for another modify round, or Done to finalize.
@@ -180,10 +180,10 @@ In `dataset` mode this phase is the entry point, Phase 1 (function picker) and P
    **Re-read them fresh here even if you read them earlier in this phase:** the Studio labeling review persists human approvals and label/annotation edits to the DB, so cached context from the find / label steps can be stale. This is the working set for confirm + every Phase 5 experiment.
 14. **Confirm the dataset**: Present the dataset via `AskUserQuestion`: each entry showing (trace ID, label, annotation summary). The dataset must contain at least one **validated failing label**: i.e. at least one trace where a human either authored or approved a `false` label. To check, call `mcp__plugin_bitfab_Bitfab__search_traces` restricted to the dataset trace IDs with `validated: true` and `labelResult: false`. Two outcomes:
 
-   - **gate fails (no validated failing label, search returns nothing)**: tell the user and loop back to find or label more unlabeled traces → step 6
-   - **gate passes (at least one validated failing label)**: get explicit approval, then continue → step 15
+   - **check fails (no validated failing label, search returns nothing)**: tell the user and loop back to find or label more unlabeled traces → step 6
+   - **check passes (at least one validated failing label)**: get explicit approval, then continue → step 15
 
-   Unapproved agent labels do **not** satisfy this gate by design, `validated: true` excludes them.
+   Unapproved agent labels do **not** satisfy this requirement by design, `validated: true` excludes them.
 15. **Hold in-context**: This approved dataset is the benchmark for all experiments in Phase 5. Keep both the `datasetId` and the trace IDs in your working context throughout.
 
    **Next:**
