@@ -55,5 +55,6 @@ Authenticate with Bitfab and retrieve the API key.
 
    **Next:**
 
-   - Mode `wizard` or `instrument`: invoke the `setup-instrument` skill with the current mode (`wizard` or `instrument`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Mode `wizard`: invoke the `setup-explain` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Mode `login`: invoke the `setup-cleanup` skill with mode `login`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+   - Mode `instrument`: invoke the `setup-instrument` skill with mode `instrument`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).

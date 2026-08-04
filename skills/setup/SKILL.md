@@ -74,9 +74,8 @@ Read `$ARGUMENTS` first. If its first token is exactly one of the mode names bel
 
 ## Dispatch
 
-- Mode `wizard`: invoke the `setup-preamble` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
+- Mode `wizard` or `login` or `instrument`: invoke the `setup-login` skill with the current mode (`wizard` or `login` or `instrument`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 - Mode `explain`: invoke the `setup-explain` skill with mode `explain`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-- Mode `login` or `instrument`: invoke the `setup-login` skill with the current mode (`login` or `instrument`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 - Mode `session-logs`: invoke the `setup-session-logs` skill with mode `session-logs`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 - Mode `modify`: invoke the `setup-modify` skill with mode `modify`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 - Mode `inspect`: invoke the `setup-inspect` skill with mode `inspect`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
