@@ -1,10 +1,7 @@
-import { detectClaudeInstallScopes, } from "bitfab-plugin-lib";
+import { detectClaudeInstallScopes, pluginUpdateScopes, } from "bitfab-plugin-lib";
 const PLUGIN_KEY = "bitfab@bitfab";
 function buildPluginUpdateCommands(scopes) {
-    // When detection fails (empty scopes), default to user scope to preserve
-    // historical behavior. Otherwise issue one update per detected scope so we
-    // also catch project/local installs that ignore the implicit user default.
-    const targets = scopes.length > 0 ? scopes : ["user"];
+    const targets = pluginUpdateScopes(scopes);
     return [
         "claude plugin marketplace update bitfab",
         ...targets.map((scope) => `claude plugin update bitfab@bitfab --scope ${scope}`),
