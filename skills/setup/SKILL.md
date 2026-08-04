@@ -44,7 +44,8 @@ When instrumenting a workflow, **its instrumentation and replay pipeline are wri
 | `status.js` | Check plugin authentication and connection status |
 | `login.js` | Authenticate for setup/instrumentation; standalone browser OAuth (blocks). Studio, dataset, and experiment flows log in inline and need no pre-login. |
 | `switchOrg.js [<clerkOrganizationId>]` | List the user's Bitfab orgs (no args), or switch the plugin's active org and replace the local API key (with a <clerkOrganizationId> arg) |
-| `openTracePlan.js <planId>` | Open the trace plan confirmation UI in Studio (blocks until user confirms or cancels) |
+| `openTracePlan.js <planId>` | Open the trace plan review UI in Studio (stays alive until the user closes or updates the plan) |
+| `openStudioTo.js <path>` | Navigate the active Studio session to a path (opens a window when none is active) |
 | `startTemplatePreview.js <functionKey>` | Open the template editor preview in Studio (blocks until user clicks Done) |
 | `closeStudio.js [message]` | Close the active Studio session (tab + background event process); no-op when nothing is open |
 | `clearStudioSession.js` | Clear the stale active-Studio pointer so the next open starts fresh |
