@@ -98,7 +98,7 @@ In sub-modes that take a function key, grep the codebase for `<key>` early so la
 | `replayProgress.js [--label <key>] [--total N] [--run-dir <path>] -- <replay command...>` | Run a replay and emit one ready-to-relay line per trace to stdout (header, then per trace: a pass/fail glyph, running n/total, and that trace's duration, with the error reason inline on failure; a liveness heartbeat line when a slow trace goes quiet; then a summary with total + average time), write a per-run replay event index to .bitfab/replays/<run-id>/events.jsonl, and write full item payloads to .bitfab/replays/<run-id>/items/*.json. Background it and relay each new line to the user |
 | `readTracesBatched.js <trace-id...> [--scope summary|full]` | Read many traces at once: fans get_traces out in parallel batches of 10, writes the concatenated result to a temp file, and prints its path as JSON |
 | `closeStudio.js [message]` | Close the active Studio session (tab + background event process); no-op when nothing is open |
-| `clearStudioSession.js` | Clear the stale active-Studio pointer so the next open starts fresh |
+| `clearStudioSession.js` | Start a fresh Studio window on the next open |
 
 ## Modes
 
