@@ -2,7 +2,7 @@
 name: setup-view
 description: View phase of the Bitfab Setup flow. Invoked by the setup flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Glob", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_trace_plan", "Skill"]
+allowed-tools: ["Bash", "Glob", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_trace_plan", "mcp__plugin_bitfab_Bitfab__list_trace_plans", "Skill"]
 ---
 
 # Bitfab Setup: View
@@ -22,12 +22,18 @@ Every View invocation targets **exactly one** trace function. The browser UI's C
 3. Call `mcp__plugin_bitfab_Bitfab__get_trace_plan` with `{ traceFunctionKey: "<chosen key>" }` (no `planId`). Two outcomes:
 
    - **Prior plan found**: parse the response for the `Plan id:` line and hold that id for the next step. Take branch **A** (Open).
-   - **"No prior confirmed trace plan found"**: there is no plan to view (key created outside the skill, never confirmed, or never instrumented via this skill). Tell the user there's nothing to view yet and suggest `/bitfab:setup modify` to build and confirm a plan for this key. Take branch **B** (Stop).
+   - **"No prior confirmed trace plan found"**: that rules out a *confirmed* plan, not every plan. **Probe `mcp__plugin_bitfab_Bitfab__list_trace_plans` with `{ traceFunctionKey: "<chosen key>", status: "awaiting" }`** before telling the user there is nothing here (a silent probe, don't narrate it):
+     - **An awaiting plan came back**: view the newest one. Read it with `mcp__plugin_bitfab_Bitfab__get_trace_plan` `{ planId }`, hold that id **and the fact that it is unconfirmed**, and take branch **A** (Open), saying in one line that this plan is still unconfirmed (an `/bitfab:setup analyze-repo` draft, or a plan whose confirmation never landed) and that `/bitfab:setup instrument` or `/bitfab:setup modify` is what turns it into instrumentation. **An unconfirmed plan is rendered inline only, never opened in Studio** (step 4 says why: its Save button would confirm it, and View must not write).
+     - **Nothing came back**: there is genuinely no plan to view (key created outside the skill, or never planned here). Tell the user that and suggest `/bitfab:setup modify` to build and confirm a plan for this key. Take branch **B** (Stop).
 
    **Next:**
 
    - Option B (Stop) (mode `view`): invoke the `setup-cleanup` skill with mode `view`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-4. **Render the trace plan inline as ASCII** from the plan fetched in step 3, using the "Trace Plan Format" reference section (default view: the captured spans, their types, and the tree as recorded). This is read-only, do not edit anything. Then use `AskUserQuestion` whether to open it in the browser or finish:
+4. **Render the trace plan inline as ASCII** from the plan fetched in step 3, using the "Trace Plan Format" reference section (default view: the captured spans, their types, and the tree as recorded). This is read-only, do not edit anything.
+
+   **🚨 If the plan came from the unconfirmed fallback in step 3 (its status is `awaiting`), the inline ASCII is the whole of View: do NOT offer the browser and do NOT run node "${CLAUDE_PLUGIN_ROOT}/dist/commands/openTracePlan.js".** Studio renders a *confirmed* plan read-only, but an awaiting one still shows its **Save** and **Close** buttons, and both persist a confirmation. Opening one "just to look" would let a read-only mode promote a draft into the key's confirmed plan with no code written to match it, which is the opposite of what View promises. Say that the plan is unconfirmed, that reviewing it for real belongs to `/bitfab:setup instrument` (to wire it up) or `/bitfab:setup modify` (to change it), and stop.
+
+   For a **confirmed** plan, use `AskUserQuestion` whether to open it in the browser or finish:
 
    - **Done**: the inline ASCII was the view; report that the plan was viewed and stop.
    - **View in browser**: open the plan in Studio for a richer read-only look, by running:
