@@ -19,12 +19,23 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    **2. Find the replay script.** Search for files matching `scripts/replay.*`, `scripts/*replay*`, or any file importing `bitfab.replay` / `client.replay`, and confirm it covers that trace function key. (You don't need to grep for capability flags here, this minimal path doesn't use code-change payloads or experiment groups. It does persist the verdict in the `verdict` step, straight from the replay output's server trace id, with no extra script capability required.)
 
+   **Mandatory pre-run replay safety check.** Complete this before executing the replay script for the first time, and re-run it whenever the script, replay root, span boundaries, dispatch model, or mock strategy changes. Do not discover unsafe coverage by running replay: a successful email, payment, queue publish, or database write has already caused the damage.
+
+   1. Read the replay call and require an explicit recorded-output strategy: normally `mock: "marked"` / `mock="marked"`; `all` is allowed only when every matched recorded child is intentionally frozen. Never accept `none` for a path with unsafe external actions.
+   2. Trace every unsafe action reachable from the replay root (database writes, outbound mutations, queue publishes, emails, payments, file/vector writes). Under `marked`, each must execute inside a manual descendant span marked `mockOnReplay: true` / `mock_on_replay: true`. Auto-observed spans, unwrapped calls, root-inline work, and import-time work are not intercepted. Move the boundary before proceeding; if that cannot be done without changing behavior, report the exact blocker and stop.
+   3. Verify the selected wrapper executes as a descendant in the same replay context. Python thread pools and `threading.Thread` require `Bitfab(trace_across_threads=True)`; pre-created queue consumers and other processes are not covered. Ruby span state is thread-local, so work dispatched to another or pre-created thread/process is not mockable from the replay root. Move the unsafe boundary into the replay context or stop. Ordinary same-context TypeScript async work and Python `asyncio` tasks/`asyncio.to_thread` retain context.
+   4. In TypeScript, a synchronous selected span cannot consume the lazy recorded-output fetch used by `mock: "marked"`. Use an already-async/Promise-returning boundary, or use `mock: "all"` only when freezing every matched child is compatible with the experiment. Never change a production function's return type just to make replay work; if neither option is valid, stop.
+
+   The SDK fails a selected mock closed when its historical tree or occurrence is unavailable, but that protects only calls that pass this check. Hold `replaySafetyVerified = true` only after every unsafe action passes it.
+
+   - **the replay safety check finds any uncovered or unmockable unsafe action**: report the exact call and why replay interception cannot cover it, then stop without executing replay → the `assistant-cleanup` skill
    - **replay script found and trace readable**: continue to run the replay → step 2
    - **no replay script found for this function**: tell the user: "No replay script found for `<key>`. Run `/bitfab:setup replay <key>` to create one, then re-run this command." Stop the flow → the `assistant-cleanup` skill
    - **trace not found or unreadable**: tell the user the trace ID wasn't found or is inaccessible, stop → the `assistant-cleanup` skill
 
    **Next:**
 
+   - The replay safety check finds any uncovered or unmockable unsafe action (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - No replay script found for this function (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Trace not found or unreadable (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 2. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Running replay"`.
@@ -44,7 +55,14 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    **Compare the single replay result to the original, report one line, then persist that verdict onto the replay trace.**
 
-   **If the replay errored** (crashed or `item.error` set): report the error clearly. This is an infra issue (missing DB row, env mismatch, etc.), not a code failure. There is no verdict to persist. Offer to retry after fixing the env, or to stop.
+   **If the replay errored**, report the concrete error and its source; do not label every error an environment problem. A non-zero exit with no items is a whole-script or whole-run failure, so diagnose its stderr/exception before offering a retry. For an errored item, inspect `traceError` / `replayError` in TypeScript or `trace_error` / `replay_error` in Python and Ruby, plus the compatible `error` message:
+
+   - A selected-mock tree/occurrence/output miss is an instrumentation or historical-trace mismatch. The real call did not run; fix the span boundary, selection, or source trace before retrying.
+   - A structured database branch or lease error is replay infrastructure. Report its code and remedy that setup.
+   - Another `replayError` / `replay_error` happened before the root ran (for example input hydration or adaptation); report that exact setup failure.
+   - A `traceError` / `trace_error` came from executing the replayed root. Treat it as a possible changed-code failure unless its message identifies the fail-closed selected-mock case above.
+
+   There is no verdict to persist for an errored item. Offer a retry only after the diagnosed cause is addressed, or offer to stop.
 
    **If the replay completed**, compare the new output against the original trace's label and annotation, then report one line:
 
