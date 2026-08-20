@@ -36,6 +36,12 @@ Authenticate with Bitfab and retrieve the API key.
 
    - Login fails, errors, or times out (mode `wizard` or `login` or `instrument`): invoke the `setup-cleanup` skill with the current mode (`wizard` or `login` or `instrument`), forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 3. Call `mcp__plugin_bitfab_Bitfab__get_bitfab_api_key` to retrieve the API key, **NEVER print or log the full key**. Stored at `~/.config/bitfab/credentials.json`, used for the `BITFAB_API_KEY` environment variable.
+
+   **If `mcp__plugin_bitfab_Bitfab__get_bitfab_api_key` is not available in this session**, the MCP server is switched off, not broken: it ships inside this plugin, so an absent tool is a setting rather than a failed install. Say so and hand the user the fix below; do not diagnose further, and do not fall back to drafting anything by hand.
+
+   Tell them to run `/mcp`, enable **Bitfab**, then re-run this skill. The tools load into the running session, so nothing is lost. Do **not** suggest restarting: the setting is stored per project and survives a relaunch, so they would come back just as stuck. Ignore `claude mcp list` here, it health-checks the server in its own process and prints `Connected` even when this session cannot reach it.
+
+   Then **stop**, the same way a failed login stops. Do not fall through to the remaining steps: every phase after this one needs these tools, so continuing only moves the failure further from its cause.
 4. Check whether session log consent has already been recorded:
 
    ```bash
