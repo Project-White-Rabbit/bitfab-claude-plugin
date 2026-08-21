@@ -5,7 +5,7 @@ argument-hint: "[wizard|explain|login|session-logs|instrument|modify|inspect|swi
 
 # Bitfab Setup
 
-**Always use `AskUserQuestion` when asking questions or presenting choices.** Never print a question as text and wait. Rules:
+**Always use `AskUserQuestion` when asking questions or presenting choices** (one exception: a step that explicitly says its answer is free-form, such as asking which file or function to instrument once the user has said they know, asks in plain chat and waits, because a menu there would stand between the user and the answer only they hold). Never print a question as text and wait. Rules:
 - Recommend an option first, explain why in one line
 - Present 2-5 concrete options
 - One decision per question, never batch
