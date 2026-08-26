@@ -57,7 +57,7 @@ Teach the two primitives the user has to instrument with. Read-only, no code cha
      /bitfab:setup inspect    Diagnose + fix setup: auth, what's instrumented, SDK/plugin current, replay coverage, traces arriving
      /bitfab:setup switch-org Switch which org the plugin reads and writes
      /bitfab:setup view       Open one trace function's plan in the browser (read-only)
-     /bitfab:setup replay     Create or update replay scripts
+     /bitfab:setup replay     Create or update replay registry modules
      /bitfab:setup templates  Change how a trace function's spans render
      /bitfab:setup session-logs  Opt in/out of session log collection
    ```

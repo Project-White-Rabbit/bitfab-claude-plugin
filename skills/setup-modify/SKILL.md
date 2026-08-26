@@ -153,9 +153,9 @@ Brackets `[…]` are structural labels (not spans). Parens `(…)` are span type
 5. **Skipped lines**: `<prefix>○ <name>`. No type annotation, no description.
 6. **Control-flow lines**: `<prefix>[loop]` / `[branch]` / `[parallel]`. They take children but have no symbol and no type.
 7. **Footer**: one blank line, then one or both of:
-   - `Files changed:` followed by a numbered list, every file the cycle will touch. This always includes the replay script path for non-Go projects (`scripts/replay.*` new or edited, per step 11b) alongside any instrumented source files. Go-only projects list only the instrumented source files.
+   - `Files changed:` followed by a numbered list, every file the cycle will touch. This always includes the replay registry module path for non-Go projects (`scripts/replayRegistry.ts`, `scripts/replay_registry.py`, or `scripts/replay_registry.rb`, new or edited per step 11b) alongside any instrumented source files. Go-only projects list only the instrumented source files.
    - `Setup: <one-line setup description>` (any plan that registers a trace processor)
-   Hybrid plans (manual spans + processor) include both, with `Setup:` first then `Files changed:`. A pure-processor plan still lists `Files changed:` because the processor-registration file is edited and the replay script (non-Go) is written. Go-only pure-processor plans with a single registration file and no manual spans may include only `Setup:` plus that one file under `Files changed:`.
+   Hybrid plans (manual spans + processor) include both, with `Setup:` first then `Files changed:`. A pure-processor plan still lists `Files changed:` because the processor-registration file is edited and the replay registry module (non-Go) is written. Go-only pure-processor plans with a single registration file and no manual spans may include only `Setup:` plus that one file under `Files changed:`.
 8. **No descriptions, no counts, no parameter details, no blank lines between siblings, no trailing whitespace.**
 9. **One trace function per plan.** A trace plan describes exactly one trace function, exactly one `Trace function: "..."` header, exactly one `[root]`, exactly one tree, exactly one `Files changed:` section. If the cycle would require instrumenting two trace functions, that's two cycles, not one plan with two trees.
 

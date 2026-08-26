@@ -17,7 +17,7 @@ Settle who does the instrumenting before any code is read or written. Runs once,
    > A) **Walk me through it**: I drive the instrumentation end to end, checking with you at each decision *(recommended)* → step 2
    > B) **I'll instrument myself**: hand over the docs and stop, no scanning, no code changes → step 3
 
-   Recommend **A** and say why in one line: it is the whole flow (SDK install, trace plan, spans, replay script) with a confirmation before anything is written. Ask this once; do not re-ask it later in the session.
+   Recommend **A** and say why in one line: it is the whole flow (SDK install, trace plan, spans, replay registry module) with a confirmation before anything is written. Ask this once; do not re-ask it later in the session.
 2. The user asked to be walked through it. **Before anything else** (before dispatching to the `setup-instrument` skill, before a single probe or file read), render the content of the block below **verbatim** as formatted markdown: no code fence, no rewording, no additions.
 
    ```markdown
@@ -37,7 +37,7 @@ Settle who does the instrumenting before any code is read or written. Runs once,
    - Mode `wizard`: invoke the `setup-instrument` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 3. The user is instrumenting on their own. Give them the pointers below in one short message, then **stop**: do not scan the codebase, read files, or edit anything.
 
-   - **Docs:** https://docs.bitfab.ai, start with the SDK guide for their language (`/typescript-sdk`, `/python-sdk`, `/ruby-sdk`, `/go-sdk`); each one covers install, initialization, wrapping a workflow, and (outside Go) the replay script. Name the language's page directly if the project's language is already obvious from the conversation; do not go read the repo to find out.
+   - **Docs:** https://docs.bitfab.ai, start with the SDK guide for their language (`/typescript-sdk`, `/python-sdk`, `/ruby-sdk`, `/go-sdk`); each one covers install, initialization, wrapping a workflow, and (outside Go) the replay registry module. Name the language's page directly if the project's language is already obvious from the conversation; do not go read the repo to find out.
    - **API key:** their app needs `BITFAB_API_KEY` set in the environment it runs in before any trace will arrive. Tell them to get the key from the Bitfab MCP's `get_bitfab_api_key` tool. Do **not** call it yourself, and never print a key.
    - **Coming back:** `/bitfab:setup` picks this flow back up, and `/bitfab:setup inspect` diagnoses an instrumentation they wrote themselves (auth, what's instrumented, whether traces are arriving).
 
