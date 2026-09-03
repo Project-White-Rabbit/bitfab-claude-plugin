@@ -2,7 +2,7 @@
 name: assistant-iterate
 description: Phase 5: Iterate with Replay phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "Grep", "Edit", "Write", "Agent", "AskUserQuestion", "Skill", "mcp__plugin_bitfab_Bitfab__search_traces", "mcp__plugin_bitfab_Bitfab__get_traces", "mcp__plugin_bitfab_Bitfab__get_trace_labels", "mcp__plugin_bitfab_Bitfab__save_human_labels", "mcp__plugin_bitfab_Bitfab__list_datasets", "mcp__plugin_bitfab_Bitfab__save_dataset", "mcp__plugin_bitfab_Bitfab__add_traces_to_dataset", "mcp__plugin_bitfab_Bitfab__list_experiments", "mcp__plugin_bitfab_Bitfab__list_experiment_traces", "mcp__plugin_bitfab_Bitfab__get_replay_status"]
+allowed-tools: ["Bash", "Read", "Grep", "Edit", "Write", "Agent", "AskUserQuestion", "Skill", "mcp__plugin_bitfab_Bitfab__search_traces", "mcp__plugin_bitfab_Bitfab__get_traces", "mcp__plugin_bitfab_Bitfab__get_trace_labels", "mcp__plugin_bitfab_Bitfab__get_trace_assertions", "mcp__plugin_bitfab_Bitfab__save_human_labels", "mcp__plugin_bitfab_Bitfab__list_datasets", "mcp__plugin_bitfab_Bitfab__save_dataset", "mcp__plugin_bitfab_Bitfab__add_traces_to_dataset", "mcp__plugin_bitfab_Bitfab__list_experiments", "mcp__plugin_bitfab_Bitfab__list_experiment_traces", "mcp__plugin_bitfab_Bitfab__get_replay_status"]
 ---
 
 # Bitfab Assistant: Phase 5: Iterate with Replay
@@ -432,7 +432,30 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
    }
    ```
 
-   In lineage keying, `testRunId` is this replay run's id (from the progress rows or the final `ReplayResult`); the server uses it to resolve each original trace to its replay trace within this run. The `expected*` list MUST be the full set of ids covered by this call's batch (and across all batches, every completed `item.error`-unset replay item must be persisted exactly once, no fewer, per the mandatory-coverage rule above). For the final end-of-run call, use only the ids not already successfully persisted by an earlier batch. `verdicts` MUST have one entry per id, either a `{label, annotation, confidence?}` verdict or a `{skip: true}` explicit skip (skips allowed only for the three enumerated skip cases above, never for an environmental doubt), keyed by the same id field as the `expected*` list. `confidence` is optional but recommended (`VeryLow|Low|Medium|High|VeryHigh`); it surfaces in the labeling UI so reviewers can prioritize low-confidence verdicts. If verdict counts don't match the `expected*` list, the script returns `status: "missing-coverage"` and the verify step routes you back to fill the gaps.
+   In lineage keying, `testRunId` is this replay run's id (from the progress rows or the final `ReplayResult`). The server uses it to resolve each original trace to its replay trace within this run. The `expected*` list MUST be the full set of ids covered by this call's batch (and across all batches, every completed `item.error`-unset replay item must be persisted exactly once, no fewer, per the mandatory-coverage rule above). For the final end-of-run call, use only the ids not already successfully persisted by an earlier batch. `verdicts` MUST cover every id in the `expected*` list, keyed by the same id field as that list. A trace with no assertions gets exactly one entry, either a `{label, annotation, confidence?}` verdict or a `{skip: true}` explicit skip (skips allowed only for the three enumerated skip cases above, never for an environmental doubt). A trace that has assertions gets one entry per assertion instead, in the shapes the per-assertion block below fixes. `confidence` is optional but recommended (`VeryLow|Low|Medium|High|VeryHigh`). It surfaces in the labeling UI so reviewers can prioritize low-confidence verdicts. If any expected id gets no entry at all, the script returns `status: "missing-coverage"` and the verify step routes you back to fill the gaps.
+
+   **A replay inherits the original trace's assertions, so score them one at a time.** Before you judge this batch, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` once with the batch's **original** trace ids (one call covers up to 100 ids, so make it once and before you judge anything). Each assertion comes back under its trace as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. A trace that comes back "no expectations recorded" has none.
+
+   - **The original had assertions:** write one entry per assertion, each carrying that assertion's `assertionId`, its own `label`, and its own `annotation` covering that one assertion and nothing else. **Write no whole-trace entry for that trace.** The trace verdict is derived from the per-assertion rows, so an entry beside them contradicts the rows it comes from, and the script rejects the whole file with `status: "invalid-input"`.
+   - **The original had none:** nothing changes. Write the single whole-trace entry with no `assertionId`, exactly as before.
+   - **An assertion whose target cannot be found on the trace you are judging:** `{ "assertionId": "<uuid>", "skip": true }` alongside the id key, never a FAIL. A missing target means the check never ran. Its sibling assertions on the same trace are still verdicted normally.
+
+   Per-assertion and whole-trace entries travel in the same file and the same call, so a mixed batch is one `verdicts` array. Lineage keying, one trace with assertions and one without:
+
+   ```json
+   {
+     "testRunId": "<testRunId>",
+     "expectedOriginalTraceIds": ["<originalTraceId1>", "<originalTraceId2>"],
+     "verdicts": [
+       { "originalTraceId": "<originalTraceId1>", "assertionId": "<assertionId1>", "label": true, "annotation": "The rebooked leg now names the carrier this assertion asks for.", "confidence": "High" },
+       { "originalTraceId": "<originalTraceId1>", "assertionId": "<assertionId2>", "label": false, "annotation": "The seat preference is still dropped." },
+       { "originalTraceId": "<originalTraceId1>", "assertionId": "<assertionId3>", "skip": true },
+       { "originalTraceId": "<originalTraceId2>", "label": true, "annotation": "No assertions on this trace, and the output addresses the original annotation." }
+     ]
+   }
+   ```
+
+   **The script's coverage check is per trace, not per assertion.** It cannot see which traces have assertions, so it accepts either shape and only reports a trace that got no entry at all. That makes the per-assertion count yours to hold. A trace with six assertions and one entry clears the script's check and still loses five verdicts. Count the assertions you read from `mcp__plugin_bitfab_Bitfab__get_trace_assertions` against the entries you wrote for that trace before you run the script.
 
    3. Run the script:
 

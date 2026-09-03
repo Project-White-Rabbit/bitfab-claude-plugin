@@ -2,7 +2,7 @@
 name: assistant-quick-replay
 description: Phase Replay: Single-Trace Quick Replay phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
+allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "mcp__plugin_bitfab_Bitfab__get_trace_assertions", "Skill"]
 ---
 
 # Bitfab Assistant: Phase Replay: Single-Trace Quick Replay
@@ -64,7 +64,9 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    There is no verdict to persist for an errored item. Offer a retry only after the diagnosed cause is addressed, or offer to stop.
 
-   **If the replay completed**, compare the new output against the original trace's label and annotation, then report one line:
+   **If the replay completed**, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` with the ORIGINAL trace id first. An assertion says what the user asked this one case to do, and the replay inherits the original's assertions, so it is what the new output is measured against. Each one comes back as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. "no expectations recorded" means the trace has none, and everything below reads exactly as it always has.
+
+   Then compare the new output against the original trace's assertions, label, and annotation, and report one line:
 
    - Original was **fail** with an annotation: does the new output address it? → "**Pass**: the fix addresses the original failure ('<annotation summary>')." vs "**Still failing**: <what's still wrong>."
    - Original was **pass**: preserved → "**Pass**: output unchanged in quality." regressed → "**Regressed**: was passing, now <what broke>."
@@ -83,13 +85,25 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
      }
      ```
 
+     **If the original had assertions**, that one entry becomes one entry per assertion instead, each carrying its `assertionId`, its own `label`, and its own `annotation` for that assertion alone, and the file carries **no** whole-trace entry for the trace. The trace verdict is derived from the per-assertion rows, so sending both makes the script reject the file with `status: "invalid-input"`. An assertion whose target cannot be found on the replay trace gets `{ "traceId": "<server-trace-id>", "assertionId": "<uuid>", "skip": true }`, never a FAIL, and its siblings are still verdicted:
+
+     ```json
+     {
+       "expectedTraceIds": ["<server-trace-id>"],
+       "verdicts": [
+         { "traceId": "<server-trace-id>", "assertionId": "<assertionId1>", "label": true, "annotation": "<why this one assertion passed>", "confidence": "High" },
+         { "traceId": "<server-trace-id>", "assertionId": "<assertionId2>", "label": false, "annotation": "<why this one assertion failed>" }
+       ]
+     }
+     ```
+
      ```bash
      node "${CLAUDE_PLUGIN_ROOT}/dist/commands/persistReplayLabels.js" <repoRoot>/.bitfab/tmp/verdicts-<test-run-id>.json
      ```
 
      `label` is `true` for Pass, `false` for Still-failing / Regressed. Read the script's single JSON status line: `ok` means the verdict is now on the replay trace, add "· saved" to your one-line report.
    - **If the completed item's trace id is `null`** (old server/SDK that returns no server-trace-id mapping, from the `run` step's note): persistence is impossible. Keep the verdict in-chat only and tell the user once: "This replay didn't return a server trace ID, so the verdict can't be saved. Upgrade the SDK/server and run `/bitfab:setup replay` to regenerate the script." Don't block the flow on it.
-   - **No-label original** (you showed a before/after diff, no pass/fail): there's no verdict to persist, just report the diff.
+   - **No-label original with no assertions either** (you showed a before/after diff, no pass/fail): there's no verdict to persist, just report the diff. An unlabeled original that HAS assertions is not this case, the assertions are the criteria, so score them one per assertion and persist them.
 
    > A) **Iterate**: make another change and re-replay the same trace → step 4
    > B) **Done** *(recommended)* → the `assistant-cleanup` skill
