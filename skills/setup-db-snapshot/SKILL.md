@@ -11,7 +11,7 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "WebFetch", "mc
 
 Set up **per-trace database snapshots for replay** so the team can re-run a historical trace against the database state that existed *when the trace was captured*, not today's data. This is what makes replay trustworthy for any code that reads stored state (a refund decision over a since-cancelled order, a retrieval step over last week's rows). Triggered explicitly by `/bitfab:setup db-snapshot`, never reached from `wizard`.
 
-**Available for TypeScript, Python, and Ruby** (the SDKs with replay). Go has no replay, so DB-snapshot replay does not apply, if the project is Go, say so and stop.
+**This registry-based setup flow supports TypeScript, Python, and Ruby.** Go also supports database-snapshot replay through its programmatic API. For Go, point to https://docs.bitfab.ai/go-sdk.md and https://docs.bitfab.ai/reference/go.md for `ReplayOptions.DBBranch` and `GetCurrentReplayBranch(ctx)`, then stop this registry-specific flow.
 
 **Capture is automatic in current SDKs, there is nothing to turn on.** Eligible root traces captured by an SDK version with always-on snapshot references pin the wall-clock instant they ran (no client config required), so those traces can later be replayed against their historical DB state, subject to replication lag. Older traces without a snapshot reference use the normal database path. Setup is therefore just two pieces:
 1. **Connect the database once** in the Bitfab dashboard. The source database can be **any Postgres**: Bitfab provisions a branchable managed copy from it. A one-time, dashboard-side step.
@@ -19,7 +19,7 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
 
 **Source of truth:** read https://docs.bitfab.ai/db-branching.md (the end-to-end, per-language setup) and your SDK's reference (`/reference/typescript.md`, `/reference/python.md`, `/reference/ruby.md`) for the exact `replay` / branch-accessor signatures before editing any code. The replay option and the accessor names differ per SDK, do not improvise from memory.
 
-1. **Confirm the SDK language.** DB-snapshot replay is available for **TypeScript, Python, and Ruby**. If the project is **Go**, tell the user Go has no replay so this doesn't apply, and route to cleanup.
+1. **Confirm the SDK language.** This registry-based flow supports **TypeScript, Python, and Ruby**. If the project is **Go**, explain that its SDK supports database-snapshot replay through the programmatic API, point to https://docs.bitfab.ai/go-sdk.md and https://docs.bitfab.ai/reference/go.md for `ReplayOptions.DBBranch` and `GetCurrentReplayBranch(ctx)`, and route to cleanup.
 
    **Check authentication.** Run:
 

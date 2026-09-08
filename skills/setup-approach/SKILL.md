@@ -37,7 +37,7 @@ Settle who does the instrumenting before any code is read or written. Runs once,
    - Mode `wizard`: invoke the `setup-instrument` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 3. The user is instrumenting on their own. Give them the pointers below in one short message, then **stop**: do not scan the codebase, read files, or edit anything.
 
-   - **Docs:** https://docs.bitfab.ai, start with the SDK guide for their language (`/typescript-sdk`, `/python-sdk`, `/ruby-sdk`, `/go-sdk`); each one covers install, initialization, wrapping a workflow, and (outside Go) the replay registry module. Name the language's page directly if the project's language is already obvious from the conversation; do not go read the repo to find out.
+   - **Docs:** https://docs.bitfab.ai, start with the SDK documentation for their language (`/typescript-sdk`, `/python-sdk`, `/ruby-sdk`, `/go-sdk`); each one covers install, initialization, wrapping a workflow, and (outside Go) the replay registry module. Name the language's page directly if the project's language is already obvious from the conversation; do not go read the repo to find out.
    - **API key:** their app needs `BITFAB_API_KEY` set in the environment it runs in before any trace will arrive. Tell them to get the key from the Bitfab MCP's `get_bitfab_api_key` tool. Do **not** call it yourself, and never print a key.
    - **Coming back:** `/bitfab:setup` picks this flow back up, and `/bitfab:setup inspect` diagnoses an instrumentation they wrote themselves (auth, what's instrumented, whether traces are arriving).
 
