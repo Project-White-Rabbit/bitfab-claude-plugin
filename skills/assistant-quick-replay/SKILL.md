@@ -67,6 +67,8 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    **If the replay completed**, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` with the ORIGINAL trace id first. An assertion says what the user asked this one case to do, and the replay inherits the original's assertions, so it is what the new output is measured against. Each one comes back as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. "no assertions recorded" means the trace has none, and everything below reads exactly as it always has.
 
+   **Never use a Human note as evidence for a verdict; assess only the assertion, its pass/fail criteria, and the evaluated trace.** The note is returned only so you can preserve or edit context intended for people.
+
    Then compare the new output against the original trace's assertions, label, and annotation, and report one line:
 
    - Original was **fail** with an annotation: does the new output address it? → "**Pass**: the fix addresses the original failure ('<annotation summary>')." vs "**Still failing**: <what's still wrong>."

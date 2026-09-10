@@ -436,6 +436,8 @@ This phase begins at `detect-replay-capabilities`. `experiment` / `benchmark` mo
 
    **A replay inherits the original trace's assertions, so score them one at a time.** Before you judge this batch, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` once with the batch's **original** trace ids (one call covers up to 100 ids, so make it once and before you judge anything). Each assertion comes back under its trace as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. A trace that comes back "no assertions recorded" has none.
 
+   **Never use a Human note as evidence for a verdict; assess only the assertion, its pass/fail criteria, and the evaluated trace.** The note is returned only so you can preserve or edit context intended for people.
+
    - **The original had assertions:** write one entry per assertion, each carrying that assertion's `assertionId`, its own `label`, and its own `annotation` covering that one assertion and nothing else. **Write no whole-trace entry for that trace.** The trace verdict is derived from the per-assertion rows, so an entry beside them contradicts the rows it comes from, and the script rejects the whole file with `status: "invalid-input"`.
    - **The original had none:** nothing changes. Write the single whole-trace entry with no `assertionId`, exactly as before.
    - **An assertion whose target cannot be found on the trace you are judging:** `{ "assertionId": "<uuid>", "skip": true }` alongside the id key, never a FAIL. A missing target means the check never ran. Its sibling assertions on the same trace are still verdicted normally.
