@@ -2,7 +2,7 @@
 name: assistant-diagnose
 description: Phase 4: Diagnose & Plan phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
+allowed-tools: ["Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__get_traces", "Skill"]
 ---
 
 # Bitfab Assistant: Phase 4: Diagnose & Plan
@@ -11,9 +11,7 @@ allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__g
 
 **Run only when mode is `wizard`, `dataset` or `investigate`.**
 
-1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Diagnosing failures"`.
-
-   **Understand failures.** Using the failed traces you read in Phase 3 (or read them now if you haven't):
+1. **Understand failures.** Using the failed traces you read in Phase 3 (or read them now if you haven't):
 
    - Call `mcp__plugin_bitfab_Bitfab__get_traces` on 3–5 failed traces with `scope: "full"`
 

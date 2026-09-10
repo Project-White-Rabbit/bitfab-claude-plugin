@@ -9,11 +9,9 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "AskUserQuestion", "Skill"]
 
 **Run only when mode is `wizard`.**
 
-Check that this trace function has both instrumentation and a replay script.
+Check that this trace function has both instrumentation and a replay registry entry.
 
-1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Verifying instrumentation"`.
-
-   Search the codebase for the trace function key to find where the SDK is used:
+1. Search the codebase for the trace function key to find where the SDK is used:
 
    - TypeScript: `grep -r "<traceFunctionKey>" --include="*.ts" --include="*.tsx"`
    - Python: `grep -r "<traceFunctionKey>" --include="*.py"`
@@ -39,30 +37,31 @@ Check that this trace function has both instrumentation and a replay script.
    - Option B (Continue anyway) (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Option C (Pick a different function) (mode `wizard`): invoke the `assistant-identify-function` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Option D (Stop) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-2. Search for a replay script that covers this trace function:
+2. Search for a replay registry module that covers this trace function:
 
-   - Look for files matching `scripts/replay.*`, `scripts/*replay*`, or any file that imports `bitfab.replay` / `client.replay`
-   - Read the script and check that it maps the target trace function key
+   - Look for `scripts/replayRegistry.*`, `scripts/replay_registry.*`, or a module defining `ReplayRegistry` / `defineReplayRegistry`
+   - Read the registry and check that an entry maps a pipeline name to the target trace function key and the exact production root
+   - Treat a project-owned file that parses replay flags or calls `replay()` as a legacy expanded script, not a current registry
 
-   If a replay script exists but targets a different function key, do NOT modify the existing script or suggest changing the code's function key. Instead, treat it as "no replay script for this function" and offer to create a new one.
+   If a registry exists but targets a different function key, do not change the code's function key. Treat it as no registry entry for this function and offer to add one.
 
-   If no replay script exists or it doesn't cover this function, use `AskUserQuestion`:
+   If no registry entry exists, use `AskUserQuestion`:
 
-   For every replay-capable language, wire the ready-made reporter to both lifecycle callbacks: TypeScript `onItemStart` + `onItemFinish`, Python `on_item_start` + `on_item_finish`, and Ruby `on_item_start:` + `on_item_finish:`. The legacy `onProgress` / `on_progress` names are deprecated compatibility callbacks and should not be used in new scripts.
-
-   > "No replay script found for `<traceFunctionKey>`."
+   > "No replay registry entry found for `<traceFunctionKey>`."
    >
-   > A) **Create replay now**: create the replay script inline *(recommended)* → step 3
+   > A) **Create registry entry now**: create or update the replay registry inline *(recommended)* → step 3
    > B) **Pick a different function** → the `assistant-identify-function` skill
    > C) **Stop** → the `assistant-cleanup` skill
 
-   If the user chooses **"Create replay now"**, create the replay script inline: fetch the SDK replay reference (`https://docs.bitfab.ai/reference/typescript.md` or the equivalent for the project language) and the script template (`https://docs.bitfab.ai/typescript-sdk.md`), then write a new replay script following the template. For keys with a decorated or manually wrapped root function, the function passed to `bitfab.replay(...)` / `client.replay(...)` must be the exact same exported top-level traced wrapper that production/runtime calls to create the root span; you must do this unless it is genuinely impossible in the host app. Inconvenience, extra refactoring, an inline wrapper, or needing to move code is not impossible. If production currently creates that wrapper inline inside a route, job, handler, callback, or local file scope, extract it into the nearest appropriate service/module, export it, and update both production and replay to import and call that same symbol. Do not replay a convenient inner helper unless that exact helper is also the production root traced wrapper, and do not create duplicate semantic wrappers split across production and replay with names like `runX`, `processX`, or `generateX`. If exported-symbol parity is impossible, stop and document the concrete blocker that prevents any shared exported root symbol. The script must accept `--limit N`, `--trace-ids`, `--name <name>`, `--code-change <path>`, `--experiment-group-id <uuid>`, and `--dataset-id <uuid>` flags. Pass the SDK's ready-made progress reporter into both replay lifecycle callbacks (`onItemStart: reportReplayProgress` and `onItemFinish: reportReplayProgress` in TS, `on_item_start=report_replay_progress` and `on_item_finish=report_replay_progress` in Python, `on_item_start: Bitfab.method(:report_replay_progress)` and `on_item_finish: Bitfab.method(:report_replay_progress)` in Ruby, the template already does this) so it streams `@@bitfab:progress {json}` lines that `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/replayProgress.js"` turns into one relayable line per trace. Capture the full `ReplayResult` in one variable and print that JSON to stdout for direct runs; when `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/replayProgress.js"` sets `BITFAB_REPLAY_RESULT_PATH`, the SDK writes the same final result file automatically and the wrapper reads that file first. Do NOT hand-code writes to `BITFAB_REPLAY_RESULT_PATH` in the script. Do NOT invoke `/bitfab:setup replay` as a separate skill. After creating the script, check its capabilities and include the required final verification fields: `Replay root parity:`, `Production root symbol:`, `Production import/path:`, `Replay symbol:`, `Replay import/path:`, `Same symbol? yes/no`, and `If no, why is this impossible?`.
+   If the user chooses **"Create registry entry now"**, fetch the SDK replay reference (`https://docs.bitfab.ai/reference/typescript.md` or the equivalent for the project language) and the language guide (`https://docs.bitfab.ai/<language>-sdk.md`), then create or update the project registry. The project owns only app imports/bootstrap, mappings to exact production roots, and per-function defaults such as `mock`, `adaptInputs` / `adapt_inputs`, and database branching. The module must not parse CLI arguments, call `replay()`, install lifecycle callbacks, print output, or handle `BITFAB_REPLAY_RESULT_PATH`; the SDK-installed `bitfab-replay` executable owns those behaviors.
 
-   **Handler-instrumented keys (no decorated root function) are replayable too.** If the key is registered via a framework handler (`get_langgraph_callback_handler("key")`, `get_openai_agent_handler("key")`, `get_claude_agent_handler("key")`, `getVercelAiMiddleware("key")`, or the TS equivalents) rather than `@span`/`withSpan`, follow the docs' "Replaying handler-instrumented functions" section: pass the handler's key plus a plain callable to `replay()` (the SDK wraps it internally), re-invoking the same framework entrypoint production calls with reconstructed runtime wiring. Put every unsafe call made by that wiring behind a replay-mockable marked span; use no-op values only for replay-only callback slots with no recorded call to mock. On SDKs that predate explicit-key replay, wrap the callable under the same key yourself. Never report a handler-instrumented function as not replayable.
+   For decorated or manually wrapped roots, the registry must import the exact same exported top-level traced wrapper that production/runtime calls to create the root span. If production creates that wrapper inside a route, job, handler, callback, or local scope, extract it into the nearest import-safe service/module and update production and the registry to import the same symbol. Do not create duplicate semantic wrappers. For handler-instrumented keys, register the key with a plain callable that invokes the same framework entrypoint and reconstructs runtime wiring. If root parity is impossible, stop and document the concrete blocker.
 
-   **Mandatory pre-run replay safety check.** Complete this before executing the replay script for the first time, and re-run it whenever the script, replay root, span boundaries, dispatch model, or mock strategy changes. Do not discover unsafe coverage by running replay: a successful email, payment, queue publish, or database write has already caused the damage.
+   After editing, report `Replay root parity:`, `Production root symbol:`, `Production import/path:`, `Registry symbol:`, `Registry import/path:`, `Same symbol? yes/no`, and `If no, why is this impossible?`. Do not invoke `/bitfab:setup replay` as a separate skill.
 
-   1. Read the replay call and require an explicit recorded-output strategy: normally `mock: "marked"` / `mock="marked"`; `all` is allowed only when every matched recorded child is intentionally frozen. Never accept `none` for a path with unsafe external actions.
+   **Mandatory pre-run replay safety check.** Complete this before executing replay for the first time, and re-run it whenever the registry entry, replay root, span boundaries, dispatch model, or mock strategy changes. Do not discover unsafe coverage by running replay: a successful email, payment, queue publish, or database write has already caused the damage.
+
+   1. Read the replay registry entry and require an explicit recorded-output strategy: normally `mock: "marked"` / `mock="marked"`; `all` is allowed only when every matched recorded child is intentionally frozen. Never accept `none` for a path with unsafe external actions.
    2. Trace every unsafe action reachable from the replay root (database writes, outbound mutations, queue publishes, emails, payments, file/vector writes). Under `marked`, each must execute inside a manual descendant span marked `mockOnReplay: true` / `mock_on_replay: true`. Auto-observed spans, unwrapped calls, root-inline work, and import-time work are not intercepted. Move the boundary before proceeding; if that cannot be done without changing behavior, report the exact blocker and stop.
    3. Verify the selected wrapper executes as a descendant in the same replay context. Python thread pools and `threading.Thread` require `Bitfab(trace_across_threads=True)`; pre-created queue consumers and other processes are not covered. Ruby span state is thread-local, so work dispatched to another or pre-created thread/process is not mockable from the replay root. Move the unsafe boundary into the replay context or stop. Ordinary same-context TypeScript async work and Python `asyncio` tasks/`asyncio.to_thread` retain context.
    4. In TypeScript, a synchronous selected span cannot consume the lazy recorded-output fetch used by `mock: "marked"`. Use an already-async/Promise-returning boundary, or use `mock: "all"` only when freezing every matched child is compatible with the experiment. Never change a production function's return type just to make replay work; if neither option is valid, stop.
@@ -74,85 +73,42 @@ Check that this trace function has both instrumentation and a replay script.
    - The replay safety check finds any uncovered or unmockable unsafe action (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Option B (Pick a different function) (mode `wizard`): invoke the `assistant-identify-function` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Option C (Stop) (mode `wizard`): invoke the `assistant-cleanup` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-3. **Detect replay script capabilities.** Check what the replay script supports. These flags determine how experiment results are tracked and displayed in Phase 5. **If you already ran this step for the same trace function earlier in this session, skip it and continue. Re-run if the user switched functions via "Pick a different function".**
+3. **Detect installed replay capabilities.** Common flags, progress events, result serialization, and replay trace IDs belong to the SDK-installed `bitfab-replay` executable. Do not inspect or modify the project registry for CLI flag support. **Reuse a capability result for the same workspace and installed SDK version; re-run after switching projects or upgrading the SDK.**
 
-   **1. Use the replay script located in the previous step** (or grep for `scripts/replay.*` / files importing `bitfab.replay` / `client.replay`).
-
-   **2. Grep the replay script for the flags it forwards:**
-
-   | Grep the script for | Flag | What it enables |
-   |----------|------|-----------------|
-   | `code-change` or `code_change` | `supportsCodeChanges` | Code diffs attached to each experiment in the dashboard |
-   | `experiment-group-id` or `experiment_group_id` | `supportsExperimentGroups` | Live streaming of results in Studio as replay runs |
-   | `dataset-id` or `dataset_id` | `supportsDatasetId` | Durable attribution of the experiment to its dataset (shows under the dataset's experiments) |
-   | `--name` plus `name` / `name:` forwarded to `replay()` | `supportsExperimentNames` | Human-readable experiment/test-run names in the UI |
-   | `originalTraceId`/`traceId` (or `original_trace_id`/`trace_id`; `sourceTraceId`/`source_trace_id` is the deprecated alias) in the output/print section | `supportsReplayTraceIds` (re-confirmed post-replay in `check-verdict-persistence`) | Verdict persistence (keyed by `originalTraceId`), cross-iteration comparison, Studio experiments page |
-
-   `supportsInputAdapters` is **not** a script-grep flag (the script gains an `adaptInputs` / `adapt_inputs` argument only after a signature actually drifts, in `adapt-replay-inputs`). It comes solely from the installed SDK in step 3.
-
-   **3. Confirm the installed SDK supports each flag.** A flag the script forwards is silently ignored when the installed SDK predates it, so each flag also depends on the SDK. Run the capability probe (it resolves the installed SDK version from the lockfile/manifest and resolves every capability by version, with no dist-file grepping across package-manager layouts):
+   Run the capability probe from the application workspace:
 
    ```bash
    cd <project-dir> && node "${CLAUDE_PLUGIN_ROOT}/dist/commands/detectCapabilities.js"
    ```
 
-   Read the `<bitfab-replay-capabilities>` block. Each line is a JSON object for one detected SDK with `language`, `workspacePath`, `current` (resolved version), `versionResolved`, `updateAvailable`, `latest`, and a `capabilities` object holding `supportsExperimentGroups`, `supportsDatasetId`, `supportsCodeChanges`, `supportsReplayTraceIds`, `supportsInputAdapters`, `supportsExperimentNames`. Pick the line whose `language` (and `workspacePath`, in a monorepo) matches the replay script's project.
+   Read the matching line from the `<bitfab-replay-capabilities>` block. Select by `language` and, in a monorepo, `workspacePath`. Hold `supportsExperimentGroups`, `supportsDatasetId`, `supportsCodeChanges`, `supportsReplayTraceIds`, `supportsInputAdapters`, and `supportsExperimentNames` directly from that SDK's `capabilities` object. If `versionResolved` is false, resolve the installed version or inspect that SDK installation before relying on a capability; do not infer support from the registry module.
 
-   - **Combine the two sources:** a flag is true only when the script forwards it (step 2) **and** that SDK's matching `capabilities.*` is true. Take `supportsInputAdapters` straight from `capabilities.supportsInputAdapters` (it has no script side).
-   - `supportsReplayTraceIds` from the probe is a definitive **pre-replay** signal; the later `check-verdict-persistence` step still re-confirms from the actual replay output.
-   - If `versionResolved` is `false`, the probe couldn't pin the installed version, so every capability defaulted false and is **unverified**. Check that one SDK by hand before relying on the flags (TypeScript: grep `node_modules/@bitfab/sdk/dist/index.d.ts` for the option names and `ReplayItem.traceId`; Python: the installed `bitfab/replay.py`; Ruby: the installed gem's `replay.rb`), or resolve the version and re-run.
+   If all capabilities are true, continue silently. If any are false, tell the user which SDK capabilities are missing and what they affect, then use `AskUserQuestion`:
 
-   If the script has a flag but the SDK's `capabilities.*` is false, mark that flag **false**. Prioritize upgrading the SDK over using fallbacks: without replay trace IDs, verdict labels can't be persisted (benchmark/experiment results stay in-agent only).
-
-   **4. Route on the result.**
-
-   If all flags are true, skip the question and continue silently.
-
-   If one or more flags are false, tell the user which capabilities are missing and what they affect, then use `AskUserQuestion`. List the missing capabilities in the question text:
-
-   > "Your replay script is missing support for:
+   > "Your installed Bitfab SDK is missing support for:
    >
    > [if !supportsCodeChanges] **Code changes**: edits won't appear in the experiment dashboard
-   > [if !supportsExperimentGroups] **Experiment groups**: no live streaming; results appear in Studio after each run
-   > [if !supportsDatasetId] **Dataset attribution**: the experiment won't be durably linked to its dataset (still findable via the trace-lineage fallback; fixed by regenerating the script / upgrading the SDK)
-   > [if !supportsExperimentNames] **Experiment names**: runs will show as generated IDs instead of readable names
-   > [if !supportsReplayTraceIds] **Replay trace IDs**: experiment results can't be persisted or compared across iterations (your SDK needs an upgrade)
-   >
-   > [if !supportsInputAdapters] **Input adapters**: replay can't recover traces when the function's signature drifts after capture (fixed by upgrading the SDK)"
+   > [if !supportsExperimentGroups] **Experiment groups**: results cannot stream into one group during the run
+   > [if !supportsDatasetId] **Dataset attribution**: the experiment won't be durably linked to its dataset
+   > [if !supportsExperimentNames] **Experiment names**: runs will show generated IDs
+   > [if !supportsReplayTraceIds] **Replay trace IDs**: verdicts can't be persisted or compared
+   > [if !supportsInputAdapters] **Input adapters**: replay can't adapt historical inputs after signature drift"
 
-   > A) **Upgrade the replay script**: regenerate the script with full support, then continue *(recommended)* → step 4
-   > B) **Continue without**: run experiments with the current script; missing features are skipped → the `assistant-iterate` skill (mode `experiment` or `fix` or `benchmark`); stop (mode `cost-optimize` or `add-trace`); the `assistant-cleanup` skill (mode `replay`); otherwise the `assistant-dataset` skill
+   > A) **Upgrade the SDK**: upgrade the installed replay executable, then continue *(recommended)* → step 4
+   > B) **Continue without**: run experiments with the current SDK; missing features are skipped → the `assistant-iterate` skill (mode `experiment` or `fix` or `benchmark`); stop (mode `cost-optimize` or `add-trace`); the `assistant-cleanup` skill (mode `replay`); otherwise the `assistant-dataset` skill
 
    **Next:**
 
    - All flags are true (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Option B (Continue without) (mode `wizard`): invoke the `assistant-dataset` skill with mode `wizard`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-4. **Upgrade the SDK and replay script.** The replay script references SDK APIs (`name`, `experimentGroupId`, `codeChangeDescription`, per-item `traceId`, `adaptInputs` / `adapt_inputs`) that require a recent SDK. Upgrade the SDK first, then regenerate the script.
+4. **Upgrade the installed SDK and replay executable.** The project registry does not own common flags, progress callbacks, or result serialization, so do not regenerate it merely to gain those capabilities.
 
-   **1. Upgrade the SDK.** Run the capability probe to read the installed version and update status (skip if you still have its block from `detect-replay-capabilities`):
-
-   ```bash
-   cd <project-dir> && node "${CLAUDE_PLUGIN_ROOT}/dist/commands/detectCapabilities.js"
-   ```
-
-   For the SDK matching this project, the `<bitfab-replay-capabilities>` block reports `current` (resolved version), `latest`, `updateAvailable`, and `renameFrom`. If `updateAvailable` is false, the SDK is already current, skip to step 2. Otherwise run the package manager's update command:
-   - TypeScript: `pnpm update @bitfab/sdk` (in monorepos, scope with `--filter <pkg>`). **If `package.json` pins an exact version (e.g. `"@bitfab/sdk": "0.13.4"` with no `^`/`~`), `pnpm update` will NOT move past the pin, bump the spec in `package.json` to the reported `latest` first (e.g. `"@bitfab/sdk": "0.13.6"`), then `pnpm install`.**
+   Run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/detectCapabilities.js"` from the application workspace and use the matching SDK line's `current`, `latest`, `updateAvailable`, and `renameFrom` fields. If an update is available, use the project's package manager:
+   - TypeScript: `pnpm update @bitfab/sdk` (scope monorepos with `--filter <pkg>`). If the manifest pins an exact version, update that spec to `latest` and install.
    - Python: `uv lock --upgrade-package bitfab-py && uv sync` or `poetry update bitfab-py`
    - Ruby: `bundle update bitfab --conservative`
 
-   If `renameFrom` is set (the SDK is on the legacy `bitfab` package instead of `@bitfab/sdk`), remove the old package and install `@bitfab/sdk`.
-
-   **2. Regenerate the replay script.** Locate the replay script for this trace function (found in `detect-replay-capabilities`). Fetch the SDK replay reference (`https://docs.bitfab.ai/reference/typescript.md` or the equivalent for the project language) and the script template (`https://docs.bitfab.ai/typescript-sdk.md`). Then edit the script to add the missing flags:
-   - **`--code-change <path>`**: parse the JSON file, pass `codeChangeDescription` and `codeChangeFiles` to `replay()`
-   - **`--experiment-group-id <uuid>`**: pass `experimentGroupId` to `replay()`
-   - **`--name <name>`**: pass `name` to `replay()` so the resulting experiment/test run has a readable title
-   - **`--dataset-id <uuid>`**: pass `datasetId` to `replay()`. This is the **preferred way to replay a dataset**: passed alone (no `--trace-ids`) the server replays exactly the dataset's traces and durably attributes the experiment to the dataset. Adding this flag is what lets the replay step drop the hand-enumerated `--trace-ids` list.
-   - **Preserve replay root parity**: while editing decorated or manually wrapped roots, verify the function passed to `bitfab.replay(...)` / `client.replay(...)` is the exact same exported top-level traced wrapper that production/runtime calls to create the root span. You must preserve this unless it is genuinely impossible in the host app; inconvenience, extra refactoring, an inline wrapper, or needing to move code is not impossible. Do not switch to a convenient inner helper, do not create a replay-only semantic wrapper (`runX`, `processX`, `generateX`), and if the current script already violates this, fix the production/replay imports to share one exported root symbol before continuing. For handler-instrumented keys with explicit-key replay, verify the callable invokes the same production framework entrypoint; this handler path is the explicit-key exception to exported-function replay, not permission to call a different helper. If exported-symbol parity is impossible, stop and document the concrete blocker that prevents any shared exported root symbol.
-   - **Replay Output Contract**: capture the full `ReplayResult` (including every item's `traceId`, `durationMs`, `tokens`, `model`) in one variable and print the JSON as one stdout block for direct runs. When `BITFAB_REPLAY_RESULT_PATH` is set by `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/replayProgress.js"`, the SDK writes that final result file automatically; do not hand-code plugin transport in the script. Human-readable summary always goes to stderr.
-   - **Replay root parity verification**: when reporting the upgraded replay script, include the required final verification section: `Replay root parity:`, `Production root symbol:`, `Production import/path:`, `Replay symbol:`, `Replay import/path:`, `Same symbol? yes/no`, and `If no, why is this impossible?`.
-   Do NOT invoke `/bitfab:setup replay` as a separate skill; edit the script inline here.
-
-   **3. Re-check capabilities.** After upgrading and editing, re-run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/detectCapabilities.js"` and re-read the `capabilities` object for this SDK (the probe now sees the upgraded version). Combine again with the script-side grep from step 2 and update the flags in working context. If any are still missing after the upgrade, note it but continue.
+   If `renameFrom` identifies the legacy TypeScript `bitfab` package, replace it with `@bitfab/sdk`. Re-run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/detectCapabilities.js"` after the upgrade and hold the new capability values. Edit the replay registry only when the upgraded SDK reports an actual registry schema incompatibility or the pipeline needs a per-entry default such as `adaptInputs` / `adapt_inputs`; never add CLI parsing, callbacks, output printing, or `BITFAB_REPLAY_RESULT_PATH` handling to project code.
 
    **Next:**
 

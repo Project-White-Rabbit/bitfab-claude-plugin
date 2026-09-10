@@ -20,17 +20,7 @@ Authenticate with Bitfab and retrieve the API key.
    ```
 
    If **already authenticated**, skip to step 3.
-2. If **"not authenticated"**, run the login script yourself, do NOT ask the user to run it manually:
-
-   ```bash
-   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/login.js"
-   ```
-   Run with 600000ms (10 minute) timeout. This opens Studio to the sign-in page and polls the server until the user completes authentication in the browser. The process exits when authentication succeeds or the 10-minute timeout fires.
-
-   **If the browser fails to open**, `login.js` prints the Studio sign-in URL. Surface it to the user verbatim so they can open it manually; do not rely on shell/tool output being visible. The polling loop stays active for the full 10-minute timeout regardless of whether auto-launch worked.
-
-
-   If `login.js` exits non-zero or the 10-minute timeout elapsed, report the error to the user and stop.
+2. If not authenticated, run node "${CLAUDE_PLUGIN_ROOT}/dist/commands/login.js" as a long-running background process. Immediately relay its sign-in URL to the user. Poll the process while keeping the conversation available. The command automatically opens a sign-in window and exits after authentication, or after ten minutes. The printed link is available if the window cannot open. On failure, report the error and let the user retry. Never print or request API keys in chat.
 
    **Next:**
 

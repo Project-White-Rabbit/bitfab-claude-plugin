@@ -2,7 +2,7 @@
 name: assistant-identify-function
 description: Phase 1: Identify the Trace Function phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Glob", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__list_trace_functions", "Skill"]
+allowed-tools: ["Glob", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__list_trace_functions", "Skill"]
 ---
 
 # Bitfab Assistant: Phase 1: Identify the Trace Function
@@ -11,9 +11,7 @@ allowed-tools: ["Bash", "Glob", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_B
 
 If a `traceFunctionKey` was provided as an argument, skip the listing and the user prompt, but still cross-check the provided key against the local codebase before moving on. Otherwise, work through all four steps below:
 
-1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Identifying trace function"`.
-
-   **Skip this step if a `traceFunctionKey` argument was provided**: use the argument directly and continue to cross-check. Otherwise, call `mcp__plugin_bitfab_Bitfab__list_trace_functions` to list all available trace functions. Use **only** the keys and metadata returned (trace counts, last activity), do NOT invent or infer descriptions of what each function does from its key name. Key names are often ambiguous or misleading, and guessing produces hallucinated descriptions that confuse the user.
+1. **Skip this step if a `traceFunctionKey` argument was provided**: use the argument directly and continue to cross-check. Otherwise, call `mcp__plugin_bitfab_Bitfab__list_trace_functions` to list all available trace functions. Use **only** the keys and metadata returned (trace counts, last activity), do NOT invent or infer descriptions of what each function does from its key name. Key names are often ambiguous or misleading, and guessing produces hallucinated descriptions that confuse the user.
 2. **Cross-check each key against the local codebase** before presenting. For each returned key, `grep` the repo for string-literal uses of that exact key (across `*.ts`, `*.tsx`, `*.py`, `*.rb`, `*.go`, `*.baml`). Mark each function in the presented list as:
 
    - **✅ instrumented here**: found in this repo, with the file path

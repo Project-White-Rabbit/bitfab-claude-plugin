@@ -14,7 +14,7 @@ Reached only from `investigate` mode. The user is describing an issue they want 
 1. Read what the user typed when they invoked `/bitfab:assistant investigate`. Two cases:
 
    - **They passed a function key as the argument:** use it. Call `mcp__plugin_bitfab_Bitfab__list_trace_functions` once to confirm the key exists and capture trace count + last activity for the explore step. Then grep the codebase for the key (`grep -r "<key>" --include="*.ts" --include="*.tsx" --include="*.py" --include="*.rb" --include="*.go" --include="*.baml"`) and note the file path. Hold both in working context.
-   - **They didn't pass a key:** read their description (failure pattern, customer complaint, "something seems off with X", etc.). First inspect the local instrumentation to infer likely function keys: grep for Bitfab SDK usage and wrappers (`@bitfab/sdk`, `withSpan`, `getFunction`, `traceable`, `observability/providers/bitfab`, replay scripts) plus domain terms from the user's description. If one key is clearly tied to the described workflow, hold it as the candidate and grep for its exact string. Then call `mcp__plugin_bitfab_Bitfab__list_trace_functions` to confirm whether the candidate has traces and to capture trace count + last activity. If code does not reveal a candidate, or multiple candidates remain plausible, use `list_trace_functions` as a fallback picker (recommend 2-4 alternatives by key, trace count, last activity, and code path when known). If nothing matches, ask the user to clarify or pass a key explicitly.
+   - **They didn't pass a key:** read their description (failure pattern, customer complaint, "something seems off with X", etc.). First inspect the local instrumentation to infer likely function keys: grep for Bitfab SDK usage and wrappers (`@bitfab/sdk`, `withSpan`, `getFunction`, `traceable`, `observability/providers/bitfab`, replay registries) plus domain terms from the user's description. If one key is clearly tied to the described workflow, hold it as the candidate and grep for its exact string. Then call `mcp__plugin_bitfab_Bitfab__list_trace_functions` to confirm whether the candidate has traces and to capture trace count + last activity. If code does not reveal a candidate, or multiple candidates remain plausible, use `list_trace_functions` as a fallback picker (recommend 2-4 alternatives by key, trace count, last activity, and code path when known). If nothing matches, ask the user to clarify or pass a key explicitly.
 
    Do NOT invent or infer descriptions of what each function does from its key name. Use only what `mcp__plugin_bitfab_Bitfab__list_trace_functions` returns plus what's in the codebase.
 2. Free-form investigation: use whatever combination of MCP and local tools fits the user's described concern, subject to the Trace-first debugging rule above. Typical moves:
@@ -43,7 +43,7 @@ Reached only from `investigate` mode. The user is describing an issue they want 
    > B) **Write an analysis report**: save the findings to a markdown file I can share or revisit later → step 4
    > C) **Build a labeled dataset**: seed the dataset with these traces, label them, and iterate against them later *(recommended)* → the `assistant-dataset` skill
 
-   Options A and B end at the cleanup step, which closes Studio. Option C continues through dataset building, diagnosis, and experiments, with Studio staying open throughout until cleanup at wrap-up.
+   Options A and B end with a summary. Option C continues through dataset building, diagnosis, and experiments, sharing relevant page links along the way.
 
    **Next:**
 
@@ -74,7 +74,7 @@ Reached only from `investigate` mode. The user is describing an issue they want 
    <concrete actions: build a dataset around hypothesis X, instrument span Y, ship a code fix for Z, etc.>
    ```
 
-   After writing, tell the user the file path so they can open or share it, then stop (the cleanup step closes Studio). Do NOT roll into dataset building automatically; that is option C, not option B.
+   After writing, tell the user the file path so they can open or share it, then stop. Do NOT roll into dataset building automatically; that is option C, not option B.
 
    **Next:**
 

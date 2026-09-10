@@ -7,12 +7,6 @@ allowed-tools: ["Bash"]
 
 # Bitfab Setup: Cleanup
 
-**Mode:** you were dispatched with a mode (`wizard` or `explain` or `login` or `session-logs` or `instrument` or `modify` or `inspect` or `switch-org` or `view` or `replay` or `db-snapshot` or `templates` or `analyze-repo`); which steps apply and where they route below depend on it.
+**Mode:** you were dispatched with a mode (`wizard` or `explain` or `login` or `session-logs` or `instrument` or `modify` or `inspect` or `switch-org` or `replay` or `db-snapshot` or `templates` or `analyze-repo`); which steps apply and where they route below depend on it.
 
-1. Close Studio. Run this unconditionally: it resolves the active session from disk, closes the Studio tab (the daemon ends the session and stops appending to the event file), and exits quietly (`{"event":"no-active-studio"}`) when nothing was opened:
-
-   ```bash
-   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/closeStudio.js"
-   ```
-
-   No sessionId argument is needed; do not track or look up one. This is silent housekeeping: never narrate it, reason about whether a session was opened, or report the outcome to the user (no "closing Studio", no "nothing to close").
+1. The requested setup work is complete.

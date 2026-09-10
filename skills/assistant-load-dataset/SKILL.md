@@ -13,8 +13,6 @@ Entry for `experiment`, `cost-optimize`, and `benchmark` modes, which skip the f
 
 1. **Run only when mode is `experiment`, `cost-optimize` or `benchmark`.**
 
-   **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Running experiments"`.
-
    **Skip on re-entry (cost-optimize).** If you are returning to this phase from the cost-diagnosis phase (`cost/diagnose`) and already hold a picked `datasetId` with its traces loaded in working context, do NOT re-pick or re-load the dataset and do NOT branch back into `cost/diagnose`: skip this step entirely and continue to `pick-execution-mode` below. The dataset-pick runs once per run. (Under split-chain the cost phase tails back into this skill, which re-enters here at the top; this guard is what stops `pick-dataset → cost → pick-dataset` from looping.)
 
    The trace function key comes from the argument and no prior phase has run (on the first pass). Pick the dataset to run against (`experiment` and `cost-optimize` modes iterate against it; `benchmark` mode replays it once to measure the current code), then locate the code:
@@ -27,7 +25,7 @@ Entry for `experiment`, `cost-optimize`, and `benchmark` modes, which skip the f
       - In `benchmark` mode, the dataset just needs **≥1 trace**: benchmark replays the entire dataset against the current code regardless of label mix (an all-passing dataset is a valid regression baseline).
       - In `cost-optimize` mode, the dataset just needs **≥1 trace**: the goal is to cut tokens while holding quality, so an all-passing-but-expensive dataset is the common, valid case. The labeled traces (if any) guard the pass rate; the token usage on every trace is what the run optimizes.
 
-   - **no datasets exist for this function (`list_datasets` returned empty), or the picked dataset fails the mode's usability check (experiment: no validated failing labels; benchmark / cost-optimize: no traces at all)**: tell the user the function has no usable dataset yet and recommend running `/bitfab:assistant dataset <key>` first; then stop the flow (the cleanup step closes Studio if one was opened) → the `assistant-cleanup` skill
+   - **no datasets exist for this function (`list_datasets` returned empty), or the picked dataset fails the mode's usability check (experiment: no validated failing labels; benchmark / cost-optimize: no traces at all)**: tell the user the function has no usable dataset yet and recommend running `/bitfab:assistant dataset <key>` first; then stop the flow → the `assistant-cleanup` skill
    - **dataset loaded (experiment: ≥1 validated failing label; benchmark / cost-optimize: ≥1 trace)**: summarize the dataset for the user (counts of pass/fail) and the failure annotations. In `experiment` mode, pick a first experiment from the failure patterns. In `benchmark` mode, confirm the dataset and proceed to replay the full set. In `cost-optimize` mode, confirm the dataset and proceed to the cost-diagnosis phase → the `assistant-cost` skill (mode `cost-optimize`); the `assistant-iterate` skill (mode `benchmark`); stop (mode `add-trace` or `replay`); otherwise step 2
 
    **Next:**

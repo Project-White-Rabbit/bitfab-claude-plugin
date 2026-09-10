@@ -11,9 +11,7 @@ allowed-tools: ["Bash", "Read", "Grep", "AskUserQuestion", "mcp__plugin_bitfab_B
 
 Reached only from `cost-optimize` mode, after `load-dataset/pick-dataset` has picked the dataset and located the code. `costRun` is always true in this mode (the mode exists to cut token cost), and `costBasis` was fixed at entry per the usual rules. The goal is to **lower token cost while holding the pass rate**: the labeled dataset is the regression guard, the token delta is the score. This phase profiles where the dataset's tokens actually go and turns that into a concrete, ordered list of token-reduction experiments, then hands off to `load-dataset/pick-execution-mode` so the shared replay loop (Phase 5) runs each one, persists verdicts, and reports the per-item and dataset-wide token delta on the run's basis so you can confirm cost dropped without a quality regression.
 
-1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" started "Diagnosing token spend"`.
-
-   **Profile where the tokens go, then plan reductions.** Ground every proposal in the actual token breakdown of this dataset's traces and in the code under test (located in `load-dataset/pick-dataset`).
+1. **Profile where the tokens go, then plan reductions.** Ground every proposal in the actual token breakdown of this dataset's traces and in the code under test (located in `load-dataset/pick-dataset`).
 
    **1. Read the token breakdown.** The dataset's full traces were already loaded in `load-dataset/pick-dataset` (via `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/readTracesBatched.js" ... --scope full`); reuse that `outputFile`. Sort by recorded token usage and study the most expensive 3-5 traces. For each, see where the tokens go: `input` vs `output`, and how much of `input` is `cached` vs fresh. A run on `costBasis = uncached` cares about fresh `(input - cached) + output`; a run on `all` cares about raw `input + output`. Note the dominant cost driver per trace.
 

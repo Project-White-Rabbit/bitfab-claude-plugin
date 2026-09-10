@@ -2,7 +2,7 @@
 name: assistant-wrap-up
 description: Phase 6: Validate & Wrap Up phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "AskUserQuestion", "Skill"]
+allowed-tools: ["AskUserQuestion", "Skill"]
 ---
 
 # Bitfab Assistant: Phase 6: Validate & Wrap Up
@@ -11,9 +11,7 @@ allowed-tools: ["Bash", "AskUserQuestion", "Skill"]
 
 **Run only when mode is `wizard`, `dataset`, `experiment`, `cost-optimize`, `investigate` or `fix`.**
 
-1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" completed "Done"`.
-
-   **Summary.** Use `AskUserQuestion` to present the final results similar to this. You may expand where appropriate based on context from the user:
+1. **Summary.** Use `AskUserQuestion` to present the final results similar to this. You may expand where appropriate based on context from the user:
 
    > "**Improvement summary for** `<traceFunctionKey>`:
    >

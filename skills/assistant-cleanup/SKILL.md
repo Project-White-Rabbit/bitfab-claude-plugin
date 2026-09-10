@@ -11,10 +11,4 @@ allowed-tools: ["Bash"]
 
 **Run only when mode is `wizard`, `dataset`, `experiment`, `cost-optimize`, `investigate`, `benchmark`, `replay` or `fix`.**
 
-1. Close Studio. Run this unconditionally: it resolves the active session from disk, closes the Studio tab (the daemon ends the session and stops appending to the event file), and exits quietly (`{"event":"no-active-studio"}`) when nothing was opened:
-
-   ```bash
-   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/closeStudio.js"
-   ```
-
-   No sessionId argument is needed; do not track or look up one. This is silent housekeeping: never narrate it, reason about whether a session was opened, or report the outcome to the user (no "closing Studio", no "nothing to close").
+1. The requested workflow is complete.

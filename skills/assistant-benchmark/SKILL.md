@@ -2,16 +2,13 @@
 name: assistant-benchmark
 description: Phase Benchmark: Scorecard phase of the Bitfab Assistant flow. Invoked by the assistant flow; not run directly
 user-invocable: false
-allowed-tools: ["Bash", "Skill"]
 ---
 
 # Bitfab Assistant: Phase Benchmark: Scorecard
 
 **Run only when mode is `benchmark`.**
 
-1. **Studio activity:** If `studioMode` is true, run `node "${CLAUDE_PLUGIN_ROOT}/dist/commands/pushActivity.js" completed "Done"`.
-
-   **Benchmark scorecard.** Present the results of replaying the dataset against the current code (no changes were made). Print the scorecard as Markdown directly in chat (do NOT use `AskUserQuestion`, this is a terminal report with no decision to make, and tables don't render inside the question UI). Use two tables.
+1. **Benchmark scorecard.** Present the results of replaying the dataset against the current code (no changes were made). Print the scorecard as Markdown directly in chat (do NOT use `AskUserQuestion`, this is a terminal report with no decision to make, and tables don't render inside the question UI). Use two tables.
 
    **Table 1, Summary** (one row per metric):
 

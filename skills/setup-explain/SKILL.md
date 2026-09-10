@@ -10,9 +10,9 @@ user-invocable: false
 
 **Run only when mode is `wizard` or `explain`.**
 
-Teach the two primitives the user has to instrument with. Read-only, no code changes, no Studio. Runs inside `wizard` (right after Login, before the approach question) and standalone via `/bitfab:setup explain` (or natural-language asks like "what is Bitfab" / "explain Bitfab"), which needs no authentication.
+Teach the opt-out tracing and replay primitives the user instruments with. Read-only, no code changes, no browser interaction. Runs inside `wizard` (right after Login, before the approach question) and standalone via `/bitfab:setup explain` (or natural-language asks like "what is Bitfab" / "explain Bitfab"), which needs no authentication.
 
-1. Render the block below **verbatim** as a single message, as formatted markdown (do **not** wrap it in a code fence, do **not** reword it, and do **not** add a summary or an ASCII diagram). This is the education the rest of setup depends on: a user who does not understand `withSpan` and `replay` cannot make the per-method decisions instrumentation asks of them. Do **not** authenticate, scan the codebase, use AskUserQuestion, or edit anything here, in either mode.
+1. Render the block below **verbatim** as a single message, as formatted markdown (do **not** wrap it in a code fence, do **not** reword it, and do **not** add a summary or an ASCII diagram). This is the education the rest of setup depends on: a user who does not understand `withTrace`, `withNode`, and `replay` cannot make the capture and replay decisions instrumentation asks of them. Do **not** authenticate, scan the codebase, use AskUserQuestion, or edit anything here, in either mode.
 
    ```markdown
    **Purpose**
@@ -21,14 +21,15 @@ Teach the two primitives the user has to instrument with. Read-only, no code cha
 
    **How to instrument**
 
-   Bitfab provides you a way to capture traces and replay them safely during development. The core primitives from the Bitfab SDK are:
+   Bitfab provides opt-out tracing and safe replay during development. For TypeScript and Python 3.12+, the core primitives are:
 
-   - `withSpan(...)`
-   - `replay(...)`
+   - `withTrace(...)` / `trace(...)` for one workflow root
+   - `withNode(...)` / `node(...)` to configure a discovered call
+   - `replay(...)` to run recorded scenarios against current code
 
-   `withSpan` captures traces and sends them to Bitfab by default. It serializes the inputs, outputs, and metadata of the method it wraps (or decorates) and sends them over the OTEL transport layer.
+   Default to opt-out tracing. A trace root records its serializable inputs and output plus every first-party call beneath it. Most descendants need no wrapper. Add a node only when a call needs a name, type, capture override, finalizer, or replay-mocking policy. TypeScript requires the matching `@bitfab/transform` build adapter; setup installs and configures it. Python requires 3.12+. Opt-in spans remain supported; setup uses them as the fallback for Ruby, Go, unsupported runtimes, and live streaming roots that opt-out tracing cannot finalize without changing behavior. Keep one tracing surface per call stack. Never mix `withSpan` beneath `withTrace`; the SDK rejects mixed tracing surfaces.
 
-   `replay` calls into your code and modifies the behavior of `withSpan` for each method it wraps (or decorates) in one of five ways:
+   `replay` calls into your trace root and can modify each captured descendant in one of five ways:
 
    1. Execute as normal
    2. Pass in inputs from the recorded trace
@@ -56,7 +57,6 @@ Teach the two primitives the user has to instrument with. Read-only, no code cha
      /bitfab:setup modify     Adjust what an existing trace captures
      /bitfab:setup inspect    Diagnose + fix setup: auth, what's instrumented, SDK/plugin current, replay coverage, traces arriving
      /bitfab:setup switch-org Switch which org the plugin reads and writes
-     /bitfab:setup view       Open one trace function's plan in the browser (read-only)
      /bitfab:setup replay     Create or update replay registry modules
      /bitfab:setup templates  Change how a trace function's spans render
      /bitfab:setup session-logs  Opt in/out of session log collection

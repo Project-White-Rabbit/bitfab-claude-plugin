@@ -17,13 +17,13 @@ Settle who does the instrumenting before any code is read or written. Runs once,
    > A) **Walk me through it**: I drive the instrumentation end to end, checking with you at each decision *(recommended)* → step 2
    > B) **I'll instrument myself**: hand over the docs and stop, no scanning, no code changes → step 3
 
-   Recommend **A** and say why in one line: it is the whole flow (SDK install, trace plan, spans, replay registry module) with a confirmation before anything is written. Ask this once; do not re-ask it later in the session.
+   Recommend **A** and say why in one line: it is the whole flow (SDK install, instrumentation, replay registry module). Ask this once; do not re-ask it later in the session.
 2. The user asked to be walked through it. **Before anything else** (before dispatching to the `setup-instrument` skill, before a single probe or file read), render the content of the block below **verbatim** as formatted markdown: no code fence, no rewording, no additions.
 
    ```markdown
    **What's about to happen next**
 
-   - This wizard will guide Claude Code on how to use the Bitfab plugin to analyze your repository. Claude Code will then instrument your AI features and write a `replay` script using the Bitfab SDK.
+   - This wizard will guide Claude Code on how to use the Bitfab plugin to analyze your repository. Claude Code will then instrument your AI features and register their production entrypoints in a replay registry using the Bitfab SDK.
    - Whenever Claude Code needs your input, it will prompt you
    - Setup takes about 10 - 17 minutes depending on how many features you want to instrument and how complex your AI features are.
    ```
