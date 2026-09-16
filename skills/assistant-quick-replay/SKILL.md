@@ -59,7 +59,7 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    There is no verdict to persist for an errored item. Offer a retry only after the diagnosed cause is addressed, or offer to stop.
 
-   **If the replay completed**, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` with the ORIGINAL trace id first. An assertion says what the user asked this one case to do, and the replay inherits the original's assertions, so it is what the new output is measured against. Each one comes back as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. "no assertions recorded" means the trace has none, and everything below reads exactly as it always has.
+   **If the replay completed**, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` with the ORIGINAL trace id first. An assertion says what the user asked this one case to do, and the replay inherits the original's assertions, so it is what the new output is measured against. Each one comes back as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. Only assertions a person has approved are listed, since only those are checked on a replay. "no approved assertions" means the trace has nothing to measure against, and everything below reads exactly as it always has.
 
    **Never use a Human note as evidence for a verdict; assess only the assertion, its pass/fail criteria, and the evaluated trace.** The note is returned only so you can preserve or edit context intended for people.
 
