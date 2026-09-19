@@ -41,7 +41,7 @@ When instrumenting a workflow, **its instrumentation and replay pipeline are wri
 | Command | Description |
 |---------|-------------|
 | `pageLink.js <path>` | Print a clickable product page URL and exit. |
-| `openExperiments.js <testRunIds>` | Print a link to experiments. |
+| `openExperiments.js <experimentIds>` | Print a link to experiments. |
 | `startDataset.js <key> <datasetId>` | Print a dataset link. |
 | `status.js` | Check plugin authentication and connection status |
 | `login.js` | Open a sign-in window and wait for authentication. Relay the printed sign-in link as a fallback. |

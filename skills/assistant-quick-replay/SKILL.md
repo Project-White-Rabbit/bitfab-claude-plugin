@@ -9,7 +9,7 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "Write", "AskUserQuestio
 
 **Run only when mode is `replay`.**
 
-Reached only from `replay` mode. The user already has a trace ID and (usually) already made a fix; they just want to replay that one trace and hear whether it worked. This is the **minimal, atomic** path: no Bitfab/browser, no dataset, no experiment groups. Locate the replay registry, read the trace, run replay against the single trace ID, compare the new output to the original, and report a one-line verdict in chat. **Whenever you derive a pass/fail verdict, persist it onto the replay trace** (the same local label you show in chat, saved via node "${CLAUDE_PLUGIN_ROOT}/dist/commands/persistReplayLabels.js") so it isn't silently thrown away. The one exception is an SDK too old to expose replay trace IDs: persistence is then impossible, so the verdict stays in-chat only with an upgrade nudge. The replay itself creates a test run intrinsically (the SDK does this); persistence just adds the agent verdict on top.
+Reached only from `replay` mode. The user already has a trace ID and (usually) already made a fix; they just want to replay that one trace and hear whether it worked. This is the **minimal, atomic** path: no Bitfab/browser, no dataset, no experiment groups. Locate the replay registry, read the trace, run replay against the single trace ID, compare the new output to the original, and report a one-line verdict in chat. **Whenever you derive a pass/fail verdict, persist it onto the replay trace** (the same local label you show in chat, saved via node "${CLAUDE_PLUGIN_ROOT}/dist/commands/persistReplayLabels.js") so it isn't silently thrown away. The one exception is an SDK too old to expose replay trace IDs: persistence is then impossible, so the verdict stays in-chat only with an upgrade nudge. The replay itself creates an experiment intrinsically (the SDK does this); persistence just adds the agent verdict on top.
 
 1. **Both sub-steps run without user interaction. No questions, just execute.**
 
@@ -45,7 +45,7 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
    # Ruby:       cd <project-dir> && bundle exec bitfab-replay --registry <registry-path> <pipeline> --trace-ids <trace-id>
    ```
 
-   This is a single-trace, in-chat path: run the replay directly, no progress-bar wrapper (one item has nothing to track). Do **not** pass `--code-change` or `--experiment-group-id`, this minimal path skips code-change payloads and experiment groups (persisting the verdict in the next step needs neither). Capture the full replay-result JSON and exit code, and from it hold the run's test-run id (`testRunId` in TS, `test_run_id` in Python/Ruby) and the completed item's trace id (`traceId` in TS, `trace_id` in Python/Ruby). **In the final replay result this trace id is already the SERVER replay trace id** (the SDK's `completeReplay` overwrites the local id with the server row id before returning), so the verdict step persists against it directly, no `get_replay_status` mapping. **If it is `null`, persistence is impossible this run** (an old server/SDK that returns no server-trace-id mapping), note that so the verdict step falls back to an in-chat-only verdict.
+   This is a single-trace, in-chat path: run the replay directly, no progress-bar wrapper (one item has nothing to track). Do **not** pass `--code-change` or `--experiment-group-id`, this minimal path skips code-change payloads and experiment groups (persisting the verdict in the next step needs neither). Capture the full replay-result JSON and exit code, and from it hold the run's experiment ID (`experimentId` in TS, `experiment_id` in Python/Ruby; older SDKs print `testRunId` / `test_run_id`) and the completed item's trace id (`traceId` in TS, `trace_id` in Python/Ruby). **In the final replay result this trace id is already the SERVER replay trace id** (the SDK's `completeReplay` overwrites the local id with the server row id before returning), so the verdict step persists against it directly, no `get_replay_status` mapping. **If it is `null`, persistence is impossible this run** (an old server/SDK that returns no server-trace-id mapping), note that so the verdict step falls back to an in-chat-only verdict.
 
    **Quick health check.** If the replay crashed (non-zero exit, no items) or the single item has `item.error` set, hold the error for the verdict step. Otherwise hold the completed item's new output alongside the original output you read in `setup`.
 3. **Compare the single replay result to the original, report one line, then persist that verdict onto the replay trace.**
@@ -95,7 +95,7 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
      ```
 
      ```bash
-     node "${CLAUDE_PLUGIN_ROOT}/dist/commands/persistReplayLabels.js" <repoRoot>/.bitfab/tmp/verdicts-<test-run-id>.json
+     node "${CLAUDE_PLUGIN_ROOT}/dist/commands/persistReplayLabels.js" <repoRoot>/.bitfab/tmp/verdicts-<experiment-id>.json
      ```
 
      `label` is `true` for Pass, `false` for Still-failing / Regressed. Read the script's single JSON status line: `ok` means the verdict is now on the replay trace, add "· saved" to your one-line report.
@@ -109,7 +109,7 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    - Option B (Done) (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
 4. **Make another change before re-replaying.** Use `AskUserQuestion` to ask what to change, or let the user describe the fix. Edit the code, then loop back to run the replay again. If the user says they'll make the change themselves, wait for their message, then proceed.
-5. **Run the trace again for real and record the result under the same id.** A re-seed is a seed, not a replay: nothing is mocked, no test run or experiment is created, and the trace keeps its id, labels, assertions, dataset membership, name, and metadata. The previous run is kept as its own trace, linked back to this one, so nothing is deleted.
+5. **Run the trace again for real and record the result under the same id.** A re-seed is a seed, not a replay: nothing is mocked, no experiment is created, and the trace keeps its id, labels, assertions, dataset membership, name, and metadata. The previous run is kept as its own trace, linked back to this one, so nothing is deleted.
 
    **It runs the function exactly as production does, side effects included.** If the safety check in `setup` found any unsafe action (an email, a payment, a write to a live system), say exactly which call would run for real and get an explicit go-ahead before continuing; a re-seed has no mocking to hide behind.
 

@@ -56,7 +56,7 @@ Entry for `experiment`, `cost-optimize`, and `benchmark` modes, which skip the f
 
    Hold the chosen mode in working context. Every iteration below (`make-change`, `replay-against-dataset`, `evaluate-results`) honors it.
 
-   - **bash output is `parallel` (bypass found in committed or user-global settings)**: **Parallel mode.** For each independent experiment, fork to a subagent using the Agent tool with `isolation: "worktree"` and `subagent_type: "general-purpose"`. The subagent edits its worktree, runs replay, returns its scored items + `testRunId` to this main agent → the `assistant-iterate` skill
+   - **bash output is `parallel` (bypass found in committed or user-global settings)**: **Parallel mode.** For each independent experiment, fork to a subagent using the Agent tool with `isolation: "worktree"` and `subagent_type: "general-purpose"`. The subagent edits its worktree, runs replay, returns its scored items + `experimentId` to this main agent → the `assistant-iterate` skill
    - **bash output is `serial` (no bypass found)**: **Serial mode.** Iterate experiments one at a time in this main agent. Subagent worktrees wouldn't inherit bypass permissions, so their Edit tool would be denied → the `assistant-iterate` skill
 
    **Next:**
