@@ -29,6 +29,7 @@ export const platform: PlatformConfig = {
   cliBinary: "claude",
   displayName: "Claude Code",
   supportsAutoUpdate: true,
+  enableAutoUpdateHint: "/plugin → Marketplaces → bitfab → Enable auto-update",
   marketplaceName: "bitfab",
   pluginName: "bitfab",
   marketplacePreRegistered: false,
