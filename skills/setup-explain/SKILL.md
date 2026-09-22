@@ -27,7 +27,7 @@ Teach the opt-out tracing and replay primitives the user instruments with. Read-
    - `withNode(...)` / `node(...)` to configure a discovered call
    - `replay(...)` to run recorded scenarios against current code
 
-   Default to opt-out tracing. A trace root records its serializable inputs and output plus every first-party call beneath it. Most descendants need no wrapper. Add a node only when a call needs a name, type, capture override, finalizer, or replay-mocking policy. TypeScript requires the matching `@bitfab/transform` build adapter; setup installs and configures it. Python requires 3.12+. Opt-in spans remain supported; setup uses them as the fallback for Ruby, Go, unsupported runtimes, and live streaming roots that opt-out tracing cannot finalize without changing behavior. Keep one tracing surface per call stack. Never mix `withSpan` beneath `withTrace`; the SDK rejects mixed tracing surfaces.
+   Default to opt-out tracing. A trace root records its serializable inputs and output plus every first-party call beneath it. Most descendants need no wrapper. Add a node only when a call needs a name, type, capture override, finalizer, or replay-mocking policy. TypeScript requires the matching `@bitfab/sdk/transform` build adapter included with the SDK; setup configures it. Python requires 3.12+. Opt-in spans remain supported; setup uses them as the fallback for Ruby, Go, unsupported runtimes, and live streaming roots that opt-out tracing cannot finalize without changing behavior. Keep one tracing surface per call stack. Never mix `withSpan` beneath `withTrace`; the SDK rejects mixed tracing surfaces.
 
    `replay` calls into your trace root and can modify each captured descendant in one of five ways:
 
