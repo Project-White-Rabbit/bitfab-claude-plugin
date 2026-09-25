@@ -45,7 +45,7 @@ When instrumenting a workflow, **its instrumentation and replay pipeline are wri
 | `startDataset.js <key> <datasetId>` | Print a dataset link. |
 | `status.js` | Check plugin authentication and connection status |
 | `login.js` | Open a sign-in window and wait for authentication. Relay the printed sign-in link as a fallback. |
-| `switchOrg.js [<clerkOrganizationId>]` | List the user's Bitfab orgs (no args), or switch the plugin's active org and replace the local API key (with a <clerkOrganizationId> arg) |
+| `switchOrg.js [<authOrganizationId>]` | List the user's Bitfab orgs (no args), or switch the plugin's active org and replace the local API key (with a <authOrganizationId> arg) |
 | `startTemplatePreview.js <functionKey>` | Print a template preview link and exit. |
 | `update.js <mode>` | Check plugin + SDK versions and install the latest (used by inspect to detect and fix staleness) |
 | `sessionLogConsent.js [get|set true|set false]` | Read (`get` prints `true`/`false`/`null`) or persist (`set true|false`) the global session-log consent flag |

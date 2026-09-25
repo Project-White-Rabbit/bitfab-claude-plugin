@@ -11,7 +11,7 @@ allowed-tools: ["Bash", "Read", "Glob", "Grep", "Edit", "AskUserQuestion", "mcp_
 
 Switch which Bitfab organization the plugin reads and writes. Triggered explicitly by `/bitfab:setup switch-org` (or natural-language asks like "switch org" / "change org" / "switch to the <name> org" / "I'm in the wrong org"). The plugin's org is set by the API key in `~/.config/bitfab/credentials.json`; this lists the user's orgs, switches to the chosen one, and replaces that local key. Requires authentication. Does **not** open Bitfab.
 
-**The live browser does not follow on its own.** Switching persists the new active org server-side (so future sign-ins default to it) and replaces the plugin's key, but a browser tab that's already signed in keeps showing the old org until its session is re-minted. The org actually flips in the browser on the **next** Bitfab open (a fresh session whose org check runs Clerk's client-side `setActive`) or when the user picks the org from the in-app org switcher.
+**The live browser does not follow on its own.** Switching persists the new active org server-side (so future sign-ins default to it) and replaces the plugin's key, but a browser tab that's already signed in keeps showing the old org until its session is re-minted. The org actually flips in the browser on the **next** Bitfab open (a fresh session whose org check sets the active organization in the browser) or when the user picks the org from the in-app org switcher.
 
 **The plugin key and the app's runtime key are separate.** Switching replaces only the plugin's credential in `~/.config/bitfab/credentials.json`. The `BITFAB_API_KEY` your application reads at runtime (from a `.env`-style file) is untouched, so traces your code sends keep landing in the **old** org until that key is updated too. The last step offers to do that.
 
@@ -26,7 +26,7 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
    **Next:**
 
    - Not authenticated (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-2. Call `mcp__plugin_bitfab_Bitfab__list_organizations` to list the organizations the signed-in user belongs to. Each entry has a name, the user's role, an `id:` (the `clerkOrganizationId`), and the org the plugin uses now is marked `[current]`.
+2. Call `mcp__plugin_bitfab_Bitfab__list_organizations` to list the organizations the signed-in user belongs to. Each entry has a name, the user's role, an `id:` (the `authOrganizationId`), and the org the plugin uses now is marked `[current]`.
 
    Choose the target org:
    - **If the user already named an org** (in their request), match it case-insensitively by name against the list and use that org's `id`. If the name matches none, or matches more than one, fall through to asking.
@@ -38,15 +38,15 @@ Switch which Bitfab organization the plugin reads and writes. Triggered explicit
    **Next:**
 
    - The only org is the one already current (nothing to switch to) (mode `switch-org`): invoke the `setup-cleanup` skill with mode `switch-org`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-3. Switch to the chosen org by passing its `clerkOrganizationId`:
+3. Switch to the chosen org by passing its `authOrganizationId`:
 
    ```bash
-   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/switchOrg.js" <clerkOrganizationId>
+   node "${CLAUDE_PLUGIN_ROOT}/dist/commands/switchOrg.js" <authOrganizationId>
    ```
 
    The command prints one JSON line; act on it:
-   - `{"event":"switched","status":"switched"|"already-aligned","clerkOrganizationId":"...","organizationName":"...","apiKey":"..."}`: success. The plugin now reads and writes that org and its API key has been replaced locally. Tell the user in one line: the plugin is now connected to **<organizationName>**. Then tell them to select **<organizationName>** with the in-app org switcher to align their browser with the plugin. Opening a plugin page link does not change the browser's active organization. Hold on to the `apiKey` value from this JSON; the next step uses it to sync the app's local key, and you must never echo that value to the user.
-   - `{"event":"not-member","clerkOrganizationId":"..."}`: the user isn't a member of that org. Report it; do not retry.
+   - `{"event":"switched","status":"switched"|"already-aligned","authOrganizationId":"...","organizationName":"...","apiKey":"..."}`: success. The plugin now reads and writes that org and its API key has been replaced locally. Tell the user in one line: the plugin is now connected to **<organizationName>**. Then tell them to select **<organizationName>** with the in-app org switcher to align their browser with the plugin. Opening a plugin page link does not change the browser's active organization. Hold on to the `apiKey` value from this JSON; the next step uses it to sync the app's local key, and you must never echo that value to the user.
+   - `{"event":"not-member","authOrganizationId":"..."}`: the user isn't a member of that org. Report it; do not retry.
    - `{"event":"error","reason":"..."}`: report the reason.
 
    Do not print or ask for the API key, and do not surface the `apiKey` value to the user; the command replaces the plugin's copy for you and hands you that value solely for the next step.
