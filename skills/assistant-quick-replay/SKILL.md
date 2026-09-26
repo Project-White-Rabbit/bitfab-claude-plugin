@@ -37,13 +37,15 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
    - The replay safety check finds any uncovered or unmockable unsafe action (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - No replay registry entry found for this function (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
    - Trace not found or unreadable (mode `replay`): invoke the `assistant-cleanup` skill with mode `replay`, forwarding `$ARGUMENTS` minus the leading mode keyword (if the user typed one).
-2. **Run the replay against the one trace ID. No user interaction, no extra flags.** Invoke the SDK-installed executable with the registry and pipeline located in `setup`:
+2. **Run the replay against the one trace ID. No user interaction, and no extra flags beyond the one below.** Invoke the SDK-installed executable with the registry and pipeline located in `setup`:
 
    ```bash
    # TypeScript: cd <project-dir> && pnpm exec bitfab-replay --registry <registry-path> <pipeline> --trace-ids <trace-id>
    # Python:     cd <project-dir> && uv run bitfab-replay --registry <registry-path> <pipeline> --trace-ids <trace-id>   (or poetry run)
    # Ruby:       cd <project-dir> && bundle exec bitfab-replay --registry <registry-path> <pipeline> --trace-ids <trace-id>
    ```
+
+   **Add `--skip-assertion-judging` when the installed replay command accepts it.** Run the SDK-installed `bitfab-replay --help` once per workspace and SDK version, with the same package runner as the replay itself. When its options list `--skip-assertion-judging`, add it to every replay command in this step. Newer SDKs otherwise have the server judge each replay's approved assertions as it finishes, which would write a second set of verdicts beside the ones this flow writes and pay for both. Older SDKs reject the flag, so leave it off when `--help` does not list it.
 
    This is a single-trace, in-chat path: run the replay directly, no progress-bar wrapper (one item has nothing to track). Do **not** pass `--code-change` or `--experiment-group-id`, this minimal path skips code-change payloads and experiment groups (persisting the verdict in the next step needs neither). Capture the full replay-result JSON and exit code, and from it hold the run's experiment ID (`experimentId` in TS, `experiment_id` in Python/Ruby; older SDKs print `testRunId` / `test_run_id`) and the completed item's trace id (`traceId` in TS, `trace_id` in Python/Ruby). **In the final replay result this trace id is already the SERVER replay trace id** (the SDK's `completeReplay` overwrites the local id with the server row id before returning), so the verdict step persists against it directly, no `get_replay_status` mapping. **If it is `null`, persistence is impossible this run** (an old server/SDK that returns no server-trace-id mapping), note that so the verdict step falls back to an in-chat-only verdict.
 
