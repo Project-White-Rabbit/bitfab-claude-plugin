@@ -65,7 +65,7 @@ Read `$ARGUMENTS` first. If its first token is exactly one of the mode names bel
 | `inspect` | `inspect` | Diagnose (and offer to fix) your tracing setup: auth, what's instrumented, plugin/SDK freshness, replay coverage, trace arrival. |
 | `switch-org` | `switch-org` | Switch which Bitfab org the plugin reads and writes (replaces the local API key). |
 | `replay` | `replay` | Create or update replay registry modules for instrumented workflows. |
-| `cloud` | `cloud` | Run your normal replay on your own GitHub Actions by adding --cloud: same options, same output, same exit code. One workflow file in the repository; no Bitfab repository connection or GitHub CLI required. |
+| `cloud` | `cloud` | Run your normal replay on your own GitHub Actions by adding --cloud: same options and exit code, with a short summary of the result. One workflow file in the repository; no Bitfab repository connection or GitHub CLI required. |
 | `db-snapshot` | `db-snapshot` | Set up per-trace database snapshots so replay runs against the DB state at trace time (TypeScript, Python, Ruby). |
 | `templates` | `templates` | Iterate on the span-rendering templates for one trace function. |
 | `analyze-repo` | `analyze-repo` | Read-only discovery: scan source, rank the top workflows to instrument, and report recommendations without creating artifacts or changing code. |
