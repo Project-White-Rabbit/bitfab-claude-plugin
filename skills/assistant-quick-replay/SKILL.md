@@ -61,7 +61,7 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
 
    There is no verdict to persist for an errored item. Offer a retry only after the diagnosed cause is addressed, or offer to stop.
 
-   **If the replay completed**, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` with the ORIGINAL trace id first. An assertion says what the user asked this one case to do, and the replay inherits the original's assertions, so it is what the new output is measured against. Each one comes back as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. Only assertions a person has approved are listed, since only those are checked on a replay. "no approved assertions" means the trace has nothing to measure against, and everything below reads exactly as it always has.
+   **If the replay completed**, call `mcp__plugin_bitfab_Bitfab__get_trace_assertions` with the ORIGINAL trace id first. An assertion says what the user asked this one case to do, and the replay inherits the original's assertions, so it is what the new output is measured against. Each one comes back as `[ID: <uuid>] checks <target>: <assertion>`, and that `[ID: <uuid>]` value is the `assertionId` its verdict carries. Only assertions a person has approved are listed, since only those are checked on a replay. "no approved assertions" means the one-line verdict below stays in the chat and nothing is persisted.
 
    **Never use a Human note as evidence for a verdict; assess only the assertion, its pass/fail criteria, and the evaluated trace.** The note is returned only so you can preserve or edit context intended for people.
 
@@ -71,20 +71,11 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
    - Original was **pass**: preserved → "**Pass**: output unchanged in quality." regressed → "**Regressed**: was passing, now <what broke>."
    - No label on the original: show a short before/after diff and summarize whether it looks better.
 
-   **Then persist that verdict onto the replay trace.** The pass/fail you just reported is a local label, save it so it survives the session and lands on the replay trace, exactly like the full replay path. This is not optional when persistence is possible: displaying a verdict and dropping it is the bug this step exists to prevent.
+   **Then, when the original has approved assertions, persist one verdict per assertion onto the replay trace.** Save them so they survive the session and land on the replay trace, exactly like the full replay path. This is not optional when persistence is possible. **When the original has no approved assertions, persist nothing:** agents do not write whole-trace verdicts, so the one-line verdict stays in the chat.
 
-   - **If the completed item's trace id is non-null** (its value is already the SERVER replay trace id, per the `run` step): persist against it directly, no `get_replay_status` call. Write a one-entry verdicts file to an absolute path under `<repoRoot>/.bitfab/tmp/` (`<repoRoot>` = `git rev-parse --show-toplevel`; create the dir if missing) and run the persist script. **The verdicts file keys are the command's fixed camelCase contract (`expectedTraceIds`, `traceId`) regardless of the SDK language, its VALUE is the server trace id you held from the replay output (`traceId` in TS, `trace_id` in Python/Ruby):**
+   - **If the completed item's trace id is non-null** (its value is already the SERVER replay trace id, per the `run` step): persist against it directly, no `get_replay_status` call. Write a verdicts file to an absolute path under `<repoRoot>/.bitfab/tmp/` (`<repoRoot>` = `git rev-parse --show-toplevel`; create the dir if missing) and run the persist script. **The verdicts file keys are the command's fixed camelCase contract (`expectedTraceIds`, `traceId`) regardless of the SDK language, its VALUE is the server trace id you held from the replay output (`traceId` in TS, `trace_id` in Python/Ruby):**
 
-     ```json
-     {
-       "expectedTraceIds": ["<server-trace-id>"],
-       "verdicts": [
-         { "traceId": "<server-trace-id>", "label": true, "annotation": "<the same one-line reason you reported above>", "confidence": "High" }
-       ]
-     }
-     ```
-
-     **If the original had assertions**, that one entry becomes one entry per assertion instead, each carrying its `assertionId`, its own `label`, and its own `annotation` for that assertion alone, and the file carries **no** whole-trace entry for the trace. The trace verdict is derived from the per-assertion rows, so sending both makes the script reject the file with `status: "invalid-input"`. An assertion whose target cannot be found on the replay trace gets `{ "traceId": "<server-trace-id>", "assertionId": "<uuid>", "skip": true }`, never a FAIL, and its siblings are still verdicted:
+     The file carries one entry per assertion, each carrying its `assertionId`, its own `label`, and its own `annotation` for that assertion alone. The script rejects an entry without an `assertionId` with `status: "invalid-input"`. An assertion whose target cannot be found on the replay trace gets `{ "traceId": "<server-trace-id>", "assertionId": "<uuid>", "skip": true }`, never a FAIL, and its siblings are still verdicted:
 
      ```json
      {
@@ -100,9 +91,9 @@ Reached only from `replay` mode. The user already has a trace ID and (usually) a
      node "${CLAUDE_PLUGIN_ROOT}/dist/commands/persistReplayLabels.js" <repoRoot>/.bitfab/tmp/verdicts-<experiment-id>.json
      ```
 
-     `label` is `true` for Pass, `false` for Still-failing / Regressed. Read the script's single JSON status line: `ok` means the verdict is now on the replay trace, add "· saved" to your one-line report.
+     Each entry's `label` is `true` when that assertion passes on the replay and `false` when it fails. Read the script's single JSON status line: `ok` means the verdicts are now on the replay trace, add "· saved" to your one-line report.
      - **If the completed item's trace id is `null`** (old server/SDK that returns no server-trace-id mapping, from the `run` step's note): persistence is impossible. Keep the verdict in-chat only and tell the user once: "This replay didn't return a server trace ID, so the verdict can't be saved. Upgrade the SDK/server." Don't block the flow on it.
-   - **No-label original with no assertions either** (you showed a before/after diff, no pass/fail): there's no verdict to persist, just report the diff. An unlabeled original that HAS assertions is not this case, the assertions are the criteria, so score them one per assertion and persist them.
+   - **Original with no approved assertions:** there's nothing to persist, just report the one-line verdict (or, for a no-label original, the before/after diff). An unlabeled original that HAS assertions is not this case, the assertions are the criteria, so score them one per assertion and persist them.
 
    > A) **Iterate**: make another change and re-replay the same trace → step 4
    > B) **Done** *(recommended)* → the `assistant-cleanup` skill

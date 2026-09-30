@@ -9,7 +9,7 @@ allowed-tools: ["Bash", "Read", "AskUserQuestion", "mcp__plugin_bitfab_Bitfab__s
 
 **Run only when mode is `add-trace`.**
 
-Reached only from `add-trace` mode. This is the lightweight path: attach one or more existing traces to a dataset (picking or creating one), then stop. No labeling, no diagnosis, no experiments, and no browser interaction. It does still run the `readTracesBatched` CLI command to resolve trace function keys. The traces attach **raw**; the user labels and approves them later wherever they review datasets.
+Reached only from `add-trace` mode. This is the lightweight path: attach one or more existing traces to a dataset (picking or creating one), then stop. No labeling, no diagnosis, no experiments, and no browser interaction. It does still run the `readTracesBatched` CLI command to resolve trace function keys. The traces attach **raw**; the user labels their assertions later wherever they review datasets.
 
 1. **Resolve what to attach and where.** The user invoked `/bitfab:assistant add-trace`, either with the signature `add-trace [<key>] <trace-id...> [<dataset-id>]` (the leading `<key>` is optional) or in natural language (e.g. "add trace abc123 to a dataset"). **Tokens are typed, not positional:** a UUID is always a trace ID (or, only when the user explicitly calls it the dataset, the `<dataset-id>`); a non-UUID slug is the function key. So `add-trace <trace-uuid>` is a trace-only invocation, never treat a bare UUID as a function key, and never conclude "no trace IDs were given" just because no slug preceded them. Parse out three things:
 
