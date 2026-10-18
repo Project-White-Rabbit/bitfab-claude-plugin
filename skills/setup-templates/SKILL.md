@@ -13,7 +13,7 @@ Iterate on span-rendering templates for one trace function. Read the current tem
 
 1. If the user passed a key as the argument, use it directly and continue.
 
-   Otherwise, follow the same picker pattern as `/bitfab:assistant`:
+   Otherwise, pick the function:
 
    1. Call `mcp__plugin_bitfab_Bitfab__list_trace_functions` to enumerate the org's traced functions. The tool returns flat `FUNCTION: <key>` lines; work from those keys directly. Use **only** the keys returned: do NOT invent or infer descriptions of what each function does from its name. Key names are often ambiguous, and guessing produces hallucinated summaries that confuse the user.
    2. Grep this repo for each key in parallel (across `*.ts`, `*.tsx`, `*.py`, `*.rb`, `*.go`, `*.baml`) so you know which keys are instrumented here. Mark each as ✅ instrumented here (with file path) or ⚠️ not found in this repo.
