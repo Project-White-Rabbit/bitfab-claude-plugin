@@ -30177,8 +30177,8 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.66.0",
-  python: "0.66.0",
+  typescript: "0.67.0",
+  python: "0.67.0",
   ruby: "0.66.0",
   go: "0.66.0"
 };
@@ -43926,6 +43926,7 @@ var FRAMEWORKS = [
     // The captured span IS the BAML function call (a model call), recorded via a
     // BAML Collector (observe), not withSpan. No nested child spans.
     autoCapture: { modelCall: "observed" },
+    recordedUnderTraceRoot: true,
     signals: {
       ts: "`@boundaryml/baml`, `baml_client` import",
       py: "`baml-py`, `from baml_client import b`"
@@ -43988,7 +43989,8 @@ function frameworkReferenceList() {
     const alias = f.aliasHandler ? `; in a LangChain-only project, prefer the identical aliases ${code(f.aliasHandler.ts)} / ${code(f.aliasHandler.py ?? f.aliasHandler.ts)} so the code reads naturally` : "";
     const wrapper = f.rootWrapper ? `, plus the replayable run wrapper ${code(f.rootWrapper.ts)} / ${code(f.rootWrapper.py ?? f.rootWrapper.ts)} (drop-in for the run call)` : "";
     const toolReplay = f.experimentalToolReplay ? `; Experimental (alpha) tool replay: ${code(f.experimentalToolReplay.factory.ts)} / ${code(f.experimentalToolReplay.factory.py ?? f.experimentalToolReplay.factory.ts)} with ${code(f.experimentalToolReplay.invoker.ts)} / ${code(f.experimentalToolReplay.invoker.py ?? f.experimentalToolReplay.invoker.ts)}${f.experimentalToolReplay.invoker.pyAsync ? ` / ${code(f.experimentalToolReplay.invoker.pyAsync)}` : ""}` : "";
-    return `${f.label} \u2192 ${code(docsUrl(f.docsPath))} (${methods}${alias}${wrapper}${toolReplay})`;
+    const underTraceRoot = f.recordedUnderTraceRoot ? `; beneath an opt-out ${code("withTrace")} / ${code("trace")} root its calls are recorded as ${code("llm")} spans with no ${methods}, so add that ${f.handlerNoun} only under opt-in ${code("withSpan")} / ${code("@span")} code, and configure one call with ${code("withNode")} / ${code("node()")} on the bound method` : "";
+    return `${f.label} \u2192 ${code(docsUrl(f.docsPath))} (${methods}${alias}${wrapper}${toolReplay}${underTraceRoot})`;
   }).join("; ");
 }
 function handlerFrameworksWithMethods() {
