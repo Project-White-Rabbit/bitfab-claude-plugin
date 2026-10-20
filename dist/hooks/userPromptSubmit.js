@@ -1,4 +1,13 @@
-import { runUserPromptSubmit } from "bitfab-plugin-lib";
-import { platform } from "../platform.js";
-import { getVersion } from "../version.js";
+import { createRequire as __bitfabCreateRequire } from 'node:module'; const require = __bitfabCreateRequire(import.meta.url);
+import {
+  getVersion
+} from "../chunks/chunk-FQSXOP32.js";
+import {
+  platform
+} from "../chunks/chunk-4L3OLJQQ.js";
+import {
+  runUserPromptSubmit
+} from "../chunks/chunk-PKOJARXU.js";
+
+// _target/dist/hooks/userPromptSubmit.js
 await runUserPromptSubmit(getVersion(), platform, "claude-code");
