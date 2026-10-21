@@ -8876,9 +8876,9 @@ var require_ajv = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.20.0/node_modules/ajv-formats/dist/formats.js
+// _target/node_modules/.pnpm/ajv-formats@3.0.1/node_modules/ajv-formats/dist/formats.js
 var require_formats = __commonJS({
-  "_target/node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.20.0/node_modules/ajv-formats/dist/formats.js"(exports) {
+  "_target/node_modules/.pnpm/ajv-formats@3.0.1/node_modules/ajv-formats/dist/formats.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.formatNames = exports.fastFormats = exports.fullFormats = void 0;
@@ -9079,9 +9079,9 @@ var require_formats = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.20.0/node_modules/ajv-formats/dist/limit.js
+// _target/node_modules/.pnpm/ajv-formats@3.0.1/node_modules/ajv-formats/dist/limit.js
 var require_limit = __commonJS({
-  "_target/node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.20.0/node_modules/ajv-formats/dist/limit.js"(exports) {
+  "_target/node_modules/.pnpm/ajv-formats@3.0.1/node_modules/ajv-formats/dist/limit.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.formatLimitDefinition = void 0;
@@ -9151,9 +9151,9 @@ var require_limit = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.20.0/node_modules/ajv-formats/dist/index.js
+// _target/node_modules/.pnpm/ajv-formats@3.0.1/node_modules/ajv-formats/dist/index.js
 var require_dist = __commonJS({
-  "_target/node_modules/.pnpm/ajv-formats@3.0.1_ajv@8.20.0/node_modules/ajv-formats/dist/index.js"(exports, module) {
+  "_target/node_modules/.pnpm/ajv-formats@3.0.1/node_modules/ajv-formats/dist/index.js"(exports, module) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var formats_1 = require_formats();
@@ -30177,8 +30177,8 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.68.1",
-  python: "0.68.1",
+  typescript: "0.68.2",
+  python: "0.68.2",
   ruby: "0.67.0",
   go: "0.67.0"
 };
@@ -35684,7 +35684,7 @@ function object2(shape, params) {
   return new ZodMiniObject(def);
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s2) {
   const schema = s2;
   return !!schema._zod;
@@ -35844,7 +35844,7 @@ function getLiteralValue(schema) {
   return void 0;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05", "2024-10-07"];
 var RELATED_TASK_META_KEY = "io.modelcontextprotocol/related-task";
@@ -37375,7 +37375,7 @@ var UrlElicitationRequiredError = class extends McpError {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
 function isTerminal(status) {
   return status === "completed" || status === "failed" || status === "cancelled";
 }
@@ -38664,7 +38664,7 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
 function mapMiniTarget(t) {
   if (!t)
     return "draft-7";
@@ -38706,7 +38706,7 @@ function parseWithCompat(schema, data) {
   return result.data;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
 var DEFAULT_REQUEST_TIMEOUT_MSEC = 6e4;
 var Protocol = class {
   constructor(_options) {
@@ -39683,7 +39683,7 @@ function mergeCapabilities(base, additional) {
   return result;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_formats = __toESM(require_dist(), 1);
 function createDefaultAjvInstance() {
@@ -39751,7 +39751,7 @@ var AjvJsonSchemaValidator = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
 var ExperimentalServerTasks = class {
   constructor(_server) {
     this._server = _server;
@@ -39964,7 +39964,7 @@ var ExperimentalServerTasks = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
 function assertToolsCallTaskCapability(requests, method, entityName) {
   if (!requests) {
     throw new Error(`${entityName} does not support task creation (required for ${method})`);
@@ -39999,7 +39999,7 @@ function assertClientRequestTaskCapability(requests, method, entityName) {
   }
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
 var Server = class extends Protocol {
   /**
    * Initializes this server with the given name and version information.
@@ -40370,7 +40370,7 @@ var Server = class extends Protocol {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
@@ -40384,7 +40384,7 @@ var McpZodTypeKind;
   McpZodTypeKind2["Completable"] = "McpCompletable";
 })(McpZodTypeKind || (McpZodTypeKind = {}));
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
 var TOOL_NAME_REGEX = /^[A-Za-z0-9._-]{1,128}$/;
 function validateToolName(name) {
   const warnings = [];
@@ -40442,7 +40442,7 @@ function validateAndWarnToolName(name) {
   return result.isValid;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
 var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
@@ -40457,7 +40457,7 @@ var ExperimentalMcpServerTasks = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
 function toolInputElementCount(value, max) {
   let count = 0;
   const stack = [value];
@@ -41289,10 +41289,10 @@ var EMPTY_COMPLETION_RESULT = {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 import process2 from "node:process";
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
 var STDIO_DEFAULT_MAX_BUFFER_SIZE = 10 * 1024 * 1024;
 var ReadBuffer = class {
   constructor(options) {
@@ -41329,7 +41329,7 @@ function serializeMessage(message) {
   return JSON.stringify(message) + "\n";
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 var StdioServerTransport = class {
   constructor(_stdin = process2.stdin, _stdout = process2.stdout, options) {
     this._stdin = _stdin;
@@ -45119,14 +45119,14 @@ var FRAMEWORKS = [
       py: "get_langchain_callback_handler"
     },
     experimentalToolReplay: {
+      spans: "ToolNode tool spans",
       factory: {
         ts: "getLangGraphIntegration",
         py: "get_langgraph_integration"
       },
       invoker: {
-        ts: "createInvoker",
-        py: "create_invoker",
-        pyAsync: "create_async_invoker"
+        ts: "instrument",
+        py: "instrument"
       }
     },
     // Callback handler: every node, tool, retriever, and LLM span is observed
@@ -45135,6 +45135,30 @@ var FRAMEWORKS = [
     signals: {
       ts: "`@langchain/langgraph`, `@langchain/core`",
       py: "`langgraph`, `langchain`, `langchain_core`"
+    }
+  },
+  {
+    id: "deep-agents",
+    label: "LangChain Deep Agents",
+    docsPath: "/frameworks/deep-agents",
+    handlerKind: "callbackHandler",
+    handlerNoun: "integration",
+    handler: {
+      ts: "getDeepAgentsIntegration",
+      py: "get_deep_agents_integration"
+    },
+    experimentalToolReplay: {
+      spans: "Tool spans of the main agent (including `task`) and of declarative subagents, for an agent built with the integration's `createDeepAgent({...})` / `create_deep_agent(...)` (same arguments as Deep Agents' own; async in TypeScript)",
+      factory: {
+        ts: "getDeepAgentsIntegration",
+        py: "get_deep_agents_integration"
+      },
+      invoker: { ts: "createDeepAgent", py: "create_deep_agent" }
+    },
+    autoCapture: { modelCall: "observed", child: "observed" },
+    signals: {
+      ts: "`deepagents`, `createDeepAgent` (takes precedence over LangGraph / LangChain when present)",
+      py: "`deepagents`, `create_deep_agent` (takes precedence over LangGraph / LangChain when present)"
     }
   },
   {
@@ -45215,6 +45239,8 @@ var FRAMEWORKS = [
   }
 ];
 var code = (s2) => `\`${s2}\``;
+var preferredName = (names) => names.ts === void 0 ? names.py : names.py ?? names.ts;
+var namePair = (names) => [names.ts, names.py].filter((name) => name !== void 0).map(code).join(" / ");
 var docsUrl = (docsPath) => `${docsPath}.md`;
 var handlerRoots = FRAMEWORKS.filter((f) => f.handlerKind !== "wrapper");
 var keyedReplayHandlers = FRAMEWORKS.flatMap((f) => {
@@ -45240,35 +45266,35 @@ function frameworkDocsPaths() {
 }
 function frameworkDetectionBullets() {
   return FRAMEWORKS.map((f) => {
+    if (f.signals.ts === void 0) {
+      return `- **${f.label}**: Python: ${f.signals.py} (Python only)`;
+    }
     const py = f.signals.py ? `; Python: ${f.signals.py}` : " (TypeScript only)";
     return `- **${f.label}**: TS: ${f.signals.ts}${py}`;
   }).join("\n");
 }
 function frameworkReferenceList() {
   return FRAMEWORKS.map((f) => {
-    const methods = f.handler.py ? `${code(f.handler.ts)} / ${code(f.handler.py)}` : code(f.handler.ts);
-    const alias = f.aliasHandler ? `; in a LangChain-only project, prefer the identical aliases ${code(f.aliasHandler.ts)} / ${code(f.aliasHandler.py ?? f.aliasHandler.ts)} so the code reads naturally` : "";
-    const wrapper = f.rootWrapper ? `, plus the replayable run wrapper ${code(f.rootWrapper.ts)} / ${code(f.rootWrapper.py ?? f.rootWrapper.ts)} (drop-in for the run call)` : "";
-    const toolReplay = f.experimentalToolReplay ? `; Experimental (alpha) tool replay: ${code(f.experimentalToolReplay.factory.ts)} / ${code(f.experimentalToolReplay.factory.py ?? f.experimentalToolReplay.factory.ts)} with ${code(f.experimentalToolReplay.invoker.ts)} / ${code(f.experimentalToolReplay.invoker.py ?? f.experimentalToolReplay.invoker.ts)}${f.experimentalToolReplay.invoker.pyAsync ? ` / ${code(f.experimentalToolReplay.invoker.pyAsync)}` : ""}` : "";
+    const methods = namePair(f.handler);
+    const alias = f.aliasHandler ? `; in a LangChain-only project, prefer the identical aliases ${namePair(f.aliasHandler)} so the code reads naturally` : "";
+    const wrapper = f.rootWrapper ? `, plus the replayable run wrapper ${namePair(f.rootWrapper)} (drop-in for the run call)` : "";
+    const toolReplay = f.experimentalToolReplay ? `; Experimental (alpha) tool replay: ${namePair(f.experimentalToolReplay.factory)} with ${namePair(f.experimentalToolReplay.invoker)}` : "";
     const underTraceRoot = f.recordedUnderTraceRoot ? `; beneath an opt-out ${code("withTrace")} / ${code("trace")} root its calls are recorded as ${code("llm")} spans with no ${methods}, so add that ${f.handlerNoun} only under opt-in ${code("withSpan")} / ${code("@span")} code, and configure one call with ${code("withNode")} / ${code("node()")} on the bound method` : "";
     return `${f.label} \u2192 ${code(docsUrl(f.docsPath))} (${methods}${alias}${wrapper}${toolReplay}${underTraceRoot})`;
   }).join("; ");
 }
 function handlerFrameworksWithMethods() {
-  return handlerRoots.map((f) => {
-    const methods = f.handler.py ? `${code(f.handler.ts)} / ${code(f.handler.py)}` : code(f.handler.ts);
-    return `${f.label} via ${methods}`;
-  }).join(", ");
+  return handlerRoots.map((f) => `${f.label} via ${namePair(f.handler)}`).join(", ");
 }
 function handlerFrameworkNames() {
   return joinOr(handlerRoots.map((f) => f.label));
 }
 function keyedHandlerKeyRefs() {
-  const refs = keyedReplayHandlers.map((k) => code(`${k.method.py ?? k.method.ts}("key")`));
+  const refs = keyedReplayHandlers.map((k) => code(`${preferredName(k.method)}("key")`));
   return `${refs.join(", ")}, or the TS equivalents`;
 }
 function keyedHandlerExamples() {
-  return keyedReplayHandlers.map((k) => `${k.framework.label} ${code(k.method.py ?? k.method.ts)}`).join(", ");
+  return keyedReplayHandlers.map((k) => `${k.framework.label} ${code(preferredName(k.method))}`).join(", ");
 }
 function replayableRootHandlerNames() {
   return joinOr(keyedReplayHandlers.map((k) => k.framework.label));
@@ -45280,10 +45306,7 @@ function traceProcessorNames() {
   return joinOr(FRAMEWORKS.filter((f) => f.handlerKind === "traceProcessor").map((f) => f.label));
 }
 function traceProcessorRootWrappers() {
-  return FRAMEWORKS.filter((f) => f.handlerKind === "traceProcessor" && f.rootWrapper).map((f) => {
-    const w = f.rootWrapper;
-    return w.py ? `${code(w.ts)} / ${code(w.py)}` : code(w.ts);
-  }).join(", ");
+  return FRAMEWORKS.filter((f) => f.handlerKind === "traceProcessor" && f.rootWrapper).map((f) => namePair(f.rootWrapper)).join(", ");
 }
 var AUTO_CAPTURE_ROLE_LABEL = {
   modelCall: "model-call",
@@ -45302,7 +45325,7 @@ function frameworkMockabilityBullets() {
       clauses.push(`${wrapped.join(" and ")} spans run through \`withSpan\` via its ${f.handlerNoun}, so they ARE mockable (though re-run live by default)`);
     }
     if (f.experimentalToolReplay) {
-      clauses.push(`ToolNode tool spans configured through its Experimental (alpha) ${code(f.experimentalToolReplay.factory.ts)} / ${code(f.experimentalToolReplay.factory.py ?? f.experimentalToolReplay.factory.ts)} integration ARE mockable; callback-only tool spans remain NOT mockable`);
+      clauses.push(`${f.experimentalToolReplay.spans} configured through its Experimental (alpha) ${namePair(f.experimentalToolReplay.factory)} integration ARE mockable; callback-only tool spans remain NOT mockable`);
     }
     return `- **${f.label}**: ${clauses.join("; ")}.`;
   }).join("\n");
@@ -45313,10 +45336,10 @@ function handlerNounList() {
 function buildSdkPatterns() {
   const base = '`getFunction("key")`, `get_function("key")`, `bitfab_function "key"`, `WithFunctionName("key")`';
   const keyed = keyedReplayHandlers.map(({ framework, method }) => {
-    const pair = method.py ? `${code(`${method.ts}("key")`)} / ${code(`${method.py}("key")`)}` : code(`${method.ts}("key")`);
+    const pair = [method.ts, method.py].filter((name) => name !== void 0).map((name) => code(`${name}("key")`)).join(" / ");
     return framework.aliasHandler ? `${pair} (or the LangChain-named aliases)` : pair;
   }).join(" and ");
-  const processors = FRAMEWORKS.filter((f) => f.handlerKind === "traceProcessor").map((f) => `${code(`${f.handler.ts}()`)} / ${code(`${f.handler.py}()`)}`).join(" and ");
+  const processors = FRAMEWORKS.filter((f) => f.handlerKind === "traceProcessor").map((f) => [f.handler.ts, f.handler.py].filter((name) => name !== void 0).map((name) => code(`${name}()`)).join(" / ")).join(" and ");
   return `${base}, plus keyed framework handlers: ${keyed}; plus trace-processor registrations (unkeyed in code, the key is derived server-side from the workflow name): ${processors}`;
 }
 function handlerReplayBlock(verb) {
