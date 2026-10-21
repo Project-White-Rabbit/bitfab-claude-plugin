@@ -4,7 +4,7 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   runCaptureHook
-} from "../chunks/chunk-XX3YXFW5.js";
+} from "../chunks/chunk-V7VDZLXD.js";
 
 // _target/dist/hooks/captureHook.js
 await runCaptureHook(process.argv[2], "claude-code", void 0, getVersion());

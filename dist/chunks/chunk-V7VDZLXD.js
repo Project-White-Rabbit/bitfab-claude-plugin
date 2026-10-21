@@ -5097,9 +5097,9 @@ var require_data = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/utils.js
+// _target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/utils.js
 var require_utils = __commonJS({
-  "_target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/utils.js"(exports, module) {
+  "_target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/utils.js"(exports, module) {
     "use strict";
     var isUUID = RegExp.prototype.test.bind(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu);
     var isIPv4 = RegExp.prototype.test.bind(/^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/u);
@@ -5330,37 +5330,6 @@ var require_utils = __commonJS({
         }
       }
       return output2.join("");
-    }
-    function removeDotSegmentsRelative(path10) {
-      if (path10 === "" || path10[0] === "/") {
-        return removeDotSegments(path10);
-      }
-      const segments = path10.split("/");
-      const last = segments.length - 1;
-      const output2 = [];
-      let trailingDirectory = false;
-      for (let i = 0; i <= last; i++) {
-        const segment = segments[i];
-        if (segment === "." || segment === "..") {
-          if (segment === "..") {
-            if (output2.length !== 0 && output2[output2.length - 1] !== "..") {
-              output2.pop();
-            } else {
-              output2.push("..");
-            }
-          }
-          trailingDirectory = i === last;
-        } else {
-          output2.push(segment);
-        }
-      }
-      if (trailingDirectory && output2[output2.length - 1] !== "..") {
-        output2.push("");
-      }
-      if (output2.length === 0 || output2[0] === "" || output2[0].includes(":")) {
-        output2.unshift(".");
-      }
-      return output2.join("/");
     }
     var HOST_DELIMS = { "@": "%40", "/": "%2F", "?": "%3F", "#": "%23", ":": "%3A" };
     var HOST_DELIM_RE = /[@/?#:]/g;
@@ -5622,7 +5591,6 @@ var require_utils = __commonJS({
       encodeFragment,
       escapePreservingEscapes,
       removeDotSegments,
-      removeDotSegmentsRelative,
       isIPv4,
       isUUID,
       normalizeIPv6,
@@ -5631,9 +5599,9 @@ var require_utils = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/schemes.js
+// _target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/schemes.js
 var require_schemes = __commonJS({
-  "_target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/schemes.js"(exports, module) {
+  "_target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/schemes.js"(exports, module) {
     "use strict";
     var { isUUID } = require_utils();
     var URN_REG = /^([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-./:;=@]|%[\da-f]{2})+)$/iu;
@@ -5842,22 +5810,20 @@ var require_schemes = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/index.js
+// _target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/index.js
 var require_fast_uri = __commonJS({
-  "_target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/index.js"(exports, module) {
+  "_target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/index.js"(exports, module) {
     "use strict";
-    var { normalizeIPv6, removeDotSegments, removeDotSegmentsRelative, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
+    var { normalizeIPv6, removeDotSegments, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
     var { SCHEMES, getSchemeHandler } = require_schemes();
     var VALID_SCHEME = /^[A-Za-z][A-Za-z0-9+.-]*$/u;
     var MALFORMED_SCHEME_ERROR = "URI scheme is malformed.";
-    var MALFORMED_HOST_ERROR = "URI host is malformed.";
-    var FORBIDDEN_DOMAIN_HOST_CHARACTER = /[\0-\x20"#/:<>?@[\\\]^`{|}\x7F]/u;
-    function validateScheme(scheme) {
-      const stringScheme = String(scheme);
-      if (!VALID_SCHEME.test(stringScheme)) {
+    function decodeValidScheme(scheme) {
+      const decodedScheme = unescape(String(scheme));
+      if (!VALID_SCHEME.test(decodedScheme)) {
         throw new TypeError(MALFORMED_SCHEME_ERROR);
       }
-      return stringScheme;
+      return decodedScheme;
     }
     function normalize(uri, options) {
       if (typeof uri === "string") {
@@ -5894,9 +5860,6 @@ var require_fast_uri = __commonJS({
       const resolvedSchemeHandler = getSchemeHandler(options && options.scheme || resolved.scheme);
       const resolvedHost = resolved.host;
       const resolvedHostIsIP = resolvedHost !== void 0 && resolvedHost !== "" && (isIPv4(resolvedHost) || normalizeIPv6(resolvedHost).isIPV6);
-      if (hasForbiddenDomainHost(resolved, options || {}, resolvedSchemeHandler, resolvedHostIsIP)) {
-        throw new Error(MALFORMED_HOST_ERROR);
-      }
       canonicalizeHost(resolved, options || {}, resolvedSchemeHandler, resolvedHostIsIP);
       const encodedASCIIHost = resolvedHost && resolvedHost.indexOf("%") !== -1 && !new RegExp("\\P{ASCII}", "u").test(resolvedHost);
       if (resolved.error && !encodedASCIIHost) {
@@ -5938,15 +5901,14 @@ var require_fast_uri = __commonJS({
             if (relative.path[0] === "/") {
               target.path = removeDotSegments(relative.path);
             } else {
-              const baseHasAuthority = base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0;
-              if (baseHasAuthority && !base.path) {
+              if ((base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0) && !base.path) {
                 target.path = "/" + relative.path;
               } else if (!base.path) {
                 target.path = relative.path;
               } else {
                 target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative.path;
               }
-              target.path = base.scheme === void 0 && !baseHasAuthority && target.path[0] !== "/" ? removeDotSegmentsRelative(target.path) : removeDotSegments(target.path);
+              target.path = removeDotSegments(target.path);
             }
             target.query = relative.query;
           }
@@ -5984,13 +5946,12 @@ var require_fast_uri = __commonJS({
       const options = Object.assign({}, opts);
       const uriTokens = [];
       if (component.scheme) {
-        component.scheme = validateScheme(component.scheme);
+        component.scheme = decodeValidScheme(component.scheme);
       }
       const schemeHandler = getSchemeHandler(options.scheme || component.scheme);
       if (schemeHandler && schemeHandler.serialize) schemeHandler.serialize(component, options);
       const hasAuthority = component.userinfo !== void 0 || component.host !== void 0 || component.port !== void 0;
-      const schemelessReference = (component.scheme === void 0 || options.reference === "suffix") && !hasAuthority;
-      const pathNoScheme = !options.skipEscape && schemelessReference;
+      const pathNoScheme = !options.skipEscape && component.scheme === void 0 && !hasAuthority;
       if (component.path !== void 0) {
         if (!options.skipEscape) {
           component.path = serializePathEncoding(component.path, pathNoScheme);
@@ -5999,7 +5960,7 @@ var require_fast_uri = __commonJS({
         }
       }
       if (options.reference !== "suffix" && component.scheme) {
-        component.scheme = validateScheme(component.scheme);
+        component.scheme = decodeValidScheme(component.scheme);
         uriTokens.push(component.scheme, ":");
       }
       const authority = recomposeAuthority(component);
@@ -6015,9 +5976,9 @@ var require_fast_uri = __commonJS({
       if (component.path !== void 0) {
         let s2 = component.path;
         if (!options.absolutePath && (!schemeHandler || !schemeHandler.absolutePath)) {
-          s2 = schemelessReference && s2[0] !== "/" ? removeDotSegmentsRelative(s2) : removeDotSegments(s2);
+          s2 = removeDotSegments(s2);
         }
-        if (schemelessReference) {
+        if (pathNoScheme) {
           s2 = serializePathEncoding(s2, true);
         }
         if (authority === void 0 && s2[0] === "/" && s2[1] === "/") {
@@ -6064,33 +6025,15 @@ var require_fast_uri = __commonJS({
       return hasMalformedPercentEncoding(matches[3]) || host !== void 0 && !isIPLiteral(host) && hasMalformedPercentEncoding(host) || hasMalformedPercentEncoding(matches[6]) || hasMalformedPercentEncoding(matches[7]) || hasMalformedPercentEncoding(matches[8]);
     }
     function canonicalizeHost(parsed, options, schemeHandler, isIP) {
-      if (hasForbiddenDomainHost(parsed, options, schemeHandler, isIP)) {
-        parsed.error = parsed.error || MALFORMED_HOST_ERROR;
-        return true;
-      }
       if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport) && parsed.host && !isIPLiteral(parsed.host) && (options.domainHost || schemeHandler && schemeHandler.domainHost) && isIP === false && nonSimpleDomain(parsed.host)) {
-        let url2;
         try {
-          url2 = new URL("http://" + parsed.host);
+          parsed.host = new URL("http://" + parsed.host).hostname;
         } catch (e) {
           parsed.error = parsed.error || "Host's domain name can not be converted to ASCII: " + e;
           return true;
         }
-        if (!isHostOnlyURL(url2)) {
-          parsed.error = parsed.error || MALFORMED_HOST_ERROR;
-          return true;
-        }
-        parsed.host = url2.hostname;
       }
       return false;
-    }
-    function hasForbiddenDomainHost(parsed, options, schemeHandler, isIP) {
-      return Boolean(
-        parsed.host && isIP === false && !isIPLiteral(parsed.host) && (options.domainHost || schemeHandler && schemeHandler.domainHost) && FORBIDDEN_DOMAIN_HOST_CHARACTER.test(parsed.host)
-      );
-    }
-    function isHostOnlyURL(url2) {
-      return url2.username === "" && url2.password === "" && url2.port === "" && url2.pathname === "/" && url2.search === "" && url2.hash === "" && url2.hostname !== "";
     }
     function parseWithStatus(uri, opts) {
       const options = Object.assign({}, opts);
@@ -6146,8 +6089,9 @@ var require_fast_uri = __commonJS({
         parsed.query = matches[7];
         parsed.fragment = matches[8];
         if (parsed.scheme !== void 0) {
-          if (VALID_SCHEME.test(parsed.scheme)) {
-            parsed.scheme = parsed.scheme.toLowerCase();
+          const decodedScheme = unescape(parsed.scheme);
+          if (VALID_SCHEME.test(decodedScheme)) {
+            parsed.scheme = decodedScheme.toLowerCase();
           } else {
             parsed.error = parsed.error || MALFORMED_SCHEME_ERROR;
             malformedScheme = true;
@@ -6175,7 +6119,7 @@ var require_fast_uri = __commonJS({
             malformedIPLiteral = hasIPLiteralBracket && (!bracketedIPLiteral || ipv6result.error === true);
             parsed.host = isIP ? ipv6result.host : ipv6result.host.toLowerCase();
             if (malformedIPLiteral) {
-              parsed.error = parsed.error || MALFORMED_HOST_ERROR;
+              parsed.error = parsed.error || "URI host is malformed.";
               malformedAuthorityOrPort = true;
             }
           } else {
@@ -6203,7 +6147,7 @@ var require_fast_uri = __commonJS({
           if (!isIP) {
             host = normalizePercentEncoding(host.toLowerCase());
           }
-          parsed.host = isIP || options.scheme !== "null" ? reescapeHostDelimiters(host, isIP) : host;
+          parsed.host = reescapeHostDelimiters(host, isIP);
         }
         if (!schemeHandler || schemeHandler && !schemeHandler.skipNormalize) {
           if (parsed.path) {
@@ -9249,7 +9193,7 @@ var require_dist = __commonJS({
   }
 });
 
-// _target/node_modules/bitfab-plugin-lib/dist/config.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/config.js
 import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
@@ -9484,11 +9428,11 @@ function getOrCreateInstallId() {
   return installId;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/login.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/login.js
 import { createHash, randomBytes } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 
-// _target/node_modules/bitfab-plugin-lib/dist/clientHeaders.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/clientHeaders.js
 import os2 from "node:os";
 function buildBitfabClientHeaders(pluginVersion, platform) {
   const resolvedOptions = Intl.DateTimeFormat().resolvedOptions();
@@ -9512,7 +9456,7 @@ function buildBitfabRequestHeaders(apiKey, pluginVersion, platform) {
   };
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/analytics.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/analytics.js
 async function reportHandoff(apiKey, pluginVersion, platform, body) {
   const config2 = getConfig();
   const headers = buildBitfabRequestHeaders(apiKey, pluginVersion, platform);
@@ -9533,7 +9477,7 @@ async function reportHandoff(apiKey, pluginVersion, platform, body) {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/browser.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/browser.js
 import { execFile, spawn } from "node:child_process";
 import os3 from "node:os";
 function getChromiumBrowsers() {
@@ -9701,7 +9645,7 @@ async function closeLoginWindow(signInUrl) {
   })));
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/login.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/login.js
 async function verifyToken(serviceUrl, token) {
   try {
     const res = await fetch(`${serviceUrl}/api/plugin/whoami`, {
@@ -9784,7 +9728,7 @@ async function runLogin(platform, pluginVersion, options) {
   throw new Error("Login timed out. Run the login command again.");
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/parseArgs.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/parseArgs.js
 var UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function formatPositionalLabel(spec) {
   const tag = spec.format && spec.format !== "string" ? `:${spec.format}` : "";
@@ -9945,7 +9889,7 @@ function positionalArgs(specs, argv = process.argv, opts) {
   }).positional;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/logout.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/logout.js
 function runLogout() {
   printHelpIfRequested({
     description: "Log out of Bitfab by removing the stored credentials from this machine. Takes no arguments."
@@ -9959,13 +9903,13 @@ function runLogout() {
   console.log("Logged out of Bitfab.");
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/output.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/output.js
 function emitJson(event) {
   process.stdout.write(`${JSON.stringify(event)}
 `);
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/pageLink.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/pageLink.js
 function emitPageLink(path10) {
   emitJson({
     event: "link",
@@ -9973,7 +9917,7 @@ function emitPageLink(path10) {
   });
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/openExperiments.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/openExperiments.js
 function parseExperimentIds(args) {
   const joined = args.join(",");
   const seen = /* @__PURE__ */ new Set();
@@ -10039,7 +9983,7 @@ async function runOpenExperiments(_platform) {
   }));
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/openDatasetExperiments.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/openDatasetExperiments.js
 var ARGS2 = [
   {
     name: "datasetId",
@@ -10065,7 +10009,7 @@ async function runOpenDatasetExperiments(_platform) {
   }));
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/pageLink.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/pageLink.js
 function runPageLink() {
   const [path10] = positionalArgs([
     { name: "path", description: "Relative Bitfab page path." }
@@ -10078,7 +10022,7 @@ function runPageLink() {
   emitPageLink(path10);
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/sessionLogConsent.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/sessionLogConsent.js
 function parseSessionLogConsentArgs(args) {
   const [verb, rawValue] = args;
   if (args.includes("-h") || args.includes("--help")) {
@@ -10120,7 +10064,7 @@ function runSessionLogConsent(args) {
   console.log(action.value ? "Session log collection enabled." : "Session log collection disabled.");
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/startDataset.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/startDataset.js
 async function runStartDataset(_platform, _pluginVersion) {
   const args = positionalArgs([
     { name: "functionKey", description: "Trace function key." },
@@ -29846,7 +29790,7 @@ function date4(params) {
   return _coercedDate(ZodDate, params);
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/startTemplatePreview.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/startTemplatePreview.js
 var ticketResponseSchema = external_exports.object({ id: external_exports.uuid() });
 async function runStartTemplatePreview(platform, pluginVersion) {
   const args = positionalArgs([{ name: "functionKey", description: "Trace function key." }], process.argv, { description: "Print a link to the page and exit." });
@@ -29878,7 +29822,7 @@ function buildTemplatePreviewPath(functionKey, ticketId) {
   return ticketId ? `${path10}?ticket=${encodeURIComponent(ticketId)}` : path10;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/updates.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/updates.js
 import fs2 from "node:fs";
 import os4 from "node:os";
 import path2 from "node:path";
@@ -29973,10 +29917,10 @@ function legacyMigrationMessage(platform, prefix = "[Bitfab]") {
   ].join("\n");
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/status.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/status.js
 import path4 from "node:path";
 
-// _target/node_modules/bitfab-plugin-lib/dist/buildInfo.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/buildInfo.js
 import crypto2 from "node:crypto";
 import fs3 from "node:fs";
 import os5 from "node:os";
@@ -30113,7 +30057,7 @@ function formatDevBuildBannerLines(summary, platformLabel) {
   return lines;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/status.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/status.js
 async function runStatus(currentVersion, platform, pluginRoot, scriptUrl) {
   printHelpIfRequested({
     description: "Show plugin status: variant, service URL, version (with update availability), and authentication state. Takes no arguments."
@@ -30163,7 +30107,7 @@ Run ${platform.loginHint} to re-authenticate.`);
   console.log("Status: authenticated");
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/switchOrg.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/switchOrg.js
 async function switchFailureMessage(res) {
   const body = await res.json().catch(() => null);
   if (typeof body?.error === "string") {
@@ -30225,13 +30169,13 @@ async function runSwitchOrg(platform) {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/update.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/update.js
 import { execSync } from "node:child_process";
 
-// _target/node_modules/bitfab-plugin-lib/dist/sdkUpdates.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/sdkUpdates.js
 var semver2 = __toESM(require_semver2(), 1);
 
-// _target/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
   typescript: "0.67.0",
   python: "0.67.0",
@@ -30239,12 +30183,12 @@ var BAKED_SDK_VERSIONS = {
   go: "0.66.0"
 };
 
-// _target/node_modules/bitfab-plugin-lib/dist/installedSdk.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
 var semver = __toESM(require_semver2(), 1);
 import fs5 from "node:fs";
 import path6 from "node:path";
 
-// _target/node_modules/bitfab-plugin-lib/dist/workspaces.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/workspaces.js
 import fs4 from "node:fs";
 import path5 from "node:path";
 function exists(p) {
@@ -30404,7 +30348,7 @@ function detectWorkspaces(rootDir) {
   return [...unique];
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/installedSdk.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
 var TS_PACKAGE = "@bitfab/sdk";
 var TS_PACKAGE_LEGACY = "bitfab";
 var PY_PACKAGE = "bitfab-py";
@@ -30743,7 +30687,7 @@ function getCurrentVersion(sdk) {
   return sdk.resolvedVersion ?? sdk.declaredVersion;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/sdkUpdates.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/sdkUpdates.js
 var TS_PACKAGE2 = "@bitfab/sdk";
 var PY_PACKAGE2 = "bitfab-py";
 var RB_PACKAGE2 = "bitfab";
@@ -30853,7 +30797,7 @@ function formatSdkUpdateLine(status) {
   return `${prefix}${status.language} (${status.packageName}) ${current} \u2192 ${status.latest}${rename}`;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/update.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/update.js
 function resolveUpdateCommands(platform) {
   if (!platform.buildPluginUpdateCommands) {
     return platform.pluginUpdateCommands;
@@ -30997,19 +30941,19 @@ async function runUpdate(currentVersion, platform, mode = "all") {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
 import fs9 from "node:fs";
 
-// _target/node_modules/bitfab-plugin-lib/dist/chatSessions/index.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/index.js
 import { execFileSync } from "node:child_process";
 import fs8 from "node:fs";
 import os7 from "node:os";
 import path8 from "node:path";
 
-// _target/node_modules/bitfab-plugin-lib/dist/skills.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/skills.js
 var BITFAB_SKILLS = ["setup", "assistant", "update"];
 
-// _target/node_modules/bitfab-plugin-lib/dist/hooks/skillDetection.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/skillDetection.js
 var SKILL_PATTERN = new RegExp(`^\\s*[/$]?bitfab[:-](?<skill>${BITFAB_SKILLS.join("|")})(?=\\s|$)`, "i");
 function extractSkillFromPrompt(prompt) {
   const match = prompt.match(SKILL_PATTERN);
@@ -31017,18 +30961,18 @@ function extractSkillFromPrompt(prompt) {
   return BITFAB_SKILLS.includes(raw ?? "") ? raw : null;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/chatSessions/arming.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/arming.js
 import fs6 from "node:fs";
 import os6 from "node:os";
 import path7 from "node:path";
 
-// _target/node_modules/bitfab-lib/dist/agentHosts.js
+// _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/agentHosts.js
 var AGENT_TYPES = ["claude-code", "cursor", "codex", "amp"];
 function isAgentType(value) {
   return AGENT_TYPES.includes(value);
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/chatSessions/arming.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/arming.js
 function sessionsDir() {
   return path7.join(os6.homedir(), ".config", "bitfab", "sessions");
 }
@@ -31118,7 +31062,7 @@ function disarm(sessionId) {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/chatSessions/client.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/client.js
 async function appendChatSession(request) {
   const { serviceUrl, apiKey } = getConfig();
   if (!apiKey) {
@@ -31194,7 +31138,7 @@ async function getChatSessionState(externalId) {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/chatSessions/transcriptReader.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/transcriptReader.js
 import fs7 from "node:fs";
 function readTranscriptDelta(transcriptPath, fromOffset, sequenceBaseOverride) {
   const stat = fs7.statSync(transcriptPath);
@@ -31340,7 +31284,7 @@ function extractToolResultBlocks(content) {
   return null;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/chatSessions/index.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/index.js
 function agentRunIdFromEnv() {
   const value = process.env.BITFAB_AGENT_RUN_ID;
   return value && value.trim() !== "" ? value : void 0;
@@ -31617,7 +31561,7 @@ function readGitBranch(cwd) {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
 function readHookStdin() {
   try {
     const raw = fs9.readFileSync(0, "utf-8").trim();
@@ -31640,10 +31584,10 @@ async function runCaptureHook(hookType, agent = "claude-code", preParsedInput, p
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/hooks/userPromptSubmit.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/userPromptSubmit.js
 import fs10 from "node:fs";
 
-// _target/node_modules/bitfab-plugin-lib/dist/commands/trackSkill.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/trackSkill.js
 async function runTrackSkill(skillName, pluginVersion, platform) {
   const config2 = getConfig();
   if (!config2.apiKey) {
@@ -31667,7 +31611,7 @@ async function runTrackSkill(skillName, pluginVersion, platform) {
   }
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/hooks/userPromptSubmit.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/userPromptSubmit.js
 function readHookInput() {
   try {
     const stdin = fs10.readFileSync(0, "utf-8");
@@ -31698,7 +31642,7 @@ async function runUserPromptSubmit(pluginVersion, platform, agent = "claude-code
   await Promise.all(tasks);
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/hooks/sessionStart.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/sessionStart.js
 async function collectSessionStartMessages(currentVersion, platform, pluginRoot, scriptUrl) {
   const messages = [];
   const devBuildActive = isDevBuildActive(platform, scriptUrl);
@@ -35740,7 +35684,7 @@ function object2(shape, params) {
   return new ZodMiniObject(def);
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s2) {
   const schema = s2;
   return !!schema._zod;
@@ -35900,7 +35844,7 @@ function getLiteralValue(schema) {
   return void 0;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05", "2024-10-07"];
 var RELATED_TASK_META_KEY = "io.modelcontextprotocol/related-task";
@@ -37431,7 +37375,7 @@ var UrlElicitationRequiredError = class extends McpError {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
 function isTerminal(status) {
   return status === "completed" || status === "failed" || status === "cancelled";
 }
@@ -38720,7 +38664,7 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
 function mapMiniTarget(t) {
   if (!t)
     return "draft-7";
@@ -38762,7 +38706,7 @@ function parseWithCompat(schema, data) {
   return result.data;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
 var DEFAULT_REQUEST_TIMEOUT_MSEC = 6e4;
 var Protocol = class {
   constructor(_options) {
@@ -39739,7 +39683,7 @@ function mergeCapabilities(base, additional) {
   return result;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_formats = __toESM(require_dist(), 1);
 function createDefaultAjvInstance() {
@@ -39807,7 +39751,7 @@ var AjvJsonSchemaValidator = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
 var ExperimentalServerTasks = class {
   constructor(_server) {
     this._server = _server;
@@ -40020,7 +39964,7 @@ var ExperimentalServerTasks = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
 function assertToolsCallTaskCapability(requests, method, entityName) {
   if (!requests) {
     throw new Error(`${entityName} does not support task creation (required for ${method})`);
@@ -40055,7 +39999,7 @@ function assertClientRequestTaskCapability(requests, method, entityName) {
   }
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
 var Server = class extends Protocol {
   /**
    * Initializes this server with the given name and version information.
@@ -40426,7 +40370,7 @@ var Server = class extends Protocol {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
@@ -40440,7 +40384,7 @@ var McpZodTypeKind;
   McpZodTypeKind2["Completable"] = "McpCompletable";
 })(McpZodTypeKind || (McpZodTypeKind = {}));
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
 var TOOL_NAME_REGEX = /^[A-Za-z0-9._-]{1,128}$/;
 function validateToolName(name) {
   const warnings = [];
@@ -40498,7 +40442,7 @@ function validateAndWarnToolName(name) {
   return result.isValid;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
 var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
@@ -40513,7 +40457,7 @@ var ExperimentalMcpServerTasks = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
 function toolInputElementCount(value, max) {
   let count = 0;
   const stack = [value];
@@ -41345,10 +41289,10 @@ var EMPTY_COMPLETION_RESULT = {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 import process2 from "node:process";
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
 var STDIO_DEFAULT_MAX_BUFFER_SIZE = 10 * 1024 * 1024;
 var ReadBuffer = class {
   constructor(options) {
@@ -41385,7 +41329,7 @@ function serializeMessage(message) {
   return JSON.stringify(message) + "\n";
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 var StdioServerTransport = class {
   constructor(_stdin = process2.stdin, _stdout = process2.stdout, options) {
     this._stdin = _stdin;
@@ -41452,7 +41396,7 @@ var StdioServerTransport = class {
   }
 };
 
-// _target/node_modules/bitfab-lib/dist/mcpContract.js
+// _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/mcpContract.js
 var DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 function parseDateOnly(value) {
   const [year, month, day] = value.split("-").map(Number);
@@ -42290,11 +42234,11 @@ var ALL_TOOL_CONTRACTS = [
 ];
 var TOOL_NAMES = ALL_TOOL_CONTRACTS.map((contract) => contract.name).sort();
 
-// _target/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
 import { readFile as readFile2 } from "node:fs/promises";
 import { resolve } from "node:path";
 
-// _target/node_modules/bitfab-plugin-lib/dist/mcpProxy.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpProxy.js
 function errorResult(message) {
   return {
     content: [{ type: "text", text: message }],
@@ -42419,7 +42363,7 @@ var McpProxy = class {
   }
 };
 
-// _target/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
 function withLegacyExperimentKeys(args) {
   return {
     ...args,
@@ -42550,7 +42494,7 @@ function createBitfabToolHandlers(platform, getConfig2, pluginVersion) {
   return { proxy, handlers };
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/mcpInstructions.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpInstructions.js
 function buildMcpInstructions(platform) {
   return `Bitfab records traces of AI agent runs and helps the user improve the code that produced them.
 There is no special command for this work. Do what the user asks directly with these tools and the SDK's commands.
@@ -42584,7 +42528,7 @@ Building datasets:
 Use \`${platform.setupHint}\` to instrument new code, set up replay or cloud replay, log in, or switch organization. Use \`${platform.updateHint}\` to update the plugin or SDK.`;
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/mcpServer.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpServer.js
 function createMcpServer(platform, getConfig2, pluginVersion) {
   const { proxy, handlers } = createBitfabToolHandlers(platform, getConfig2, pluginVersion);
   const server = new McpServer({
@@ -44901,7 +44845,7 @@ function amp(options) {
   };
 }
 
-// _target/node_modules/bitfab-plugin-lib/dist/retiredAssistant.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/retiredAssistant.js
 var RETIRED_ASSISTANT_EXAMPLE_REQUESTS = [
   "Find the failing traces for generate-email from the last day and tell me why they failed",
   "Draft assertions for the last three traces in my bugs dataset",
@@ -44909,7 +44853,7 @@ var RETIRED_ASSISTANT_EXAMPLE_REQUESTS = [
   "Compare the baseline experiment with the two prompt-variant experiments"
 ];
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/kit.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/kit.js
 var BITFAB_PLUGIN = "bitfab";
 var MCP_SERVER = "Bitfab";
 var CODEX_RESOLVE_PLUGIN_DIR_BASH = `\`\`\`bash
@@ -44984,7 +44928,7 @@ var SHARED_VARIABLES = {
   }
 };
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/assistant.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/assistant.js
 var EXAMPLE_LINES = RETIRED_ASSISTANT_EXAMPLE_REQUESTS.map((request) => `> - "${request}"`).join("\n");
 var assistantFlow = bitfabKit.defineFlow({
   schemaVersion: 1,
@@ -45023,7 +44967,7 @@ If the user passed arguments along with the command, offer to do that request di
   ]
 });
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/commandWrappers.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/commandWrappers.js
 var COMMAND_WRAPPERS = [
   {
     name: "pageLink",
@@ -45158,7 +45102,7 @@ function commandFilesFromWrappers(wrappers) {
 var COMMAND_FILES = commandFilesFromWrappers(COMMAND_WRAPPERS);
 var BITFAB_PLUGIN_COMMANDS = defineCommandCatalog(COMMAND_FILES);
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/frameworks.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/frameworks.js
 var FRAMEWORKS = [
   {
     id: "langgraph",
@@ -45398,7 +45342,7 @@ var FRAMEWORK_VARIABLES = {
   }
 };
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/replayRegistryRules.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/replayRegistryRules.js
 var REGISTRY_PLACEMENT_RULES = [
   "**Put the registry where production builds the call.** Find the production code that calls the root and builds what it passes in (tools, clients, config). The registry goes in that package's scripts location (Go: `cmd/registry/main.go`), and `bitfab-replay` runs from that package's directory. When the root is defined in a lower-level library and an app package calls it with tools or clients it built, the registry goes in the app package, even when the Bitfab SDK is so far installed only in the library. Add the SDK to the app package's dependencies. That is normal setup, not a refactor or an architecture change, so it needs no confirmation. Name the added dependency in the summary you give the user. Never copy the app's dependencies into the library.",
   "**Never replay with less than production wiring.** An entry that calls the root with an empty or smaller toolset, a stub client, a no-op callback, or a hand-built runner that skips production wiring replays code production never runs. Never write one, not even temporarily with a TODO, and never run replay on one. An existing registry like that counts as missing. Fix it instead of running it, and do not offer running it as an option.",
@@ -45415,7 +45359,7 @@ var REPLAY_REGISTRY_VARIABLES = {
   registryPlacementRulesNested: bulletList(REGISTRY_PLACEMENT_RULES, "  ")
 };
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/setup.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/setup.js
 var setupFlow = bitfabKit.defineFlow({
   schemaVersion: 1,
   id: "setup",
@@ -47106,7 +47050,7 @@ If **zero** valid candidates remain, skip to step {{step:analyze-repo/report}} a
   ]
 });
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/update.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/update.js
 var updateFlow = bitfabKit.defineFlow({
   schemaVersion: 1,
   id: "update",
@@ -47446,7 +47390,7 @@ After each update, Read the manifest to verify the new version and confirm to th
   }
 });
 
-// _target/node_modules/bitfab-plugin-lib/dist/flows/setupV2.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/flows/setupV2.js
 var FINISH_STEP = "finish/done";
 var STEP_RENAMES = {
   "cleanup/finish": FINISH_STEP,
@@ -47696,7 +47640,7 @@ var setupV2Flow = bitfabKit.defineFlow({
   }
 });
 
-// _target/node_modules/bitfab-plugin-lib/dist/installScope.js
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installScope.js
 import fs11 from "node:fs";
 import os8 from "node:os";
 import path9 from "node:path";
