@@ -4,13 +4,13 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-XOTX2NK4.js";
+} from "../chunks/chunk-4AI6ESEJ.js";
 import {
   detectLegacyInstall,
   legacyMigrationMessage,
   parseUpdateMode,
   runUpdate
-} from "../chunks/chunk-3S2DLBW3.js";
+} from "../chunks/chunk-25TWML6B.js";
 
 // _target/dist/commands/update.js
 async function main() {

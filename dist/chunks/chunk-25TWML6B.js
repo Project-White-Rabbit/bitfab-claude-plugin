@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.68.7",
-  python: "0.68.6",
-  ruby: "0.67.1",
-  go: "0.67.2"
+  typescript: "0.68.8",
+  python: "0.68.7",
+  ruby: "0.67.2",
+  go: "0.67.3"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -42153,6 +42153,14 @@ var saveTraceCategories = {
     categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).max(100)).describe("Every category the trace belongs to, replacing its saved set. An empty list clears it.")
   }
 };
+var generateScenario = {
+  name: "generate_scenario",
+  title: "Generate Scenario",
+  description: "Start building the scenario for one trace and return at once, without waiting for it. The scenario appears on the trace later: read it with get_scenario. Bitfab builds the trigger itself for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, fills in the rest for any trace. A trace that already has a scenario is left as it is and answers with that scenario's id. A replay, a trace outside this organization, or a trace Bitfab cannot build a scenario for (not noah-agent-turn and no scenario callback) is refused. Adding traces to a dataset links each one to an empty scenario, and starts this same build for each only when the organization has a scenario callback.",
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The trace to build a scenario for.")
+  }
+};
 var generateScenarioAssertions = {
   name: "generate_scenario_assertions",
   title: "Generate Scenario Assertions",
@@ -42230,6 +42238,7 @@ var ALL_TOOL_CONTRACTS = [
   getScenario,
   saveScenario,
   saveTraceCategories,
+  generateScenario,
   generateScenarioAssertions
 ];
 var TOOL_NAMES = ALL_TOOL_CONTRACTS.map((contract) => contract.name).sort();
