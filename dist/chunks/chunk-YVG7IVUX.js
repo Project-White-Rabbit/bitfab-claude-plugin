@@ -30177,7 +30177,7 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.68.8",
+  typescript: "0.68.9",
   python: "0.68.8",
   ruby: "0.67.3",
   go: "0.67.4"
@@ -45252,6 +45252,18 @@ var FRAMEWORKS = [
     signals: {
       ts: "`ai`, `wrapLanguageModel`, `streamText`, `generateText`"
     }
+  },
+  {
+    id: "pi",
+    label: "Pi agent harness",
+    docsPath: "/frameworks/pi",
+    handlerKind: "callbackHandler",
+    handlerNoun: "integration",
+    handler: { ts: "getPiIntegration" },
+    autoCapture: { modelCall: "withSpan", child: "withSpan" },
+    signals: {
+      ts: "`@earendil-works/pi-agent-core`, `@mariozechner/pi-agent-core`, `@earendil-works/pi-coding-agent` (`createAgentSession`); instrument with `getPiIntegration(key).instrument(agent)`"
+    }
   }
 ];
 var code = (s2) => `\`${s2}\``;
@@ -45328,17 +45340,21 @@ var AUTO_CAPTURE_ROLE_LABEL = {
   modelCall: "model-call",
   child: "tool / retriever / read / side-effect"
 };
+var WRAPPED_ROLE_REPLAY_DEFAULT = {
+  modelCall: "though re-run live by default",
+  child: "and answered from the recording by default"
+};
 function frameworkMockabilityBullets() {
   return FRAMEWORKS.map((f) => {
     const roles = Object.entries(f.autoCapture);
     const observed = roles.filter(([, m]) => m === "observed").map(([role]) => AUTO_CAPTURE_ROLE_LABEL[role]);
-    const wrapped = roles.filter(([, m]) => m === "withSpan").map(([role]) => AUTO_CAPTURE_ROLE_LABEL[role]);
+    const wrapped = roles.filter(([, m]) => m === "withSpan").map(([role]) => role);
     const clauses = [];
     if (observed.length > 0) {
       clauses.push(`${observed.join(" and ")} spans are observed via its ${f.handlerNoun}, so they are NOT mockable`);
     }
-    if (wrapped.length > 0) {
-      clauses.push(`${wrapped.join(" and ")} spans run through \`withSpan\` via its ${f.handlerNoun}, so they ARE mockable (though re-run live by default)`);
+    for (const role of wrapped) {
+      clauses.push(`${AUTO_CAPTURE_ROLE_LABEL[role]} spans run through \`withSpan\` via its ${f.handlerNoun}, so they ARE mockable (${WRAPPED_ROLE_REPLAY_DEFAULT[role]})`);
     }
     if (f.experimentalToolReplay) {
       clauses.push(`${f.experimentalToolReplay.spans} configured through its Experimental (alpha) ${namePair(f.experimentalToolReplay.factory)} integration ARE mockable; callback-only tool spans remain NOT mockable`);
