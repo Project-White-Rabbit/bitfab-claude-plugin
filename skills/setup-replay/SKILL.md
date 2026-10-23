@@ -76,7 +76,7 @@ Whenever the user picks "refactor to extract a pure core" (or any option that mo
 
 2. **Present the plan verbatim** to the user, in the same format above.
 
-3. **AskUserQuestion** with exactly two options:
+3. **Use `AskUserQuestion`** with exactly two options:
    - **"Apply refactor"**: proceed to write the changes
    - **"Cancel"**: return to the previous AskUserQuestion (Instrument's workflow-selection (a)/(b)/(c), or Replay's non-replayable-root three-option prompt) so the user can pick a different resolution
 
