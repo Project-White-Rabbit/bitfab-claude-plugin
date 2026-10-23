@@ -4,10 +4,10 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-YACCVJPH.js";
+} from "../chunks/chunk-XOTX2NK4.js";
 import {
   runUserPromptSubmit
-} from "../chunks/chunk-WSWDYRMO.js";
+} from "../chunks/chunk-3S2DLBW3.js";
 
 // _target/dist/hooks/userPromptSubmit.js
 await runUserPromptSubmit(getVersion(), platform, "claude-code");
