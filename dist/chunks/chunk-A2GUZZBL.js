@@ -30177,9 +30177,9 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.68.11",
-  python: "0.68.10",
-  ruby: "0.67.4",
+  typescript: "0.69.0",
+  python: "0.69.0",
+  ruby: "0.68.0",
   go: "0.67.5"
 };
 
@@ -42030,7 +42030,7 @@ var saveExperiment = {
 var getExperiment = {
   name: "get_experiment",
   title: "Get Experiment",
-  description: "Get a single experiment by experiment ID, with its name, notes, status, pass/fail totals, delta, experiment group, and grader results: the aggregate passing/failing checks and pass rate, plus a per-grader breakdown (each assigned grader's own passing/failing and pass rate on the run). Use this when you already have an experiment ID and want just that run's results, instead of paging the whole function's history with list_experiments.",
+  description: "Get a single experiment by experiment ID, with its name, notes, status, pass/fail totals, delta, experiment group, and grader results: the aggregate passing/failing checks and pass rate, plus a per-grader breakdown (each assigned grader's own passing/failing and pass rate on the run). Once every verdict is in it also carries the written summary: pass rate, cost, and latency before and after against the baseline (the first finished experiment in its group, or the original traces), the assertions and categories that flipped with example replay trace ids, and the traces worth opening first. Use this when you already have an experiment ID and want just that run's results, instead of paging the whole function's history with list_experiments.",
   inputSchema: {
     experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments")
   }
