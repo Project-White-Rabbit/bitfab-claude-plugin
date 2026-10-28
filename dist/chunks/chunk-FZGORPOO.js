@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.71.0",
-  python: "0.71.0",
-  ruby: "0.70.0",
-  go: "0.69.0"
+  typescript: "0.72.0",
+  python: "0.72.0",
+  ruby: "0.71.0",
+  go: "0.70.0"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -42512,7 +42512,7 @@ Replaying traces against the current code:
 - A replay runs a trace's historical inputs through the current code. Use it to check a fix, compare prompt or model changes, or test a dataset before release. It runs through the \`bitfab-replay\` command that the Bitfab SDK installs. These tools do not start replays.
 - It needs the project's replay registry module. Look for \`scripts/replayRegistry.*\`, \`scripts/replay_registry.*\`, or \`cmd/registry/main.go\`. If none exists, \`${platform.setupHint}\` creates one.
 - Run it from the project directory with the project's package runner. TypeScript: \`pnpm exec bitfab-replay --registry <registry-path> <trace-function-key> --dataset-id <dataset-id>\`. Python: \`uv run bitfab-replay ...\` or \`poetry run bitfab-replay ...\`. Ruby: \`bundle exec bitfab-replay ...\`. Go: \`go run ./cmd/registry <trace-function-key> ...\`.
-- Every replay needs \`--code-change\`: \`working-tree\` (uncommitted), \`last-branch\` (vs parent branch), \`default-branch\` (vs the default branch), \`skip\` (baseline), or \`manual\` with \`--code-change-file <path>\`. Ask if unclear.
+- Every replay needs \`--code-change\`: \`working-tree\` (uncommitted), \`last-branch\`, \`default-branch\`, \`ref\` with \`--code-change-base <branch|sha>\`, \`skip\`, or \`manual\` with \`--code-change-file <path>\`. Ask if unclear.
 - Pass \`--trace-ids <id>,<id>\` instead of \`--dataset-id\` to replay specific traces. Pass \`--name <name>\` to name the run, and \`--attempts <n>\` to replay each trace more than once when results vary. Pass \`--cloud\` to run it on GitHub Actions once \`${platform.setupHint}\` has set up cloud replay. Run the command with \`--help\` for every option.
 - Each replay creates an experiment and prints its ID. ${getReplayStatus.name} reports its progress. If it stopped early and is resumable, resume it with the same command plus \`--resume <experiment-id>\`. Leave out \`--dataset-id\` and \`--trace-ids\`, because a resume reuses the experiment's own traces.
 
