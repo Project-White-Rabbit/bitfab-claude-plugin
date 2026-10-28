@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.72.1",
-  python: "0.72.1",
-  ruby: "0.71.1",
-  go: "0.70.1"
+  typescript: "0.73.0",
+  python: "0.73.0",
+  ruby: "0.72.0",
+  go: "0.71.0"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -41779,6 +41779,11 @@ var assertionTargetShape = external_exports.discriminatedUnion("kind", [
     ]).optional().describe('Which call to check when the trace runs that span more than once, e.g. a retry loop. "first", "last" (the default), or a 0-based index. Leave it off unless the repetition matters.')
   }).describe("Check one span by name rather than the whole trace, e.g. that a particular tool call was made with the right arguments.")
 ]).describe('SCOPE: what part of the trace under evaluation this assertion is checked against. OMIT IT for the whole trace, which is the common case and the right default when unsure. On an edit, omitting it keeps the current scope, and passing null returns the assertion to the whole trace. Pass { "kind": "output" } to check only the final output, or { "kind": "span", "name": "..." } to check one span. Scoping narrows what a judge looks at, so a wrong scope hides real failures. A target naming something the evaluated trace does not contain makes the check ERRORED, never passed, because a check that could not run must never look like a check that succeeded.');
+var assertionKindShape = external_exports.enum(["judge", "code", "hybrid"]).describe('KIND: who decides this assertion on a replay. "judge" (the default): the LLM judge reads the run. "code": the code below decides every replay by itself, and never returns "defer". "hybrid": the code decides what a program can read and returns "defer" to hand the rest to the LLM judge. Send "code" or "hybrid" together with code. On an edit, omit it to keep the current kind, and pass "judge" to remove the code.');
+var assertionCodeShape = external_exports.object({
+  source: external_exports.string().trim().min(1).max(2e4).describe('Body of a TypeScript function (plain JavaScript also works) called with `spans` (every span of the run in start order, each { name, input, output, metadata }), `input`, and `output` (the run\'s root input and output). It returns "pass", "fail", or "defer", or { result, reason } with a short reason. Only a hybrid assertion returns "defer": when the part the code can read holds and the rest needs reading what text means, so the LLM judge decides it. Copy ids, recipients, and times from the trace as literals, never match the wording of prose, and guard every read so it never throws on a missing field. It runs in a sandbox with no network, files, or timers, and must finish within one second.'),
+  spanNames: external_exports.array(external_exports.string().min(1)).max(50).describe("Every span name the code expects a correct run to produce. Leave out names it only checks did not run. When one of these is missing from a replay and from the other replays sampled for the same function, the code is reported as broken rather than failing the replay.")
+}).describe(`CODE: decides this assertion's verdict from the trace's spans instead of the LLM judge, so replays it decides cost no judge call and give the same verdict every time. Write it only when facts a program reads settle the claim, or a necessary part of it: which spans ran and how often, argument and output values, ordering, or an exact literal in a message. Leave it off when deciding needs reading meaning. Bitfab may draft it itself after saving. The code is run on this trace before it is saved, and refused with the reason when it throws, times out, returns anything else, or returns "defer" for a "code" assertion. On an edit, omit it to keep the current code.`);
 var justificationShape = external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
   spanId: external_exports.uuid().describe("The span this reason comes from, taken from the `[ID: ...]` shown for that span in get_traces output."),
   text: external_exports.string().trim().min(1).max(1e4).describe("What that span shows, in one or two sentences.")
@@ -41861,6 +41866,8 @@ var saveTraceAssertions = {
       passCriteria: external_exports.string().optional().describe("How a judge should recognise a pass, when the assertion alone leaves room to argue, e.g. 'arrival timestamp is strictly before 09:00 in the destination timezone'. Optional, and only worth writing when it removes real ambiguity. Same field save_grader takes, so an assertion that proves out across many traces is promoted into a grader by copying it. On an edit, omit to keep the current value and pass an empty string to clear it."),
       failCriteria: external_exports.string().optional().describe("How a judge should recognise a failure, for cases the pass criteria do not obviously exclude, e.g. 'any leg departing after 09:00, including connections'. Optional. On an edit, omit to keep the current value and pass an empty string to clear it."),
       targetOnEvaluatedTrace: assertionTargetShape.nullish(),
+      kind: assertionKindShape.nullish(),
+      code: assertionCodeShape.nullish(),
       justification: justificationShape.nullish().describe("Why this assertion is right for THIS trace, cited span by span: the spans that show what the run actually did, each with its own reason. Omit on an edit to preserve it, or pass null to remove it. It is the evidence behind `approvalState`, so an assertion with no justification is one a reviewer has to reconstruct from scratch. Cite spans on this trace only."),
       categoryJustification: justificationShape.nullish().describe("Why `category_id` is the right category for this assertion, cited span by span. Omit on an edit to preserve it, or pass null to remove it. Changing the category clears it, since it justified the old one. Cite spans on this trace only."),
       approvalState: optionalApprovalState(),
