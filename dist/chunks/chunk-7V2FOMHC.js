@@ -41396,6 +41396,109 @@ var StdioServerTransport = class {
   }
 };
 
+// _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/deprecatedToolNames.js
+var DEPRECATED_TOOL_NAMES = {
+  read_traces: "get_traces",
+  read_trace_labels: "get_trace_verdicts",
+  read_grader_labels: "get_grader_verdicts",
+  read_span_field: "get_span_field",
+  get_experiment_traces: "list_experiment_traces",
+  update_template: "save_template",
+  update_agent_labels: "save_agent_verdicts",
+  set_human_labels: "save_human_verdicts",
+  create_dataset: "save_dataset",
+  add_grader_to_experiment_group: "add_graders_to_experiment_group"
+};
+function isRecord(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function rewriteRenamedToolArguments(deprecatedName, args) {
+  if (deprecatedName !== "add_grader_to_experiment_group" || !isRecord(args)) {
+    return args;
+  }
+  const { graderId, ...rest } = args;
+  if (typeof graderId !== "string" || "graderIds" in rest) {
+    return args;
+  }
+  return { ...rest, graderIds: [graderId] };
+}
+var DEPRECATED_ARGUMENT_NAMES = {
+  search_traces: { testRunId: "experimentId" },
+  save_agent_verdicts: { testRunId: "experimentId" },
+  save_agent_labels: { testRunId: "experimentId" },
+  rerun_graders_on_experiment: { testRunId: "experimentId" },
+  add_graders_to_experiment: { testRunId: "experimentId" },
+  remove_graders_from_experiment: { testRunId: "experimentId" },
+  list_experiment_traces: { testRunId: "experimentId" },
+  get_replay_status: { testRunId: "experimentId" },
+  save_experiment_group: { testRunIds: "experimentIds" },
+  save_experiment: { testRunId: "experimentId" },
+  get_experiment: { testRunId: "experimentId" }
+};
+function rewriteArgumentNames(toolName, args) {
+  const renames = DEPRECATED_ARGUMENT_NAMES[toolName];
+  if (!renames || !isRecord(args)) {
+    return { args, deprecatedNames: [], changed: false };
+  }
+  const rewritten = { ...args };
+  const deprecatedNames = [];
+  let changed = false;
+  for (const [deprecatedKey, currentKey] of Object.entries(renames)) {
+    if (!(deprecatedKey in rewritten)) {
+      continue;
+    }
+    changed = true;
+    if (currentKey in rewritten) {
+      delete rewritten[deprecatedKey];
+      continue;
+    }
+    rewritten[currentKey] = rewritten[deprecatedKey];
+    delete rewritten[deprecatedKey];
+    deprecatedNames.push(`${toolName}.${deprecatedKey}`);
+  }
+  return changed ? { args: rewritten, deprecatedNames, changed } : { args, deprecatedNames, changed };
+}
+function rewriteMessage(message) {
+  if (!isRecord(message) || message.method !== "tools/call") {
+    return { message, deprecatedNames: [], changed: false };
+  }
+  const params = message.params;
+  if (!isRecord(params) || typeof params.name !== "string") {
+    return { message, deprecatedNames: [], changed: false };
+  }
+  const renamedTo = DEPRECATED_TOOL_NAMES[params.name];
+  const currentName = renamedTo ?? params.name;
+  const toolArgs = renamedTo ? rewriteRenamedToolArguments(params.name, params.arguments) : params.arguments;
+  const argumentRewrite = rewriteArgumentNames(currentName, toolArgs);
+  const deprecatedNames = [
+    ...renamedTo ? [params.name] : [],
+    ...argumentRewrite.deprecatedNames
+  ];
+  if (renamedTo === void 0 && !argumentRewrite.changed) {
+    return { message, deprecatedNames, changed: false };
+  }
+  return {
+    message: {
+      ...message,
+      params: {
+        ...params,
+        name: currentName,
+        arguments: argumentRewrite.args
+      }
+    },
+    deprecatedNames,
+    changed: true
+  };
+}
+function installDeprecatedToolCallRewrites(protocolServer) {
+  const method = "tools/call";
+  const originalHandler = protocolServer._requestHandlers.get(method);
+  if (!originalHandler) {
+    throw new Error("Cannot install deprecated tool call rewrites before tools register");
+  }
+  protocolServer._requestHandlers.set(method, (request, extra) => originalHandler(rewriteMessage(request).message, extra));
+}
+
 // _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/mcpContract.js
 var DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 function parseDateOnly(value) {
@@ -41455,11 +41558,11 @@ function toolConfig(contract) {
     inputSchema: external_exports.strictObject(contract.inputSchema)
   };
 }
-function isRecord(value) {
+function isRecord2(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function appendToolParameterWarning(result, warning) {
-  if (!isRecord(result) || !Array.isArray(result.content)) {
+  if (!isRecord2(result) || !Array.isArray(result.content)) {
     return result;
   }
   return {
@@ -41475,11 +41578,11 @@ function installToolParameterWarnings(protocolServer, contracts, receiver) {
   }
   const contractsByName = new Map(contracts.map((toolContract) => [toolContract.name, toolContract]));
   protocolServer._requestHandlers.set(method, async (request, extra) => {
-    if (!isRecord(request) || !isRecord(request.params)) {
+    if (!isRecord2(request) || !isRecord2(request.params)) {
       return originalHandler(request, extra);
     }
     const { name, arguments: args } = request.params;
-    if (typeof name !== "string" || !isRecord(args)) {
+    if (typeof name !== "string" || !isRecord2(args)) {
       return originalHandler(request, extra);
     }
     const toolContract = contractsByName.get(name);
@@ -42442,18 +42545,6 @@ function createBitfabToolHandlers(platform, getConfig2, pluginVersion) {
       });
     };
   }
-  async function handleSaveExperiment(args) {
-    const { experimentId, name, notes, experimentGroupId } = args;
-    if (name === void 0 && notes === void 0 && experimentGroupId === void 0) {
-      return errorResult("Error saving experiment: provide name, notes, and/or experimentGroupId.");
-    }
-    return proxyToolCall("save_experiment", {
-      experimentId,
-      name,
-      notes,
-      experimentGroupId
-    });
-  }
   async function handleSaveExperimentGroup(args) {
     const { experimentGroupId, experimentIds, name, notes } = args;
     if (experimentGroupId === void 0 && experimentIds === void 0) {
@@ -42492,7 +42583,6 @@ function createBitfabToolHandlers(platform, getConfig2, pluginVersion) {
   const specialHandlers = {
     [saveAgentVerdicts.name]: handleSaveAgentVerdictsAs(saveAgentVerdicts.name),
     [saveAgentLabels.name]: handleSaveAgentVerdictsAs(saveAgentLabels.name),
-    [saveExperiment.name]: handleSaveExperiment,
     [saveExperimentGroup.name]: handleSaveExperimentGroup,
     [saveScenario.name]: handleSaveScenario
   };
@@ -42549,6 +42639,7 @@ function createMcpServer(platform, getConfig2, pluginVersion) {
     server.registerTool(contract.name, toolConfig(contract), async (args) => handle(args));
   }
   installToolParameterWarnings(server.server, handlers.map(({ contract }) => contract), `Bitfab plugin ${pluginVersion}`);
+  installDeprecatedToolCallRewrites(server.server);
   return { server, proxy };
 }
 async function startMcpServer(platform, getConfig2, pluginVersion) {
