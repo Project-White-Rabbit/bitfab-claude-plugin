@@ -1,7 +1,7 @@
 import { createRequire as __bitfabCreateRequire } from 'node:module'; const require = __bitfabCreateRequire(import.meta.url);
 import {
   runLogout
-} from "../chunks/chunk-DW6BVMZO.js";
+} from "../chunks/chunk-HS3642ZZ.js";
 
 // _target/dist/commands/logout.js
 runLogout();
