@@ -2,7 +2,7 @@ import { createRequire as __bitfabCreateRequire } from 'node:module'; const requ
 import {
   detectClaudeInstallScopes,
   pluginUpdateScopes
-} from "./chunk-T3QTQVUF.js";
+} from "./chunk-JFOI2FJ6.js";
 
 // _target/dist/platform.js
 var PLUGIN_KEY = "bitfab@bitfab";
