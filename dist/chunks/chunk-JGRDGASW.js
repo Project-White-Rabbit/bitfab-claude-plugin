@@ -41852,6 +41852,15 @@ var generateTraceAssertions = {
     regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to rerun generation and replace prior generated drafts. Omit or set false to reuse the existing generation result.")
   }
 };
+var regenerateAssertion = {
+  name: "regenerate_assertion",
+  title: "Regenerate Assertion",
+  description: "Have Bitfab write one existing assertion again, and save the new wording in place of the old. Call this when the user names one assertion that is wrong, vague, or checks the wrong thing and wants Bitfab to write it again, optionally saying how with guidance. Pass only the assertion's id: Bitfab finds the trace it belongs to, reads that trace's input, what the recorded run did, the spans the assertion's justification cites, and the trace's other assertions, then writes a new claim with its pass and fail criteria. The assertion keeps its id, trace, category, assignee, human note, and justification. Everything else is saved as if it were a new assertion: the wording and criteria are replaced, and it is saved as a judge assertion, so any code it had is dropped, along with the span it was limited to and every verdict given on the old wording. It always goes back to awaiting review, even when it was approved or rejected, so it is not checked on replays until a person approves it again, in Bitfab or with save_trace_assertions `approvalState`. After this call returns, Bitfab decides whether code can check the new wording and writes that code, the same as for any new assertion. The response names the trace and gives the new assertion and criteria, the old wording, and what changed. To replace every generated draft on a trace, use generate_trace_assertions with regenerate. To write the new wording yourself, use save_trace_assertions. An archived assertion is refused.",
+  inputSchema: {
+    assertionId: external_exports.uuid().describe("The assertion to write again, from get_trace_assertions or list_trace_assertions. It must be an active assertion in this organization."),
+    guidance: external_exports.string().trim().min(1).max(1e4).optional().describe("Optional instruction for the new wording, such as what the current assertion gets wrong, what it should check instead, or a root cause analysis of why the trace went wrong. Omit to have Bitfab check the same behavior and write it better.")
+  }
+};
 var saveTraceAssertions = {
   name: "save_trace_assertions",
   title: "Save Trace Assertions",
@@ -42319,6 +42328,7 @@ var ALL_TOOL_CONTRACTS = [
   getAssertionCategory,
   deleteAssertionCategory,
   generateTraceAssertions,
+  regenerateAssertion,
   saveTraceAssertions,
   getTraceAssertions,
   listTraceAssertions,
