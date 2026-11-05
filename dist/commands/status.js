@@ -5,10 +5,10 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-IIR5Q2DA.js";
+} from "../chunks/chunk-GVKDDVXB.js";
 import {
   runStatus
-} from "../chunks/chunk-JGRDGASW.js";
+} from "../chunks/chunk-FMEKMS2G.js";
 
 // _target/dist/commands/status.js
 runStatus(getVersion(), platform, PLUGIN_ROOT, import.meta.url).catch((err) => {
