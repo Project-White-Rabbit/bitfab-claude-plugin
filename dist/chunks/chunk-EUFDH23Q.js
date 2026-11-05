@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.76.4",
-  python: "0.76.3",
-  ruby: "0.75.3",
-  go: "0.75.3"
+  typescript: "0.76.5",
+  python: "0.76.4",
+  ruby: "0.75.4",
+  go: "0.75.4"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -42194,7 +42194,7 @@ var getSimPlan = {
 var saveSimPlan = {
   name: "save_sim_plan",
   title: "Save Sim Plan",
-  description: "Turn content capture (inputs and outputs) off or on for span nodes of one trace function. A span with capture off is no longer sent. The trace's root, a span recorded by a framework integration, and a span that recorded an error are still sent without inputs and outputs, and a node declared in code always keeps its content. Call it when the user wants a span to stop recording its payloads, or to record them again. A node is its span name inside the trace function key, exactly as get_sim_plan lists it. A node recorded by a framework integration (OpenAI Agents, LangGraph, Claude Agent SDK, Vercel AI SDK), a node that is the root of its traces, a node imported from another platform, or a node named by Bitfab rather than the SDK keeps its content; asking to turn it off is refused with the reason. Turning a node off also turns content off for every node beneath it in the sim plan; a node beneath it that keeps its content stays on, and a node you name in the same call keeps the value you give it. Turning a node back on leaves the nodes beneath it as they are, so turn those on by name. Returns the updated sim plan.",
+  description: "Turn content capture (inputs and outputs) off or on for span nodes of one trace function. A span with capture off is no longer sent. The trace's root, a span recorded by a framework integration, a span that recorded an error, and a span that recorded LLM usage (token counts or a cost in its contexts) are still sent without inputs and outputs, and a node declared in code always keeps its content. Call it when the user wants a span to stop recording its payloads, or to record them again. A node is its span name inside the trace function key, exactly as get_sim_plan lists it. A node recorded by a framework integration (OpenAI Agents, LangGraph, Claude Agent SDK, Vercel AI SDK), a node that is the root of its traces, a node imported from another platform, or a node named by Bitfab rather than the SDK keeps its content; asking to turn it off is refused with the reason. Turning a node off also turns content off for every node beneath it in the sim plan; a node beneath it that keeps its content stays on, and a node you name in the same call keeps the value you give it. Turning a node back on leaves the nodes beneath it as they are, so turn those on by name. Returns the updated sim plan.",
   inputSchema: {
     traceFunctionKey: external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it."),
     nodes: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
