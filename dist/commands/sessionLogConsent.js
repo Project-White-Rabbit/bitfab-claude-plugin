@@ -1,7 +1,7 @@
 import { createRequire as __bitfabCreateRequire } from 'node:module'; const require = __bitfabCreateRequire(import.meta.url);
 import {
   runSessionLogConsent
-} from "../chunks/chunk-EUFDH23Q.js";
+} from "../chunks/chunk-DFAMHEJJ.js";
 
 // _target/dist/commands/sessionLogConsent.js
 try {
