@@ -4,10 +4,10 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-FNRXPQAP.js";
+} from "../chunks/chunk-ON54WV5G.js";
 import {
   runLogin
-} from "../chunks/chunk-DQTWTU7S.js";
+} from "../chunks/chunk-4LDXTFVY.js";
 
 // _target/dist/commands/login.js
 runLogin(platform, getVersion()).catch((err) => {

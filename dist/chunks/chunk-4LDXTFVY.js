@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.76.7",
-  python: "0.76.7",
-  ruby: "0.75.4",
-  go: "0.75.4"
+  typescript: "0.76.8",
+  python: "0.76.8",
+  ruby: "0.75.5",
+  go: "0.75.5"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -41875,6 +41875,7 @@ var saveTraceAssertions = {
       failCriteria: external_exports.string().optional().describe("How a judge should recognise a failure, for cases the pass criteria do not obviously exclude, e.g. 'any leg departing after 09:00, including connections'. Optional. On an edit, omit to keep the current value and pass an empty string to clear it."),
       targetOnEvaluatedTrace: assertionTargetShape.nullish(),
       code: assertionCodeShape.nullish(),
+      codeOff: external_exports.boolean().optional().describe("Pass true to stop this assertion's code from deciding its verdicts while keeping the code, so the LLM judge decides every replay. Use it when the code turns out to be wrong. Pass false to use the code again. Bitfab does not write new code for an assertion whose code is turned off, saving new code leaves the switch where it is, and removing the code (code: null) turns it back on. Omit to keep the current setting."),
       justification: justificationShape.nullish().describe("Why this assertion is right for THIS trace, cited span by span: the spans that show what the run actually did, each with its own reason. Omit on an edit to preserve it, or pass null to remove it. It is the evidence behind `approvalState`, so an assertion with no justification is one a reviewer has to reconstruct from scratch. Cite spans on this trace only."),
       categoryJustification: justificationShape.nullish().describe("Why `category_id` is the right category for this assertion, cited span by span. Omit on an edit to preserve it, or pass null to remove it. Changing the category clears it, since it justified the old one. Cite spans on this trace only."),
       approvalState: optionalApprovalState(),
