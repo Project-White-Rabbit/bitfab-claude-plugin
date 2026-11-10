@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.77.3",
-  python: "0.77.2",
-  ruby: "0.76.1",
-  go: "0.76.1"
+  typescript: "0.77.4",
+  python: "0.77.3",
+  ruby: "0.76.2",
+  go: "0.76.2"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -42153,19 +42153,20 @@ var getExperimentGroup = {
 var saveExperiment = {
   name: "save_experiment",
   title: "Save Experiment",
-  description: "Update an existing experiment. Provide the experiment ID and at least one of name, notes, experimentGroupId, or status. Omitted fields keep their current values; pass an empty notes string to clear notes, a group id to move the experiment to that existing group, or null to remove it from its group. Set status when a replay stopped without finishing. completed grades the traces that landed, and interrupted marks a pending experiment as stopped so it can be resumed later.",
+  description: "Update an existing experiment. Provide the experiment ID and at least one of name, notes, experimentGroupId, baselineExperimentId, or status. Omitted fields keep their current values; pass an empty notes string to clear notes, a group id to move the experiment to that existing group, or null to remove it from its group. Set baselineExperimentId to the earlier experiment this one is compared against, such as the run before the change it tests, or null to clear it. Set status when a replay stopped without finishing. completed grades the traces that landed, and interrupted marks a pending experiment as stopped so it can be resumed later.",
   inputSchema: {
     experimentId: external_exports.uuid().describe("The experiment ID to update"),
     name: external_exports.string().trim().min(1).max(120).optional().describe("What this run is testing, in a few words, such as 'baseline' or 'shorter system prompt'. Bitfab already records the commit, branch, tree state, datasets, and who ran it with every experiment, so do not repeat them here."),
     notes: external_exports.string().max(1e4).optional().describe("Run conditions Bitfab cannot see on its own, such as an environment override or a forced feature flag. Omit to keep existing notes; pass an empty string to clear them."),
     experimentGroupId: external_exports.uuid().nullable().optional().describe("Existing experiment group id to move this experiment into. Omit to keep its current group; pass null to remove it from its group."),
+    baselineExperimentId: external_exports.uuid().nullable().optional().describe("The earlier experiment this one is compared against, such as the run of the code before the change this experiment tests. The experiment page and the written summary measure the change against it. Must be another experiment in the same organization. Omit to keep the current baseline; pass null to clear it."),
     status: external_exports.enum(["completed", "interrupted"]).optional().describe("completed finishes the replay and grades the traces that landed. interrupted marks a pending experiment as stopped. Omit to keep the current status.")
   }
 };
 var getExperiment = {
   name: "get_experiment",
   title: "Get Experiment",
-  description: "Get a single experiment by experiment ID, with its name, notes, status, pass/fail totals, delta, experiment group, and grader results: the aggregate passing/failing checks and pass rate, plus a per-grader breakdown (each assigned grader's own passing/failing and pass rate on the run). Once every verdict is in it also carries the written summary: pass rate, cost, and latency before and after against the baseline (the first finished experiment in its group, or the original traces), the assertions and categories that flipped with example replay trace ids, and the traces worth opening first. Use this when you already have an experiment ID and want just that run's results, instead of paging the whole function's history with list_experiments.",
+  description: "Get a single experiment by experiment ID, with its name, notes, status, pass/fail totals, delta, experiment group, and grader results: the aggregate passing/failing checks and pass rate, plus a per-grader breakdown (each assigned grader's own passing/failing and pass rate on the run). Once every verdict is in it also carries the written summary: pass rate, cost, and latency before and after against the baseline (the experiment set as its baseline, else the first finished experiment in its group, else the original traces), the assertions and categories that flipped with example replay trace ids, and the traces worth opening first. Use this when you already have an experiment ID and want just that run's results, instead of paging the whole function's history with list_experiments.",
   inputSchema: {
     experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments")
   }
@@ -42645,7 +42646,7 @@ Recording a fresh run of a trace:
 - \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` runs the function again on a trace's inputs and records the result under the same trace ID. It runs side effects for real, so warn the user first. It does not create an experiment.
 
 Comparing experiments:
-- To compare versions, such as a baseline and two prompt variants, put their experiments in one group with ${saveExperimentGroup.name}, ideally before running them. Pass the group with \`--experiment-group-id\`.
+- Put runs you compare in one group with ${saveExperimentGroup.name} and pass \`--experiment-group-id\`. When a run tests a change against an earlier run, pass \`--baseline-experiment-id <experiment-id>\`, or set \`baselineExperimentId\` with ${saveExperiment.name}.
 - Read results with ${listExperiments.name}, ${listExperimentGroups.name}, ${getExperiment.name}, and ${listExperimentTraces.name}. Report what got better and what got worse against the original traces or the baseline.
 
 Finding out what happened:
