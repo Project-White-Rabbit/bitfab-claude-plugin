@@ -1,10 +1,10 @@
 import { createRequire as __bitfabCreateRequire } from 'node:module'; const require = __bitfabCreateRequire(import.meta.url);
 import {
   platform
-} from "../chunks/chunk-P77JPUIL.js";
+} from "../chunks/chunk-H7FAMEE6.js";
 import {
   runOpenExperiments
-} from "../chunks/chunk-J3TXAGKY.js";
+} from "../chunks/chunk-TI374BM2.js";
 
 // _target/dist/commands/openExperiments.js
 runOpenExperiments(platform).catch((err) => {
