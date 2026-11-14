@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.77.13",
-  python: "0.77.9",
-  ruby: "0.76.8",
-  go: "0.76.7"
+  typescript: "0.77.14",
+  python: "0.77.10",
+  ruby: "0.76.9",
+  go: "0.76.8"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -42292,10 +42292,11 @@ var saveTraceCategories = {
 var generateScenario = {
   name: "generate_scenario",
   title: "Generate Scenario",
-  description: "Start building the scenario for one trace and return at once, without waiting for it. The scenario's creation status becomes generating, and the answer names the scenario and its creation status. Read it later with get_scenario, which shows the creation status until the scenario is created or building it failed. Asking again while it is generating starts nothing more, and asking for one whose build failed starts it over. Bitfab builds the trigger itself for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, fills in the rest for any trace. A trace that already has a scenario is left as it is and answers with that scenario's id, unless regenerate is true. A replay, a trace outside this organization, or a trace Bitfab cannot build a scenario for (not noah-agent-turn and no scenario callback) is refused. Adding traces to a dataset links each one to an empty scenario, and starts this same build for each only when the organization has a scenario callback.",
+  description: "Start building the scenario for one trace and return at once, without waiting for it. The scenario's creation status becomes generating, and the answer names the scenario and its creation status. Read it later with get_scenario, which shows the creation status until the scenario is created or building it failed. Asking again while it is generating starts nothing more, and asking for one whose build failed starts it over. Bitfab builds the trigger itself for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, fills in the rest for any trace. A trace that already has a scenario is left as it is and answers with that scenario's id, unless regenerate is true. Add force to regenerate when the scenario callback is still working on the scenario, for example after it answered 202 and its data never came. A replay, a trace outside this organization, or a trace Bitfab cannot build a scenario for (not noah-agent-turn and no scenario callback) is refused. Adding traces to a dataset links each one to an empty scenario, and starts this same build for each only when the organization has a scenario callback.",
   inputSchema: {
     traceId: external_exports.uuid().describe("The trace to build a scenario for."),
-    regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to build a scenario that already exists again: its name, description, trigger, data, and actual outcome are cleared, Bitfab builds the trigger again for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, is asked again. Its categories, review status, labels, and assertions are kept. Asking while it is generating starts nothing more. Omit or set false to leave an existing scenario as it is.")
+    regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to build a scenario that already exists again: its name, description, trigger, data, and actual outcome are cleared, Bitfab builds the trigger again for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, is asked again. Its categories, review status, labels, and assertions are kept. Asking while it is generating, or while the scenario callback is still working on it, starts nothing more unless force is true. Omit or set false to leave an existing scenario as it is."),
+    force: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true together with regenerate to start over even while the scenario is generating or the scenario callback is still working on it (it is waiting for the callback, or the callback answered 202 less than a day ago). The scenario is cleared and the callback is asked again. Refused without regenerate.")
   }
 };
 var generateScenarioAssertions = {
