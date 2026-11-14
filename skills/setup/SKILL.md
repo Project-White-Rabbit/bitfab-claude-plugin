@@ -42,6 +42,7 @@ When instrumenting a workflow, **its instrumentation and replay pipeline are wri
 |---------|-------------|
 | `pageLink.js <path>` | Print a clickable product page URL and exit. |
 | `openExperiments.js <experimentIds>` | Print a link to experiments. |
+| `waitForExperiment.js <experimentIds> or --metadata <key=value> [--count N]` | Wait in the foreground until experiments finish, printing their progress; exits after about nine minutes and says to run it again. |
 | `startDataset.js <key> <datasetId>` | Print a dataset link. |
 | `status.js` | Check plugin authentication and connection status |
 | `login.js` | Open a sign-in window and wait for authentication. Relay the printed sign-in link as a fallback. |
