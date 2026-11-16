@@ -1,10 +1,10 @@
 import { createRequire as __bitfabCreateRequire } from 'node:module'; const require = __bitfabCreateRequire(import.meta.url);
 import {
   platform
-} from "../chunks/chunk-7VCHKQSG.js";
+} from "../chunks/chunk-6BF2VFQN.js";
 import {
   runSwitchOrg
-} from "../chunks/chunk-SYRLSQYK.js";
+} from "../chunks/chunk-JANRXFXY.js";
 
 // _target/dist/commands/switchOrg.js
 runSwitchOrg(platform).catch((err) => {
