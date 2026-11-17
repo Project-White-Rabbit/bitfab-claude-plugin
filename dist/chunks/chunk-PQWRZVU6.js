@@ -33,9 +33,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/constants.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/constants.js
 var require_constants = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/constants.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/constants.js"(exports, module) {
     "use strict";
     var SEMVER_SPEC_VERSION = "2.0.0";
     var MAX_LENGTH = 256;
@@ -43,6 +43,33 @@ var require_constants = __commonJS({
     9007199254740991;
     var MAX_SAFE_COMPONENT_LENGTH = 16;
     var MAX_SAFE_BUILD_LENGTH = MAX_LENGTH - 6;
+    var WHITESPACE_CHARACTERS = [
+      "	",
+      "\n",
+      "\v",
+      "\f",
+      "\r",
+      " ",
+      "\xA0",
+      "\u1680",
+      "\u2000",
+      "\u2001",
+      "\u2002",
+      "\u2003",
+      "\u2004",
+      "\u2005",
+      "\u2006",
+      "\u2007",
+      "\u2008",
+      "\u2009",
+      "\u200A",
+      "\u2028",
+      "\u2029",
+      "\u202F",
+      "\u205F",
+      "\u3000",
+      "\uFEFF"
+    ];
     var RELEASE_TYPES = [
       "major",
       "premajor",
@@ -57,6 +84,7 @@ var require_constants = __commonJS({
       MAX_SAFE_COMPONENT_LENGTH,
       MAX_SAFE_BUILD_LENGTH,
       MAX_SAFE_INTEGER,
+      WHITESPACE_CHARACTERS,
       RELEASE_TYPES,
       SEMVER_SPEC_VERSION,
       FLAG_INCLUDE_PRERELEASE: 1,
@@ -65,9 +93,9 @@ var require_constants = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/debug.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/debug.js
 var require_debug = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/debug.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/debug.js"(exports, module) {
     "use strict";
     var debug = typeof process === "object" && process.env && process.env.NODE_DEBUG && /\bsemver\b/i.test(process.env.NODE_DEBUG) ? (...args) => console.error("SEMVER", ...args) : () => {
     };
@@ -75,9 +103,9 @@ var require_debug = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/re.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/re.js
 var require_re = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/re.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/re.js"(exports, module) {
     "use strict";
     var {
       MAX_SAFE_COMPONENT_LENGTH,
@@ -163,9 +191,9 @@ var require_re = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/parse-options.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/parse-options.js
 var require_parse_options = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/parse-options.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/parse-options.js"(exports, module) {
     "use strict";
     var looseOption = Object.freeze({ loose: true });
     var emptyOpts = Object.freeze({});
@@ -182,9 +210,9 @@ var require_parse_options = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/identifiers.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/identifiers.js
 var require_identifiers = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/identifiers.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/identifiers.js"(exports, module) {
     "use strict";
     var numeric = /^[0-9]+$/;
     var compareIdentifiers = (a, b) => {
@@ -207,9 +235,9 @@ var require_identifiers = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/classes/semver.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/classes/semver.js
 var require_semver = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/classes/semver.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/classes/semver.js"(exports, module) {
     "use strict";
     var debug = require_debug();
     var { MAX_LENGTH, MAX_SAFE_INTEGER } = require_constants();
@@ -499,9 +527,9 @@ var require_semver = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/parse.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/parse.js
 var require_parse = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/parse.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/parse.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var parse3 = (version2, options, throwErrors = false) => {
@@ -521,9 +549,9 @@ var require_parse = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/valid.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/valid.js
 var require_valid = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/valid.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/valid.js"(exports, module) {
     "use strict";
     var parse3 = require_parse();
     var valid = (version2, options) => {
@@ -534,9 +562,9 @@ var require_valid = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/clean.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/clean.js
 var require_clean = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/clean.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/clean.js"(exports, module) {
     "use strict";
     var parse3 = require_parse();
     var clean = (version2, options) => {
@@ -547,9 +575,9 @@ var require_clean = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/inc.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/inc.js
 var require_inc = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/inc.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/inc.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var inc = (version2, release, options, identifier, identifierBase) => {
@@ -571,9 +599,9 @@ var require_inc = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/diff.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/diff.js
 var require_diff = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/diff.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/diff.js"(exports, module) {
     "use strict";
     var parse3 = require_parse();
     var diff = (version1, version2) => {
@@ -615,9 +643,9 @@ var require_diff = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/major.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/major.js
 var require_major = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/major.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/major.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var major = (a, loose) => new SemVer(a, loose).major;
@@ -625,9 +653,9 @@ var require_major = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/minor.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/minor.js
 var require_minor = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/minor.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/minor.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var minor = (a, loose) => new SemVer(a, loose).minor;
@@ -635,9 +663,9 @@ var require_minor = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/patch.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/patch.js
 var require_patch = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/patch.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/patch.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var patch = (a, loose) => new SemVer(a, loose).patch;
@@ -645,9 +673,9 @@ var require_patch = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/prerelease.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/prerelease.js
 var require_prerelease = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/prerelease.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/prerelease.js"(exports, module) {
     "use strict";
     var parse3 = require_parse();
     var prerelease = (version2, options) => {
@@ -658,9 +686,9 @@ var require_prerelease = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/compare.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/compare.js
 var require_compare = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/compare.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/compare.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var compare = (a, b, loose) => new SemVer(a, loose).compare(new SemVer(b, loose));
@@ -668,9 +696,9 @@ var require_compare = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/rcompare.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/rcompare.js
 var require_rcompare = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/rcompare.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/rcompare.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var rcompare = (a, b, loose) => compare(b, a, loose);
@@ -678,9 +706,9 @@ var require_rcompare = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/compare-loose.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/compare-loose.js
 var require_compare_loose = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/compare-loose.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/compare-loose.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var compareLoose = (a, b) => compare(a, b, true);
@@ -688,9 +716,9 @@ var require_compare_loose = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/compare-build.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/compare-build.js
 var require_compare_build = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/compare-build.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/compare-build.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var compareBuild = (a, b, loose) => {
@@ -702,9 +730,9 @@ var require_compare_build = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/sort.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/sort.js
 var require_sort = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/sort.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/sort.js"(exports, module) {
     "use strict";
     var compareBuild = require_compare_build();
     var sort = (list, loose) => list.sort((a, b) => compareBuild(a, b, loose));
@@ -712,9 +740,9 @@ var require_sort = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/rsort.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/rsort.js
 var require_rsort = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/rsort.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/rsort.js"(exports, module) {
     "use strict";
     var compareBuild = require_compare_build();
     var rsort = (list, loose) => list.sort((a, b) => compareBuild(b, a, loose));
@@ -722,9 +750,9 @@ var require_rsort = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/gt.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/gt.js
 var require_gt = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/gt.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/gt.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var gt2 = (a, b, loose) => compare(a, b, loose) > 0;
@@ -732,9 +760,9 @@ var require_gt = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/lt.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/lt.js
 var require_lt = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/lt.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/lt.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var lt = (a, b, loose) => compare(a, b, loose) < 0;
@@ -742,9 +770,9 @@ var require_lt = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/eq.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/eq.js
 var require_eq = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/eq.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/eq.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var eq = (a, b, loose) => compare(a, b, loose) === 0;
@@ -752,9 +780,9 @@ var require_eq = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/neq.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/neq.js
 var require_neq = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/neq.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/neq.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var neq = (a, b, loose) => compare(a, b, loose) !== 0;
@@ -762,9 +790,9 @@ var require_neq = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/gte.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/gte.js
 var require_gte = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/gte.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/gte.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var gte = (a, b, loose) => compare(a, b, loose) >= 0;
@@ -772,9 +800,9 @@ var require_gte = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/lte.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/lte.js
 var require_lte = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/lte.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/lte.js"(exports, module) {
     "use strict";
     var compare = require_compare();
     var lte = (a, b, loose) => compare(a, b, loose) <= 0;
@@ -782,9 +810,9 @@ var require_lte = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/cmp.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/cmp.js
 var require_cmp = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/cmp.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/cmp.js"(exports, module) {
     "use strict";
     var eq = require_eq();
     var neq = require_neq();
@@ -832,9 +860,9 @@ var require_cmp = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/coerce.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/coerce.js
 var require_coerce = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/coerce.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/coerce.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var parse3 = require_parse();
@@ -878,9 +906,9 @@ var require_coerce = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/truncate.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/truncate.js
 var require_truncate = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/truncate.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/truncate.js"(exports, module) {
     "use strict";
     var parse3 = require_parse();
     var constants = require_constants();
@@ -919,9 +947,9 @@ var require_truncate = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/lrucache.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/lrucache.js
 var require_lrucache = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/internal/lrucache.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/lrucache.js"(exports, module) {
     "use strict";
     var LRUCache = class {
       constructor() {
@@ -957,9 +985,200 @@ var require_lrucache = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/classes/range.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/trim-comparator-whitespace.js
+var require_trim_comparator_whitespace = __commonJS({
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/internal/trim-comparator-whitespace.js"(exports, module) {
+    "use strict";
+    var {
+      MAX_LENGTH,
+      MAX_SAFE_BUILD_LENGTH,
+      WHITESPACE_CHARACTERS
+    } = require_constants();
+    var whitespace = new Uint8Array(65536);
+    for (const char of WHITESPACE_CHARACTERS) {
+      whitespace[char.charCodeAt(0)] = 1;
+    }
+    var isWhitespace = (char) => char !== void 0 && whitespace[char.charCodeAt(0)] === 1;
+    var isVersionPrefix = (char) => char === "v" || char === "=" || isWhitespace(char);
+    var isDigit = (char) => char !== void 0 && char >= "0" && char <= "9";
+    var isLetter = (char) => char !== void 0 && (char >= "a" && char <= "z" || char >= "A" && char <= "Z");
+    var isIdentifierCharacter = (char) => isDigit(char) || isLetter(char) || char === "-";
+    var isVersionStart = (char) => isDigit(char) || char === "x" || char === "X" || char === "*";
+    var findDigitsEndIndex = (range, start, limit, digitRuns) => {
+      if (!isDigit(range[start])) {
+        return start;
+      }
+      if (start >= digitRuns.start && start < digitRuns.end) {
+        return Math.min(start + limit, digitRuns.end);
+      }
+      if (start >= digitRuns.previousStart && start < digitRuns.previousEnd) {
+        return Math.min(start + limit, digitRuns.previousEnd);
+      }
+      let end = start + 1;
+      while (isDigit(range[end])) {
+        end++;
+      }
+      digitRuns.previousStart = digitRuns.start;
+      digitRuns.previousEnd = digitRuns.end;
+      digitRuns.start = start;
+      digitRuns.end = end;
+      return Math.min(start + limit, end);
+    };
+    var findVersionNumberEndIndex = (range, start, loose, digitRuns) => {
+      if (!loose && range[start] === "0") {
+        return start + 1;
+      }
+      return findDigitsEndIndex(range, start, loose ? MAX_LENGTH : MAX_LENGTH + 1, digitRuns);
+    };
+    var findPrereleaseIdentifierEndIndex = (range, start, loose, digitRuns) => {
+      const digitsEnd = findDigitsEndIndex(range, start, MAX_LENGTH, digitRuns);
+      if (isLetter(range[digitsEnd]) || range[digitsEnd] === "-") {
+        let end = digitsEnd + 1;
+        const limit = end + MAX_SAFE_BUILD_LENGTH;
+        while (end < limit && isIdentifierCharacter(range[end])) {
+          end++;
+        }
+        return end;
+      }
+      return findVersionNumberEndIndex(range, start, loose, digitRuns);
+    };
+    var findPrereleaseEndIndex = (range, start, loose, digitRuns) => {
+      const hyphen = range[start] === "-";
+      if (!loose && !hyphen) {
+        return start;
+      }
+      const identifierStart = start + (hyphen ? 1 : 0);
+      let end = findPrereleaseIdentifierEndIndex(range, identifierStart, loose, digitRuns);
+      if (end === identifierStart) {
+        if (!loose || !hyphen) {
+          return start;
+        }
+        end = findPrereleaseIdentifierEndIndex(range, start, loose, digitRuns);
+      }
+      while (range[end] === ".") {
+        const next = findPrereleaseIdentifierEndIndex(range, end + 1, loose, digitRuns);
+        if (next === end + 1) {
+          break;
+        }
+        end = next;
+      }
+      return end;
+    };
+    var findBuildIdentifierEndIndex = (range, start) => {
+      let end = start;
+      while (end - start < MAX_SAFE_BUILD_LENGTH && isIdentifierCharacter(range[end])) {
+        end++;
+      }
+      return end;
+    };
+    var findBuildEndIndex = (range, start) => {
+      if (range[start] !== "+") {
+        return start;
+      }
+      let end = findBuildIdentifierEndIndex(range, start + 1);
+      if (end === start + 1) {
+        return start;
+      }
+      while (range[end] === ".") {
+        const next = findBuildIdentifierEndIndex(range, end + 1);
+        if (next === end + 1) {
+          break;
+        }
+        end = next;
+      }
+      return end;
+    };
+    var findLooseFullVersionEndIndex = (range, start, digitRuns) => {
+      let end = start;
+      for (let component = 0; component < 3; component++) {
+        const next = findVersionNumberEndIndex(range, end, true, digitRuns);
+        if (next === end) {
+          return start;
+        }
+        end = next;
+        if (component < 2) {
+          if (range[end] !== ".") {
+            return start;
+          }
+          end++;
+        }
+      }
+      const prereleaseEnd = findPrereleaseEndIndex(range, end, true, digitRuns);
+      return findBuildEndIndex(range, prereleaseEnd);
+    };
+    var findPartialVersionComponentEndIndex = (range, start, digitRuns) => {
+      if (isDigit(range[start])) {
+        return findVersionNumberEndIndex(range, start, false, digitRuns);
+      }
+      return isVersionStart(range[start]) ? start + 1 : start;
+    };
+    var findPartialVersionEndIndex = (range, start, digitRuns) => {
+      let end = findPartialVersionComponentEndIndex(range, start, digitRuns);
+      for (let component = 0; component < 2; component++) {
+        if (range[end] !== ".") {
+          return end;
+        }
+        const next = findPartialVersionComponentEndIndex(range, end + 1, digitRuns);
+        if (next === end + 1) {
+          return end;
+        }
+        end = next;
+      }
+      const prereleaseEnd = findPrereleaseEndIndex(range, end, false, digitRuns);
+      return findBuildEndIndex(range, prereleaseEnd);
+    };
+    var findVersionEndIndex = (range, start, digitRuns) => {
+      const fullVersionEnd = findLooseFullVersionEndIndex(range, start, digitRuns);
+      return fullVersionEnd !== start ? fullVersionEnd : findPartialVersionEndIndex(range, start, digitRuns);
+    };
+    var findRemovableWhitespaceIndex = (range, matchStart) => {
+      let position = matchStart;
+      if (isWhitespace(range[position])) {
+        position++;
+      }
+      if (range[position] === "<" || range[position] === ">") {
+        position++;
+      }
+      if (range[position] === "=") {
+        position++;
+      }
+      return isWhitespace(range[position]) ? position : -1;
+    };
+    var trimComparatorWhitespace = (range) => {
+      let result = "";
+      let copyFrom = 0;
+      let cursor2 = 0;
+      const digitRuns = { start: -1, end: -1, previousStart: -1, previousEnd: -1 };
+      while (cursor2 < range.length) {
+        const matchStart = cursor2;
+        if (range[cursor2] === "<" || range[cursor2] === ">") {
+          cursor2++;
+        } else if (!isVersionPrefix(range[cursor2]) && !isVersionStart(range[cursor2])) {
+          cursor2++;
+          continue;
+        }
+        while (cursor2 < range.length && isVersionPrefix(range[cursor2])) {
+          cursor2++;
+        }
+        if (!isVersionStart(range[cursor2])) {
+          continue;
+        }
+        const whitespacePosition = findRemovableWhitespaceIndex(range, matchStart);
+        if (whitespacePosition !== -1) {
+          result += range.slice(copyFrom, whitespacePosition);
+          copyFrom = whitespacePosition + 1;
+        }
+        cursor2 = findVersionEndIndex(range, cursor2, digitRuns);
+      }
+      return result + range.slice(copyFrom);
+    };
+    module.exports = trimComparatorWhitespace;
+  }
+});
+
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/classes/range.js
 var require_range = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/classes/range.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/classes/range.js"(exports, module) {
     "use strict";
     var SPACE_CHARACTERS = /\s+/g;
     var Range = class _Range {
@@ -1038,7 +1257,7 @@ var require_range = __commonJS({
         const hr = loose ? re[t.HYPHENRANGELOOSE] : re[t.HYPHENRANGE];
         range = range.replace(hr, hyphenReplace(this.options.includePrerelease));
         debug("hyphen replace", range);
-        range = range.replace(re[t.COMPARATORTRIM], comparatorTrimReplace);
+        range = trimComparatorWhitespace(range);
         debug("comparator trim", range);
         range = range.replace(re[t.TILDETRIM], tildeTrimReplace);
         debug("tilde trim", range);
@@ -1108,11 +1327,11 @@ var require_range = __commonJS({
     var Comparator = require_comparator();
     var debug = require_debug();
     var SemVer = require_semver();
+    var trimComparatorWhitespace = require_trim_comparator_whitespace();
     var {
       safeRe: re,
       src,
       t,
-      comparatorTrimReplace,
       tildeTrimReplace,
       caretTrimReplace
     } = require_re();
@@ -1342,9 +1561,9 @@ var require_range = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/classes/comparator.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/classes/comparator.js
 var require_comparator = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/classes/comparator.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/classes/comparator.js"(exports, module) {
     "use strict";
     var ANY = /* @__PURE__ */ Symbol("SemVer ANY");
     var Comparator = class _Comparator {
@@ -1455,9 +1674,9 @@ var require_comparator = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/satisfies.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/satisfies.js
 var require_satisfies = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/functions/satisfies.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/satisfies.js"(exports, module) {
     "use strict";
     var Range = require_range();
     var satisfies = (version2, range, options) => {
@@ -1472,9 +1691,9 @@ var require_satisfies = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/to-comparators.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/to-comparators.js
 var require_to_comparators = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/to-comparators.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/to-comparators.js"(exports, module) {
     "use strict";
     var Range = require_range();
     var toComparators = (range, options) => new Range(range, options).set.map((comp) => comp.map((c) => c.value).join(" ").trim().split(" "));
@@ -1482,9 +1701,9 @@ var require_to_comparators = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/max-satisfying.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/max-satisfying.js
 var require_max_satisfying = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/max-satisfying.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/max-satisfying.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var Range = require_range();
@@ -1511,9 +1730,9 @@ var require_max_satisfying = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/min-satisfying.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/min-satisfying.js
 var require_min_satisfying = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/min-satisfying.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/min-satisfying.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var Range = require_range();
@@ -1540,9 +1759,9 @@ var require_min_satisfying = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/min-version.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/min-version.js
 var require_min_version = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/min-version.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/min-version.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var Range = require_range();
@@ -1599,9 +1818,9 @@ var require_min_version = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/valid.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/valid.js
 var require_valid2 = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/valid.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/valid.js"(exports, module) {
     "use strict";
     var Range = require_range();
     var validRange = (range, options) => {
@@ -1615,9 +1834,9 @@ var require_valid2 = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/outside.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/outside.js
 var require_outside = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/outside.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/outside.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
     var Comparator = require_comparator();
@@ -1684,9 +1903,9 @@ var require_outside = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/gtr.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/gtr.js
 var require_gtr = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/gtr.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/gtr.js"(exports, module) {
     "use strict";
     var outside = require_outside();
     var gtr = (version2, range, options) => outside(version2, range, ">", options);
@@ -1694,9 +1913,9 @@ var require_gtr = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/ltr.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/ltr.js
 var require_ltr = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/ltr.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/ltr.js"(exports, module) {
     "use strict";
     var outside = require_outside();
     var ltr = (version2, range, options) => outside(version2, range, "<", options);
@@ -1704,9 +1923,9 @@ var require_ltr = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/intersects.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/intersects.js
 var require_intersects = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/intersects.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/intersects.js"(exports, module) {
     "use strict";
     var Range = require_range();
     var intersects = (r1, r2, options) => {
@@ -1718,9 +1937,9 @@ var require_intersects = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/simplify.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/simplify.js
 var require_simplify = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/simplify.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/simplify.js"(exports, module) {
     "use strict";
     var satisfies = require_satisfies();
     var compare = require_compare();
@@ -1768,9 +1987,9 @@ var require_simplify = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/subset.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/subset.js
 var require_subset = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/ranges/subset.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/ranges/subset.js"(exports, module) {
     "use strict";
     var Range = require_range();
     var Comparator = require_comparator();
@@ -1930,9 +2149,9 @@ var require_subset = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/index.js
+// _target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/index.js
 var require_semver2 = __commonJS({
-  "_target/node_modules/.pnpm/semver@7.8.5/node_modules/semver/index.js"(exports, module) {
+  "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/index.js"(exports, module) {
     "use strict";
     var internalRe = require_re();
     var constants = require_constants();
@@ -5097,9 +5316,9 @@ var require_data = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/utils.js
+// _target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/utils.js
 var require_utils = __commonJS({
-  "_target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/utils.js"(exports, module) {
+  "_target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/utils.js"(exports, module) {
     "use strict";
     var isUUID = RegExp.prototype.test.bind(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu);
     var isIPv4 = RegExp.prototype.test.bind(/^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/u);
@@ -5330,6 +5549,37 @@ var require_utils = __commonJS({
         }
       }
       return output2.join("");
+    }
+    function removeDotSegmentsRelative(path12) {
+      if (path12 === "" || path12[0] === "/") {
+        return removeDotSegments(path12);
+      }
+      const segments = path12.split("/");
+      const last = segments.length - 1;
+      const output2 = [];
+      let trailingDirectory = false;
+      for (let i = 0; i <= last; i++) {
+        const segment = segments[i];
+        if (segment === "." || segment === "..") {
+          if (segment === "..") {
+            if (output2.length !== 0 && output2[output2.length - 1] !== "..") {
+              output2.pop();
+            } else {
+              output2.push("..");
+            }
+          }
+          trailingDirectory = i === last;
+        } else {
+          output2.push(segment);
+        }
+      }
+      if (trailingDirectory && output2[output2.length - 1] !== "..") {
+        output2.push("");
+      }
+      if (output2.length === 0 || output2[0] === "" || output2[0].includes(":")) {
+        output2.unshift(".");
+      }
+      return output2.join("/");
     }
     var HOST_DELIMS = { "@": "%40", "/": "%2F", "?": "%3F", "#": "%23", ":": "%3A" };
     var HOST_DELIM_RE = /[@/?#:]/g;
@@ -5591,6 +5841,7 @@ var require_utils = __commonJS({
       encodeFragment,
       escapePreservingEscapes,
       removeDotSegments,
+      removeDotSegmentsRelative,
       isIPv4,
       isUUID,
       normalizeIPv6,
@@ -5599,9 +5850,9 @@ var require_utils = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/schemes.js
+// _target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/schemes.js
 var require_schemes = __commonJS({
-  "_target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/lib/schemes.js"(exports, module) {
+  "_target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/lib/schemes.js"(exports, module) {
     "use strict";
     var { isUUID } = require_utils();
     var URN_REG = /^([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-./:;=@]|%[\da-f]{2})+)$/iu;
@@ -5810,20 +6061,22 @@ var require_schemes = __commonJS({
   }
 });
 
-// _target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/index.js
+// _target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/index.js
 var require_fast_uri = __commonJS({
-  "_target/node_modules/.pnpm/fast-uri@3.1.8/node_modules/fast-uri/index.js"(exports, module) {
+  "_target/node_modules/.pnpm/fast-uri@3.1.9/node_modules/fast-uri/index.js"(exports, module) {
     "use strict";
-    var { normalizeIPv6, removeDotSegments, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
+    var { normalizeIPv6, removeDotSegments, removeDotSegmentsRelative, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
     var { SCHEMES, getSchemeHandler } = require_schemes();
     var VALID_SCHEME = /^[A-Za-z][A-Za-z0-9+.-]*$/u;
     var MALFORMED_SCHEME_ERROR = "URI scheme is malformed.";
-    function decodeValidScheme(scheme) {
-      const decodedScheme = unescape(String(scheme));
-      if (!VALID_SCHEME.test(decodedScheme)) {
+    var MALFORMED_HOST_ERROR = "URI host is malformed.";
+    var FORBIDDEN_DOMAIN_HOST_CHARACTER = /[\0-\x20"#/:<>?@[\\\]^`{|}\x7F]/u;
+    function validateScheme(scheme) {
+      const stringScheme = String(scheme);
+      if (!VALID_SCHEME.test(stringScheme)) {
         throw new TypeError(MALFORMED_SCHEME_ERROR);
       }
-      return decodedScheme;
+      return stringScheme;
     }
     function normalize(uri, options) {
       if (typeof uri === "string") {
@@ -5860,6 +6113,9 @@ var require_fast_uri = __commonJS({
       const resolvedSchemeHandler = getSchemeHandler(options && options.scheme || resolved.scheme);
       const resolvedHost = resolved.host;
       const resolvedHostIsIP = resolvedHost !== void 0 && resolvedHost !== "" && (isIPv4(resolvedHost) || normalizeIPv6(resolvedHost).isIPV6);
+      if (hasForbiddenDomainHost(resolved, options || {}, resolvedSchemeHandler, resolvedHostIsIP)) {
+        throw new Error(MALFORMED_HOST_ERROR);
+      }
       canonicalizeHost(resolved, options || {}, resolvedSchemeHandler, resolvedHostIsIP);
       const encodedASCIIHost = resolvedHost && resolvedHost.indexOf("%") !== -1 && !new RegExp("\\P{ASCII}", "u").test(resolvedHost);
       if (resolved.error && !encodedASCIIHost) {
@@ -5901,14 +6157,15 @@ var require_fast_uri = __commonJS({
             if (relative.path[0] === "/") {
               target.path = removeDotSegments(relative.path);
             } else {
-              if ((base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0) && !base.path) {
+              const baseHasAuthority = base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0;
+              if (baseHasAuthority && !base.path) {
                 target.path = "/" + relative.path;
               } else if (!base.path) {
                 target.path = relative.path;
               } else {
                 target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative.path;
               }
-              target.path = removeDotSegments(target.path);
+              target.path = base.scheme === void 0 && !baseHasAuthority && target.path[0] !== "/" ? removeDotSegmentsRelative(target.path) : removeDotSegments(target.path);
             }
             target.query = relative.query;
           }
@@ -5946,12 +6203,13 @@ var require_fast_uri = __commonJS({
       const options = Object.assign({}, opts);
       const uriTokens = [];
       if (component.scheme) {
-        component.scheme = decodeValidScheme(component.scheme);
+        component.scheme = validateScheme(component.scheme);
       }
       const schemeHandler = getSchemeHandler(options.scheme || component.scheme);
       if (schemeHandler && schemeHandler.serialize) schemeHandler.serialize(component, options);
       const hasAuthority = component.userinfo !== void 0 || component.host !== void 0 || component.port !== void 0;
-      const pathNoScheme = !options.skipEscape && component.scheme === void 0 && !hasAuthority;
+      const schemelessReference = (component.scheme === void 0 || options.reference === "suffix") && !hasAuthority;
+      const pathNoScheme = !options.skipEscape && schemelessReference;
       if (component.path !== void 0) {
         if (!options.skipEscape) {
           component.path = serializePathEncoding(component.path, pathNoScheme);
@@ -5960,7 +6218,7 @@ var require_fast_uri = __commonJS({
         }
       }
       if (options.reference !== "suffix" && component.scheme) {
-        component.scheme = decodeValidScheme(component.scheme);
+        component.scheme = validateScheme(component.scheme);
         uriTokens.push(component.scheme, ":");
       }
       const authority = recomposeAuthority(component);
@@ -5976,9 +6234,9 @@ var require_fast_uri = __commonJS({
       if (component.path !== void 0) {
         let s2 = component.path;
         if (!options.absolutePath && (!schemeHandler || !schemeHandler.absolutePath)) {
-          s2 = removeDotSegments(s2);
+          s2 = schemelessReference && s2[0] !== "/" ? removeDotSegmentsRelative(s2) : removeDotSegments(s2);
         }
-        if (pathNoScheme) {
+        if (schemelessReference) {
           s2 = serializePathEncoding(s2, true);
         }
         if (authority === void 0 && s2[0] === "/" && s2[1] === "/") {
@@ -6025,15 +6283,33 @@ var require_fast_uri = __commonJS({
       return hasMalformedPercentEncoding(matches[3]) || host !== void 0 && !isIPLiteral(host) && hasMalformedPercentEncoding(host) || hasMalformedPercentEncoding(matches[6]) || hasMalformedPercentEncoding(matches[7]) || hasMalformedPercentEncoding(matches[8]);
     }
     function canonicalizeHost(parsed, options, schemeHandler, isIP) {
+      if (hasForbiddenDomainHost(parsed, options, schemeHandler, isIP)) {
+        parsed.error = parsed.error || MALFORMED_HOST_ERROR;
+        return true;
+      }
       if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport) && parsed.host && !isIPLiteral(parsed.host) && (options.domainHost || schemeHandler && schemeHandler.domainHost) && isIP === false && nonSimpleDomain(parsed.host)) {
+        let url2;
         try {
-          parsed.host = new URL("http://" + parsed.host).hostname;
+          url2 = new URL("http://" + parsed.host);
         } catch (e) {
           parsed.error = parsed.error || "Host's domain name can not be converted to ASCII: " + e;
           return true;
         }
+        if (!isHostOnlyURL(url2)) {
+          parsed.error = parsed.error || MALFORMED_HOST_ERROR;
+          return true;
+        }
+        parsed.host = url2.hostname;
       }
       return false;
+    }
+    function hasForbiddenDomainHost(parsed, options, schemeHandler, isIP) {
+      return Boolean(
+        parsed.host && isIP === false && !isIPLiteral(parsed.host) && (options.domainHost || schemeHandler && schemeHandler.domainHost) && FORBIDDEN_DOMAIN_HOST_CHARACTER.test(parsed.host)
+      );
+    }
+    function isHostOnlyURL(url2) {
+      return url2.username === "" && url2.password === "" && url2.port === "" && url2.pathname === "/" && url2.search === "" && url2.hash === "" && url2.hostname !== "";
     }
     function parseWithStatus(uri, opts) {
       const options = Object.assign({}, opts);
@@ -6089,9 +6365,8 @@ var require_fast_uri = __commonJS({
         parsed.query = matches[7];
         parsed.fragment = matches[8];
         if (parsed.scheme !== void 0) {
-          const decodedScheme = unescape(parsed.scheme);
-          if (VALID_SCHEME.test(decodedScheme)) {
-            parsed.scheme = decodedScheme.toLowerCase();
+          if (VALID_SCHEME.test(parsed.scheme)) {
+            parsed.scheme = parsed.scheme.toLowerCase();
           } else {
             parsed.error = parsed.error || MALFORMED_SCHEME_ERROR;
             malformedScheme = true;
@@ -6119,7 +6394,7 @@ var require_fast_uri = __commonJS({
             malformedIPLiteral = hasIPLiteralBracket && (!bracketedIPLiteral || ipv6result.error === true);
             parsed.host = isIP ? ipv6result.host : ipv6result.host.toLowerCase();
             if (malformedIPLiteral) {
-              parsed.error = parsed.error || "URI host is malformed.";
+              parsed.error = parsed.error || MALFORMED_HOST_ERROR;
               malformedAuthorityOrPort = true;
             }
           } else {
@@ -6147,7 +6422,7 @@ var require_fast_uri = __commonJS({
           if (!isIP) {
             host = normalizePercentEncoding(host.toLowerCase());
           }
-          parsed.host = reescapeHostDelimiters(host, isIP);
+          parsed.host = isIP || options.scheme !== "null" ? reescapeHostDelimiters(host, isIP) : host;
         }
         if (!schemeHandler || schemeHandler && !schemeHandler.skipNormalize) {
           if (parsed.path) {
@@ -30177,7 +30452,7 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.80.0",
+  typescript: "0.80.1",
   python: "0.80.0",
   ruby: "0.78.0",
   go: "0.78.0"
@@ -37267,7 +37542,7 @@ function object2(shape, params) {
   return new ZodMiniObject(def);
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s2) {
   const schema = s2;
   return !!schema._zod;
@@ -37427,7 +37702,7 @@ function getLiteralValue(schema) {
   return void 0;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05", "2024-10-07"];
 var RELATED_TASK_META_KEY = "io.modelcontextprotocol/related-task";
@@ -38958,7 +39233,7 @@ var UrlElicitationRequiredError = class extends McpError {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
 function isTerminal(status) {
   return status === "completed" || status === "failed" || status === "cancelled";
 }
@@ -40247,7 +40522,7 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
 function mapMiniTarget(t) {
   if (!t)
     return "draft-7";
@@ -40289,7 +40564,7 @@ function parseWithCompat(schema, data) {
   return result.data;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
 var DEFAULT_REQUEST_TIMEOUT_MSEC = 6e4;
 var Protocol = class {
   constructor(_options) {
@@ -41266,7 +41541,7 @@ function mergeCapabilities(base, additional) {
   return result;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_formats = __toESM(require_dist(), 1);
 function createDefaultAjvInstance() {
@@ -41334,7 +41609,7 @@ var AjvJsonSchemaValidator = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
 var ExperimentalServerTasks = class {
   constructor(_server) {
     this._server = _server;
@@ -41547,7 +41822,7 @@ var ExperimentalServerTasks = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
 function assertToolsCallTaskCapability(requests, method, entityName) {
   if (!requests) {
     throw new Error(`${entityName} does not support task creation (required for ${method})`);
@@ -41582,7 +41857,7 @@ function assertClientRequestTaskCapability(requests, method, entityName) {
   }
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
 var Server = class extends Protocol {
   /**
    * Initializes this server with the given name and version information.
@@ -41953,7 +42228,7 @@ var Server = class extends Protocol {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
@@ -41967,7 +42242,7 @@ var McpZodTypeKind;
   McpZodTypeKind2["Completable"] = "McpCompletable";
 })(McpZodTypeKind || (McpZodTypeKind = {}));
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
 var TOOL_NAME_REGEX = /^[A-Za-z0-9._-]{1,128}$/;
 function validateToolName(name) {
   const warnings = [];
@@ -42025,7 +42300,7 @@ function validateAndWarnToolName(name) {
   return result.isValid;
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
 var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
@@ -42040,7 +42315,7 @@ var ExperimentalMcpServerTasks = class {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
 function toolInputElementCount(value, max) {
   let count = 0;
   const stack = [value];
@@ -42089,6 +42364,15 @@ var McpServer = class {
     this._promptHandlersInitialized = false;
     this.server = new Server(serverInfo, options);
     this._maxToolInputElements = resolveMaxToolInputElements(options?.maxToolInputElements);
+    if (options?.capabilities?.tools) {
+      this.setToolRequestHandlers();
+    }
+    if (options?.capabilities?.resources) {
+      this.setResourceRequestHandlers();
+    }
+    if (options?.capabilities?.prompts) {
+      this.setPromptRequestHandlers();
+    }
   }
   /**
    * Access experimental features.
@@ -42872,10 +43156,10 @@ var EMPTY_COMPLETION_RESULT = {
   }
 };
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 import process2 from "node:process";
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
 var STDIO_DEFAULT_MAX_BUFFER_SIZE = 10 * 1024 * 1024;
 var ReadBuffer = class {
   constructor(options) {
@@ -42912,7 +43196,7 @@ function serializeMessage(message) {
   return JSON.stringify(message) + "\n";
 }
 
-// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.1_@cfworker+json-schema@4.1.1_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// _target/node_modules/.pnpm/@modelcontextprotocol+sdk@1.32.2_@cfworker+json-schema@4.1.6_supports-color@8.1.1_zod@4.6.7/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 var StdioServerTransport = class {
   constructor(_stdin = process2.stdin, _stdout = process2.stdout, options) {
     this._stdin = _stdin;
