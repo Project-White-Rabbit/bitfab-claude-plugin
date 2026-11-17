@@ -58,13 +58,21 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
    const result = await client.replay("my-function", myInstrumentedFn, {
      limit: 10,
      dbBranch: true,
+     experimentGroupId: randomUUID(),
+     experimentGroupName: "Database branch check",
    })
    ```
 
    **Python**: `db_branch=`:
 
    ```python
-   result = client.replay(my_instrumented_fn, limit=10, db_branch=True)
+   result = client.replay(
+       my_instrumented_fn,
+       limit=10,
+       db_branch=True,
+       experiment_group_id=str(uuid.uuid4()),
+       experiment_group_name="Database branch check",
+   )
    ```
 
    **Ruby**: `db_branch:`:
@@ -75,6 +83,8 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
      trace_function_key: "my-function",
      limit: 10,
      db_branch: true,
+     experiment_group_id: SecureRandom.uuid,
+     experiment_group_name: "Database branch check",
    )
    ```
 
@@ -92,7 +102,7 @@ Set up **per-trace database snapshots for replay** so the team can re-run a hist
 
    1. Resolve the exact fresh trace ID. Before triggering the instrumented function, call `mcp__plugin_bitfab_Bitfab__search_traces` with `{ traceFunctionKey: "<key>", limit: 10 }` and retain the returned IDs. Record the current timestamp, then run the instrumented function once (or have the user trigger it). Poll the same search once or twice and compare the returned IDs with the before set. Select the ID only when exactly one new root trace has a timestamp after the recorded time. If there are zero new IDs, stop and report that no fresh trace arrived; if concurrent traffic produces more than one candidate, stop and ask the user for the intended trace ID. `search_traces` does not return trace inputs, so never guess based on an assumed input match. Confirm the exact ID is eligible by calling `mcp__plugin_bitfab_Bitfab__search_traces` with `{ traceFunctionKey: "<key>", traceIds: ["<fresh-trace-id>"], hasDbSnapshot: true, limit: 1 }`. If it is absent, do not replay it: report that the fresh trace did not capture a snapshot and diagnose SDK freshness/database connection first.
    2. **Mandatory replay-safety check, before any replay command.** Read the replay registry module, the real production root it imports, and every reachable external-action span. Inventory database writes, outbound mutations, queue publishes, email, payments, filesystem writes, and similar unsafe actions. Confirm each one is behind a manual replay-mockable descendant selected by the registry entry's actual strategy and has a serializable recorded output; `mock: "marked"` requires `mockOnReplay` on that boundary. Confirm the boundary runs in the same replay context: Python worker threads require `trace_across_threads=True`; Python async-generator spans cannot be mocked; Ruby child threads, pre-created consumers, and processes do not inherit replay interception; TypeScript synchronous selected spans cannot use lazy `marked` output and may use `all` only when freezing every matched child is acceptable. Also reject unsafe import-time/module initialization, because it runs before replay interception. Confirm the replay call requests `dbBranch` / `db_branch`. If any unsafe action is unselected, unmockable, outside context, or uncertain, **do not run the smoke test**; report the exact blocker and required boundary change. Mocking, not the app environment, is the safety boundary.
-   3. Run the SDK-installed replay command against only the verified ID using `--trace-ids <fresh-trace-id>` (for example, `pnpm with-env bitfab-replay --registry scripts/replayRegistry.ts <pipeline> --code-change skip --trace-ids <fresh-trace-id>`, `poetry run bitfab-replay --registry scripts/replay_registry.py <pipeline> --code-change skip --trace-ids <fresh-trace-id>`, or `bundle exec bitfab-replay --registry scripts/replay_registry.rb <pipeline> --code-change skip --trace-ids <fresh-trace-id>`, with the app's normal environment loader). Pass `--code-change skip`: this run checks the instrumentation, not a code change. Never substitute `--limit 1`.
+   3. Run the SDK-installed replay command against only the verified ID using `--trace-ids <fresh-trace-id>` (for example, `pnpm with-env bitfab-replay --registry scripts/replayRegistry.ts <pipeline> --code-change skip --trace-ids <fresh-trace-id> --experiment-group-id <new UUID> --experiment-group-name "Setup instrumentation check"`, `poetry run bitfab-replay --registry scripts/replay_registry.py <pipeline> --code-change skip --trace-ids <fresh-trace-id> --experiment-group-id <new UUID> --experiment-group-name "Setup instrumentation check"`, or `bundle exec bitfab-replay --registry scripts/replay_registry.rb <pipeline> --code-change skip --trace-ids <fresh-trace-id> --experiment-group-id <new UUID> --experiment-group-name "Setup instrumentation check"`, with the app's normal environment loader). Pass `--code-change skip`: this run checks the instrumentation, not a code change. Every replay needs an experiment group, one series of experiments testing one thing: generate a new UUID for `--experiment-group-id`, since this check starts its own group. Never substitute `--limit 1`.
    4. Confirm the branch was injected: inside the replayed function, `getCurrentReplayBranch()` (TypeScript), `get_current_replay_branch()` (Python), or `Bitfab.current_replay_branch` (Ruby) must be non-null. Compare its `databaseUrl` / `database_url` host and database with the app's normal `DATABASE_URL`; they should differ. Print the experiment URL from the replay output (`experimentUrl` in TypeScript, `experiment_url` in Python/Ruby; older SDKs print `testRunUrl` / `test_run_url`) so the user can open the experiment.
 
    If the branch accessor is null for a freshly captured trace, check that the source database is connected, that the trace actually carries a snapshot reference, and that the SDK supports always-on capture (upgrade with `/bitfab:update` when needed). Re-check the dashboard Database section in step 2; there is no separate replay-environment active flag.

@@ -30177,10 +30177,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.78.0",
-  python: "0.78.5",
-  ruby: "0.76.9",
-  go: "0.76.8"
+  typescript: "0.79.0",
+  python: "0.79.0",
+  ruby: "0.77.0",
+  go: "0.77.0"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -31514,10 +31514,11 @@ var removeGradersFromExperimentGroup = {
 var listExperiments = {
   name: "list_experiments",
   title: "List Experiments",
-  description: "List experiments (replays against changed code) newest first, with status, pass/fail totals, delta (fixed/regressed/still-passing/still-failing), and the git state each ran from. Every filter is optional and they combine: narrow by traced function, git branch, dataset, or any mix; with no filters it lists the organization's most recent experiments. Call this to see past experiment results, or at the start of experiment mode to understand what's been tried before. Before launching a new replay, settle which experiment group it belongs to: reuse an existing group's id (from list_experiment_groups) when the run continues that line of work, or generate a new UUID for a new one, and pass it to the replay with --experiment-group-id (plus --experiment-group-name for a new group) so related runs land side by side for comparison instead of as loose, ungrouped experiments.",
+  description: "List experiments (replays against changed code) newest first, with status, pass/fail totals, delta (fixed/regressed/still-passing/still-failing), and the git state each ran from. Every filter is optional and they combine: narrow by traced function, git branch, coding agent session, dataset, or any mix; with no filters it lists the organization's most recent experiments. Call this to see past experiment results, or before a new replay to see what has been tried. Every replay must name its experiment group with --experiment-group-id. A group is one series of experiments testing one thing, such as baseline against shorter prompt. Reuse a group's id (from list_experiment_groups) only when the new run tests that same thing; when you start testing something else, generate a new UUID and pass --experiment-group-name with a name for what is being tested. Group by what is tested, not by session, branch, or worktree: a branch testing one thing can keep one group, and a session testing several things starts one group per thing.",
   inputSchema: {
     traceFunctionKey: external_exports.string().min(1).optional().describe("Only experiments for this trace function key"),
     gitBranch: external_exports.string().min(1).optional().describe("Only experiments run from this git branch (exact branch name, e.g. feature/shorter-prompt)"),
+    agentSessionId: external_exports.string().min(1).optional().describe("Only experiments launched from this coding agent session (exact session id, the agent_session_id the Bitfab plugin gives you at session start). Use it to find the runs you launched in this session."),
     datasetId: external_exports.uuid().optional().describe("Only experiments for this dataset, from list_datasets: runs launched against it plus runs that replayed any of its traces"),
     limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max experiments to return (default 20, max 50)")
   }
@@ -31568,18 +31569,18 @@ var saveTemplate = {
 var saveExperimentGroup = {
   name: "save_experiment_group",
   title: "Save Experiment Group",
-  description: "Create or edit an experiment group. Prefer starting new experiments in a group, so related runs sit side by side for comparison, and decide the group before launching a replay rather than grouping afterwards: to add the run to an existing group, pass that group's id (from list_experiment_groups) to the replay with --experiment-group-id; to start a new group, generate a new UUID and pass it to every replay with --experiment-group-id (plus --experiment-group-name to name it). Do not call this tool first for runs you have not launched yet: the first replay that persists creates the group and the rest join it. This tool groups experiments that already exist, for example runs that were launched without a group id. To create, omit experimentGroupId and provide experimentIds plus an optional name and notes; the supplied experiments are grouped together. To edit, provide experimentGroupId and at least one of name or notes, but omit experimentIds; editing metadata does not change membership. Editing works only once a replay or a create has made the group. Creation is idempotent when all supplied experiments already share one group. All resources must belong to the active organization.",
+  description: "Create or edit an experiment group. An experiment group is one series of experiments testing one thing, such as a baseline and two prompt variants, named after what is being tested. Every replay must name its group with --experiment-group-id, so decide it before launching: reuse a group's id (from list_experiment_groups) only when the run tests the same thing as that group's runs; when you start testing something else, generate a new UUID and pass it with --experiment-group-name, named after what the series tests. Group by what is tested, not by session, branch, or worktree: a branch testing one thing can keep one group, and a session testing several things starts one group per thing. Do not call this tool first for runs you have not launched yet: the first replay that persists creates the group and the rest join it. This tool groups experiments that already exist, for example older runs launched without a group id. To create, omit experimentGroupId and provide experimentIds plus an optional name and notes; the supplied experiments are grouped together. To edit, provide experimentGroupId and at least one of name or notes, but omit experimentIds; editing metadata does not change membership. Editing works only once a replay or a create has made the group. Creation is idempotent when all supplied experiments already share one group. All resources must belong to the active organization.",
   inputSchema: {
     experimentGroupId: external_exports.uuid().optional().describe("Existing experiment group id to rename. Omit when creating."),
     experimentIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Experiment IDs to group (1-100). Required when creating; omit when editing."),
-    name: external_exports.string().trim().min(1).max(120).optional().describe("Human-readable group name. Optional when creating or editing."),
+    name: external_exports.string().trim().min(1).max(120).optional().describe("What this series of runs tests, in a few words, such as 'shorter system prompt'. Always name a group you create, and name any group you find without one."),
     notes: external_exports.string().max(1e4).optional().describe("Optional group notes. Omit to keep existing notes when editing; pass an empty string to clear them.")
   }
 };
 var listExperimentGroups = {
   name: "list_experiment_groups",
   title: "List Experiment Groups",
-  description: "List recent experiment groups in the active organization, newest first. Each group includes its id, name, notes, creation time, and the experiment ids currently in the group.",
+  description: "List recent experiment groups in the active organization, newest first. Each group includes its id, name, notes, creation time, and the experiment ids currently in the group. A group or experiment with no name should be named with save_experiment_group or save_experiment.",
   inputSchema: {
     limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max experiment groups to return (default 20, max 50)")
   }
@@ -31595,12 +31596,12 @@ var getExperimentGroup = {
 var saveExperiment = {
   name: "save_experiment",
   title: "Save Experiment",
-  description: "Update an existing experiment. Provide the experiment ID and at least one of name, notes, experimentGroupId, baselineExperimentId, or status. Omitted fields keep their current values; pass an empty notes string to clear notes, a group id to move the experiment to that existing group, or null to remove it from its group. Set baselineExperimentId to the earlier experiment this one is compared against, such as the run before the change it tests, or null to clear it. Set status when a replay stopped without finishing. completed grades the traces that landed, and interrupted marks a pending experiment as stopped so it can be resumed later.",
+  description: "Update an existing experiment. Every experiment should have a name saying what the run changes: pass --name when launching the replay, and use this tool to name any run that has none. Provide the experiment ID and at least one of name, notes, experimentGroupId, baselineExperimentId, or status. Omitted fields keep their current values; pass an empty notes string to clear notes, or a group id to move the experiment to that existing group. Set baselineExperimentId to the earlier experiment this one is compared against, such as the run before the change it tests, or null to clear it. Set status when a replay stopped without finishing. completed grades the traces that landed, and interrupted marks a pending experiment as stopped so it can be resumed later.",
   inputSchema: {
     experimentId: external_exports.uuid().describe("The experiment ID to update"),
-    name: external_exports.string().trim().min(1).max(120).optional().describe("What this run is testing, in a few words, such as 'baseline' or 'shorter system prompt'. Bitfab already records the commit, branch, tree state, datasets, and who ran it with every experiment, so do not repeat them here."),
+    name: external_exports.string().trim().min(1).max(120).optional().describe("What this run changes, in a few words, such as 'baseline' or 'shorter system prompt'. Bitfab already records the commit, branch, tree state, datasets, and who ran it with every experiment, so do not repeat them here."),
     notes: external_exports.string().max(1e4).optional().describe("Run conditions Bitfab cannot see on its own, such as an environment override or a forced feature flag. Omit to keep existing notes; pass an empty string to clear them."),
-    experimentGroupId: external_exports.uuid().nullable().optional().describe("Existing experiment group id to move this experiment into. Omit to keep its current group; pass null to remove it from its group."),
+    experimentGroupId: external_exports.uuid().optional().describe("Existing experiment group id to move this experiment into, when it belongs with that group's series of runs testing one thing. Omit to keep its current group. An experiment cannot be taken out of a group here."),
     baselineExperimentId: external_exports.uuid().nullable().optional().describe("The earlier experiment this one is compared against, such as the run of the code before the change this experiment tests. The experiment page and the written summary measure the change against it. Must be another experiment in the same organization. Omit to keep the current baseline; pass null to clear it."),
     status: external_exports.enum(["completed", "interrupted"]).optional().describe("completed finishes the replay and grades the traces that landed. interrupted marks a pending experiment as stopped. Omit to keep the current status.")
   }
@@ -32844,38 +32845,40 @@ function buildMcpInstructions(platform, waitCommand = WAIT_COMMAND_FALLBACK) {
 }
 function renderMcpInstructions(platform, waitCommand) {
   return `Bitfab records traces of AI agent runs and helps the user improve the code that produced them.
-There is no special command for this work. Do what the user asks directly with these tools and the SDK's commands.
+There is no special command for this work: use these tools and the SDK's commands.
 
 Replaying traces against the current code:
-- A replay runs a trace's recorded inputs through the current code. It runs through the \`bitfab-replay\` command that the Bitfab SDK installs. These tools do not start replays.
+- A replay runs a trace's recorded inputs through the current code, via the SDK's \`bitfab-replay\` command; these tools do not start replays.
 - It needs the project's replay registry module. Look for \`scripts/replayRegistry.*\`, \`scripts/replay_registry.*\`, or \`cmd/registry/main.go\`. If none exists, \`${platform.setupHint}\` creates one.
 - Run it from the project directory. TypeScript: \`pnpm exec bitfab-replay --registry <registry-path> <trace-function-key> --dataset-id <dataset-id>\`. Python: \`uv run\` or \`poetry run bitfab-replay ...\`. Ruby: \`bundle exec bitfab-replay ...\`. Go: \`go run ./cmd/registry <trace-function-key> ...\`.
 - Every replay needs \`--code-change\`: \`working-tree\` (uncommitted), \`last-branch\`, \`default-branch\`, \`ref\` with \`--code-change-base <branch|sha>\`, \`skip\`, or \`manual\` with \`--code-change-file <path>\`. Ask if unclear.
-- \`--trace-ids <id>,<id>\` replays specific traces instead of \`--dataset-id\`. \`--name <name>\` names the run; \`--attempts <n>\` replays each trace n times when results vary. \`--cloud\` runs it on GitHub Actions once \`${platform.setupHint}\` sets up cloud replay. \`--help\` lists every option.
+- \`--trace-ids <id>,<id>\` replays specific traces instead of \`--dataset-id\`. \`--attempts <n>\` replays each trace n times. \`--cloud\` runs it on GitHub Actions once \`${platform.setupHint}\` sets up cloud replay. \`--help\` lists every option.
 - Each replay creates an experiment. ${getReplayStatus.name} reports its progress. If it stopped early and is resumable, resume it with the same command plus \`--resume <experiment-id>\`. Leave out \`--dataset-id\` and \`--trace-ids\`: a resume reuses the experiment's traces.
 
 Recording a fresh run of a trace:
-- \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` runs the function again on a trace's inputs and records the result under the same trace ID. It runs side effects for real, so warn the user first. It does not create an experiment.
+- \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` reruns the function on a trace's inputs under the same trace ID. It runs side effects for real, so warn the user first. It creates no experiment.
 
 Waiting for replays:
 - Keep your turn open until your replays finish. Start each in the background, logging to a file, all with one \`--metadata bitfab-wait=<new-uuid>\` (plus \`--cloud-detach\` with \`--cloud\`). Then wait for them all in the foreground, never the background: \`node ${waitCommand} --metadata bitfab-wait=<uuid> --count <replays>\`. It exits when they end or after 9 minutes; rerun it until it prints FINISHED, then read the results in this turn.
 
-Comparing experiments:
-- Put runs you compare in one group with ${saveExperimentGroup.name} and pass \`--experiment-group-id\`. When a run tests a change against an earlier run, pass \`--baseline-experiment-id <experiment-id>\`, or set \`baselineExperimentId\` with ${saveExperiment.name}.
-- Read results with ${listExperiments.name}, ${listExperimentGroups.name}, ${getExperiment.name}, and ${listExperimentTraces.name}. Report what improved and what regressed against the originals or the baseline.
+Experiment groups:
+- Every replay needs \`--experiment-group-id\`: one series of runs testing one thing. Reuse one from ${listExperimentGroups.name} for the same thing, else a new UUID; group by what is tested, not session or branch.
+- Name each run with \`--name\` (what changed) and each new group with \`--experiment-group-name\` (what it tests); name unnamed ones with ${saveExperiment.name} or ${saveExperimentGroup.name}.
+- To compare against an earlier run, pass \`--baseline-experiment-id <experiment-id>\` or set it with ${saveExperiment.name}.
+- Read results with ${listExperiments.name}, ${listExperimentGroups.name}, ${getExperiment.name}, and ${listExperimentTraces.name}. Report what improved and regressed against the baseline.
 
 Finding out what happened:
-- Find the traced function with ${listTraceFunctions.name}. Find its traces with ${searchTraces.name}. It filters by status, environment, keyword, and dataset. Read them with ${getTraces.name}, and read a long value with ${getSpanField.name}.
+- Find the traced function with ${listTraceFunctions.name} and its traces with ${searchTraces.name} (by status, environment, keyword, or dataset). Read them with ${getTraces.name}, and read a long value with ${getSpanField.name}.
 
 Writing down what should happen:
-- An assertion says what should happen when one trace is replayed. Draft them with ${generateTraceAssertions.name} or write them with ${saveTraceAssertions.name}. Retire one with ${archiveTraceAssertions.name}.
-- A verdict says whether a run passed one assertion. Read a trace's assertions with ${getTraceAssertions.name}, then record verdicts with ${saveAgentVerdicts.name}. Use ${saveHumanVerdicts.name} only when the user gives the verdict.
-- A scenario describes the situation one run was in. Read it with ${getScenario.name} and build it with ${saveScenario.name}.
+- An assertion says what should happen when a trace is replayed: draft with ${generateTraceAssertions.name}, write with ${saveTraceAssertions.name}, retire with ${archiveTraceAssertions.name}.
+- A verdict says whether a run passed an assertion: read assertions with ${getTraceAssertions.name}, record verdicts with ${saveAgentVerdicts.name}, and use ${saveHumanVerdicts.name} only for the user's own verdicts.
+- A scenario describes one run's situation: read with ${getScenario.name}, build with ${saveScenario.name}.
 
 Building datasets:
-- A dataset is a saved set of traces to replay together. Use ${listDatasets.name}, ${saveDataset.name}, and ${addTracesToDataset.name}.
+- A dataset is a saved set of traces to replay together: ${listDatasets.name}, ${saveDataset.name}, ${addTracesToDataset.name}.
 
-Use \`${platform.setupHint}\` to instrument new code, set up replay or cloud replay, log in, or switch organization. Use \`${platform.updateHint}\` to update the plugin or SDK.`;
+Use \`${platform.setupHint}\` to instrument code, set up replay or cloud replay, log in, or switch organization. Use \`${platform.updateHint}\` to update the plugin or SDK.`;
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/replayStopGuard.js
@@ -46026,7 +46029,7 @@ var REGISTRY_PLACEMENT_RULES = [
   "**Rebuild what the recording cannot keep.** When the root takes live objects as arguments (tools with their functions, clients, callbacks), the recording keeps only their data. Rebuild them in the entry's input adapter (`adaptInputs` / `adapt_inputs` / `AdaptInputs`) by calling the same code production uses. If production builds them inline, extract that code into an exported function that production and the registry both call. That edits production code, so confirm it first. Show the user the function being extracted, the file it moves to, and each call site that changes, state that the logic moves unchanged, and wait for a yes before editing. Present it as a small visibility change, not an architecture change. If the user declines, stop and say that replay cannot rebuild these arguments without it.",
   "**Rebuilt tools run for real unless marked.** A tool call returns its recorded output during replay only inside a marked span (`mockOnReplay` / `mock_on_replay` / `WithMockOnReplay`). Tool calls recorded by a framework handler, such as the Claude Agent SDK handler's tool spans, are records only, so those tools run for real. Before any replay, list every tool the registry wires in and put each one that writes, sends, charges, or calls a paid API behind a marked span. If a tool cannot be marked because it runs where replay cannot reach it, stop and tell the user that replaying this workflow runs that tool for real.",
   "**Experiment settings are not registry entries.** Set a model swap or any other experiment setting through an environment variable the app already reads. `optionsFactory` / `options_factory` only changes replay options such as mocking, never how the app builds the root. Never add a second registry entry with the setting written into it.",
-  "**Check the wiring before calling it done.** Run `--dry-run` first. Every replay command, dry runs included, names its code change, and a wiring check has none, so pass `--code-change skip`. The first real replay of an unchanged trace (after the replay safety check) should take the same tool path as the original. A tool the original called that the replay skips means production wiring is still missing."
+  "**Check the wiring before calling it done.** Run `--dry-run` first. Every replay command, dry runs included, names its code change, and a wiring check has none, so pass `--code-change skip`. The first real replay of an unchanged trace (after the replay safety check) should take the same tool path as the original. A real replay, unlike a dry run, needs an experiment group: pass a new UUID with `--experiment-group-id` and a name for what it tests with `--experiment-group-name`. A tool the original called that the replay skips means production wiring is still missing."
 ];
 function bulletList(rules, indent) {
   return rules.map((rule) => `${indent}- ${rule}`).join("\n");
@@ -46849,7 +46852,7 @@ Include the replay registry module in the change summary alongside the instrumen
           id: "tell-user-how-to-run",
           kind: "action",
           title: "Tell the user how to generate traces and run replay",
-          body: `Give the user a clear completion message that explains how to run the instrumented workflow and, once traces exist, the SDK-installed replay command with this registry. If the repository reveals an exact command or user action that drives the real instrumented path, provide it. If it does not, name the application path or workflow that must be exercised without inventing a command. Always give the exact \`bitfab-replay --registry ...\` command when a registry was created. Do NOT run either command yourself. (Omit the replay command for Go-only projects.) **If step {{step:instrument/present-workflows}} flagged this function as reading stored DB state (or reading the workflow at step {{step:instrument/read-signatures}} noted a captured node that reads stored database state, an \`external_read\` with \`readKind: db_read\` specifically, not an \`http_read\` / \`vector_search\` / \`cache_read\` / \`filesystem_read\`)** (TypeScript, Python, Ruby), add one line: replay currently reads today's data, run \`{{cmd}}setup db-snapshot\` to make it replay against the database state at trace time.
+          body: `Give the user a clear completion message that explains how to run the instrumented workflow and, once traces exist, the SDK-installed replay command with this registry. If the repository reveals an exact command or user action that drives the real instrumented path, provide it. If it does not, name the application path or workflow that must be exercised without inventing a command. Always give the exact \`bitfab-replay --registry ...\` command when a registry was created, with \`--experiment-group-id <new UUID> --experiment-group-name "<what the run tests>"\`: every replay outside a dry run needs an experiment group, one series of experiments testing one thing, and a later run testing the same thing passes that group's id again. Do NOT run either command yourself. (Omit the replay command for Go-only projects.) **If step {{step:instrument/present-workflows}} flagged this function as reading stored DB state (or reading the workflow at step {{step:instrument/read-signatures}} noted a captured node that reads stored database state, an \`external_read\` with \`readKind: db_read\` specifically, not an \`http_read\` / \`vector_search\` / \`cache_read\` / \`filesystem_read\`)** (TypeScript, Python, Ruby), add one line: replay currently reads today's data, run \`{{cmd}}setup db-snapshot\` to make it replay against the database state at trace time.
 
 **Generate the trace by driving the instrumented path, not by instrumenting a new one.** If the convenient local entrypoint (a dev CLI, script, or REPL) bypasses the wrapped root and calls the inner function directly, common when prod runs behind an orchestrator (Temporal, a job/queue worker), its trace won't match production. Say so, then steer to driving the real path or rerouting the harness through the wrapped entrypoint, never add a span to a dev/test-only entrypoint just to make its trace look right.
 
@@ -47475,13 +47478,21 @@ When the status is \`checking\`, wait ~15 seconds before calling the tool again,
 const result = await client.replay("my-function", myInstrumentedFn, {
   limit: 10,
   dbBranch: true,
+  experimentGroupId: randomUUID(),
+  experimentGroupName: "Database branch check",
 })
 \`\`\`
 
 **Python**: \`db_branch=\`:
 
 \`\`\`python
-result = client.replay(my_instrumented_fn, limit=10, db_branch=True)
+result = client.replay(
+    my_instrumented_fn,
+    limit=10,
+    db_branch=True,
+    experiment_group_id=str(uuid.uuid4()),
+    experiment_group_name="Database branch check",
+)
 \`\`\`
 
 **Ruby**: \`db_branch:\`:
@@ -47492,6 +47503,8 @@ result = client.replay(
   trace_function_key: "my-function",
   limit: 10,
   db_branch: true,
+  experiment_group_id: SecureRandom.uuid,
+  experiment_group_name: "Database branch check",
 )
 \`\`\`
 
@@ -47516,7 +47529,7 @@ Leave the live request path untouched: only the replayed function reads the bran
 
 1. Resolve the exact fresh trace ID. Before triggering the instrumented function, call {{tool:searchTraces}} with \`{ traceFunctionKey: "<key>", limit: 10 }\` and retain the returned IDs. Record the current timestamp, then run the instrumented function once (or have the user trigger it). Poll the same search once or twice and compare the returned IDs with the before set. Select the ID only when exactly one new root trace has a timestamp after the recorded time. If there are zero new IDs, stop and report that no fresh trace arrived; if concurrent traffic produces more than one candidate, stop and ask the user for the intended trace ID. \`search_traces\` does not return trace inputs, so never guess based on an assumed input match. Confirm the exact ID is eligible by calling {{tool:searchTraces}} with \`{ traceFunctionKey: "<key>", traceIds: ["<fresh-trace-id>"], hasDbSnapshot: true, limit: 1 }\`. If it is absent, do not replay it: report that the fresh trace did not capture a snapshot and diagnose SDK freshness/database connection first.
 2. **Mandatory replay-safety check, before any replay command.** Read the replay registry module, the real production root it imports, and every reachable external-action span. Inventory database writes, outbound mutations, queue publishes, email, payments, filesystem writes, and similar unsafe actions. Confirm each one is behind a manual replay-mockable descendant selected by the registry entry's actual strategy and has a serializable recorded output; \`mock: "marked"\` requires \`mockOnReplay\` on that boundary. Confirm the boundary runs in the same replay context: Python worker threads require \`trace_across_threads=True\`; Python async-generator spans cannot be mocked; Ruby child threads, pre-created consumers, and processes do not inherit replay interception; TypeScript synchronous selected spans cannot use lazy \`marked\` output and may use \`all\` only when freezing every matched child is acceptable. Also reject unsafe import-time/module initialization, because it runs before replay interception. Confirm the replay call requests \`dbBranch\` / \`db_branch\`. If any unsafe action is unselected, unmockable, outside context, or uncertain, **do not run the smoke test**; report the exact blocker and required boundary change. Mocking, not the app environment, is the safety boundary.
-3. Run the SDK-installed replay command against only the verified ID using \`--trace-ids <fresh-trace-id>\` (for example, \`pnpm with-env bitfab-replay --registry scripts/replayRegistry.ts <pipeline> --code-change skip --trace-ids <fresh-trace-id>\`, \`poetry run bitfab-replay --registry scripts/replay_registry.py <pipeline> --code-change skip --trace-ids <fresh-trace-id>\`, or \`bundle exec bitfab-replay --registry scripts/replay_registry.rb <pipeline> --code-change skip --trace-ids <fresh-trace-id>\`, with the app's normal environment loader). Pass \`--code-change skip\`: this run checks the instrumentation, not a code change. Never substitute \`--limit 1\`.
+3. Run the SDK-installed replay command against only the verified ID using \`--trace-ids <fresh-trace-id>\` (for example, \`pnpm with-env bitfab-replay --registry scripts/replayRegistry.ts <pipeline> --code-change skip --trace-ids <fresh-trace-id> --experiment-group-id <new UUID> --experiment-group-name "Setup instrumentation check"\`, \`poetry run bitfab-replay --registry scripts/replay_registry.py <pipeline> --code-change skip --trace-ids <fresh-trace-id> --experiment-group-id <new UUID> --experiment-group-name "Setup instrumentation check"\`, or \`bundle exec bitfab-replay --registry scripts/replay_registry.rb <pipeline> --code-change skip --trace-ids <fresh-trace-id> --experiment-group-id <new UUID> --experiment-group-name "Setup instrumentation check"\`, with the app's normal environment loader). Pass \`--code-change skip\`: this run checks the instrumentation, not a code change. Every replay needs an experiment group, one series of experiments testing one thing: generate a new UUID for \`--experiment-group-id\`, since this check starts its own group. Never substitute \`--limit 1\`.
 4. Confirm the branch was injected: inside the replayed function, \`getCurrentReplayBranch()\` (TypeScript), \`get_current_replay_branch()\` (Python), or \`Bitfab.current_replay_branch\` (Ruby) must be non-null. Compare its \`databaseUrl\` / \`database_url\` host and database with the app's normal \`DATABASE_URL\`; they should differ. Print the experiment URL from the replay output (\`experimentUrl\` in TypeScript, \`experiment_url\` in Python/Ruby; older SDKs print \`testRunUrl\` / \`test_run_url\`) so the user can open the experiment.
 
 If the branch accessor is null for a freshly captured trace, check that the source database is connected, that the trace actually carries a snapshot reference, and that the SDK supports always-on capture (upgrade with \`{{cmd}}update\` when needed). Re-check the dashboard Database section in step {{step:db-snapshot/connect-db}}; there is no separate replay-environment active flag.
