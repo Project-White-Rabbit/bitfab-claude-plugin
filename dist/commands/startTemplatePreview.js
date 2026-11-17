@@ -4,10 +4,10 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-DV7VJSN6.js";
+} from "../chunks/chunk-Z7AO3KCU.js";
 import {
   runStartTemplatePreview
-} from "../chunks/chunk-SWDIKCT3.js";
+} from "../chunks/chunk-FGNYXVFK.js";
 
 // _target/dist/commands/startTemplatePreview.js
 runStartTemplatePreview(platform, getVersion()).catch((err) => {
