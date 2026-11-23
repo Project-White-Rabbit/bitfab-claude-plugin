@@ -1,12 +1,13 @@
 {
   "name": "bitfab-claude-plugin",
-  "version": "0.12.175",
+  "version": "0.13.0",
   "description": "Automated regression testing and improvements for your prompts, context, and tool calls.",
   "files": [
     "dist",
     "hooks",
     "scripts",
     "skills",
+    "types",
     ".mcp.json"
   ],
   "type": "module",

@@ -5475,8 +5475,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path12) {
-      let input2 = path12;
+    function removeDotSegments(path10) {
+      let input2 = path10;
       const output2 = [];
       let nextSlash = -1;
       let len = 0;
@@ -5550,11 +5550,11 @@ var require_utils = __commonJS({
       }
       return output2.join("");
     }
-    function removeDotSegmentsRelative(path12) {
-      if (path12 === "" || path12[0] === "/") {
-        return removeDotSegments(path12);
+    function removeDotSegmentsRelative(path10) {
+      if (path10 === "" || path10[0] === "/") {
+        return removeDotSegments(path10);
       }
-      const segments = path12.split("/");
+      const segments = path10.split("/");
       const last = segments.length - 1;
       const output2 = [];
       let trailingDirectory = false;
@@ -5917,8 +5917,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path12 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path12 && path12 !== "/" ? path12 : void 0;
+        const path10 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path10 && path10 !== "/" ? path10 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -9455,12 +9455,12 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f;
     };
-    function addFormats(ajv, list, fs14, exportName) {
+    function addFormats(ajv, list, fs12, exportName) {
       var _a3;
       var _b;
       (_a3 = (_b = ajv.opts.code).formats) !== null && _a3 !== void 0 ? _a3 : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
       for (const f of list)
-        ajv.addFormat(f, fs14[f]);
+        ajv.addFormat(f, fs12[f]);
     }
     module.exports = exports = formatsPlugin;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -9886,8 +9886,8 @@ async function closeLoginWindow(signInUrl) {
   if (!["http:", "https:"].includes(url2.protocol) || url2.username !== "" || url2.password !== "" || !/^\/plugin\/auth\/[a-z0-9-]+$/.test(url2.pathname) || marker === null || !/^[a-f0-9]{32}$/.test(marker)) {
     return;
   }
-  const appNames = getChromiumBrowsers().flatMap((browser) => browser.binaryPaths.flatMap((path12) => {
-    const appName = path12.match(/\/([^/]+)\.app\//)?.[1];
+  const appNames = getChromiumBrowsers().flatMap((browser) => browser.binaryPaths.flatMap((path10) => {
+    const appName = path10.match(/\/([^/]+)\.app\//)?.[1];
     return appName === void 0 ? [] : [appName];
   }));
   await Promise.all(appNames.map((appName) => new Promise((resolve2) => {
@@ -10185,10 +10185,10 @@ function emitJson(event) {
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/pageLink.js
-function emitPageLink(path12) {
+function emitPageLink(path10) {
   emitJson({
     event: "link",
-    url: `${getConfig().serviceUrl.replace(/\/$/, "")}${path12}`
+    url: `${getConfig().serviceUrl.replace(/\/$/, "")}${path10}`
   });
 }
 
@@ -10286,15 +10286,15 @@ async function runOpenDatasetExperiments(_platform) {
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/pageLink.js
 function runPageLink() {
-  const [path12] = positionalArgs([
+  const [path10] = positionalArgs([
     { name: "path", description: "Relative Bitfab page path." }
   ]);
-  const url2 = new URL(path12, "https://bitfab.invalid");
+  const url2 = new URL(path10, "https://bitfab.invalid");
   const pluginPage = /^\/plugin\/(?:auth\/|sign-in(?:\/|$)|trace-functions\/[^/]+\/template-preview(?:\/|$))/;
-  if (!path12.startsWith("/") || path12.startsWith("//") || path12.includes("\\") || url2.origin !== "https://bitfab.invalid" || /^\/(?:studio|trace-plan|trace-plans)(?:\/|$)/.test(url2.pathname) || url2.pathname.startsWith("/plugin/") && !pluginPage.test(url2.pathname)) {
+  if (!path10.startsWith("/") || path10.startsWith("//") || path10.includes("\\") || url2.origin !== "https://bitfab.invalid" || /^\/(?:studio|trace-plan|trace-plans)(?:\/|$)/.test(url2.pathname) || url2.pathname.startsWith("/plugin/") && !pluginPage.test(url2.pathname)) {
     throw new Error("Provide an app page path or a plugin login or template-preview path.");
   }
-  emitPageLink(path12);
+  emitPageLink(path10);
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/sessionLogConsent.js
@@ -11165,10 +11165,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path12) {
-  if (!path12)
+function getElementAtPath(obj, path10) {
+  if (!path10)
     return obj;
-  return path12.reduce((acc, key) => acc?.[key], obj);
+  return path10.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -11508,11 +11508,11 @@ function explicitlyAborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path12, issues) {
+function prefixIssues(path10, issues) {
   return issues.map((iss) => {
     var _a3;
     (_a3 = iss).path ?? (_a3.path = []);
-    iss.path.unshift(path12);
+    iss.path.unshift(path10);
     return iss;
   });
 }
@@ -11974,16 +11974,16 @@ function flattenError(error62, mapper = (issue2) => issue2.message) {
 }
 function formatError(error62, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error63, path12 = []) => {
+  const processError = (error63, path10 = []) => {
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path12, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path12, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path12, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else {
-        const fullpath = [...path12, ...issue2.path];
+        const fullpath = [...path10, ...issue2.path];
         if (fullpath.length === 0) {
           fieldErrors._errors.push(mapper(issue2));
         } else {
@@ -12022,17 +12022,17 @@ function formatError(error62, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error62, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error63, path12 = []) => {
+  const processError = (error63, path10 = []) => {
     var _a3;
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path12, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path12, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path12, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else {
-        const fullpath = [...path12, ...issue2.path];
+        const fullpath = [...path10, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -12071,8 +12071,8 @@ function treeifyError(error62, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path12 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path12) {
+  const path10 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path10) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -29210,13 +29210,13 @@ function resolveRef(ref, ctx) {
   if (!ref.startsWith("#")) {
     throw new Error("External $ref is not supported, only local refs (#/...) are allowed");
   }
-  const path12 = ref.slice(1).split("/").filter(Boolean);
-  if (path12.length === 0) {
+  const path10 = ref.slice(1).split("/").filter(Boolean);
+  if (path10.length === 0) {
     return ctx.rootSchema;
   }
   const defsKey = ctx.version === "draft-2020-12" ? "$defs" : "definitions";
-  if (path12[0] === defsKey) {
-    const key = path12[1] === void 0 ? void 0 : decodeJSONPointerSegment(path12[1]);
+  if (path10[0] === defsKey) {
+    const key = path10[1] === void 0 ? void 0 : decodeJSONPointerSegment(path10[1]);
     if (!key || !ctx.defs[key]) {
       throw new Error(`Reference not found: ${ref}`);
     }
@@ -30093,8 +30093,8 @@ async function runStartTemplatePreview(platform, pluginVersion) {
   emitPageLink(buildTemplatePreviewPath(args[0], ticket.id));
 }
 function buildTemplatePreviewPath(functionKey, ticketId) {
-  const path12 = `/plugin/trace-functions/${encodeURIComponent(functionKey)}/template-preview`;
-  return ticketId ? `${path12}?ticket=${encodeURIComponent(ticketId)}` : path12;
+  const path10 = `/plugin/trace-functions/${encodeURIComponent(functionKey)}/template-preview`;
+  return ticketId ? `${path10}?ticket=${encodeURIComponent(ticketId)}` : path10;
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/updates.js
@@ -31216,1296 +31216,331 @@ async function runUpdate(currentVersion, platform, mode = "all") {
   }
 }
 
-// _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/mcpContract.js
-var DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-function parseDateOnly(value) {
-  const [year, month, day] = value.split("-").map(Number);
-  const date5 = /* @__PURE__ */ new Date(0);
-  date5.setHours(0, 0, 0, 0);
-  date5.setFullYear(year, month - 1, day);
-  return date5;
-}
-var dateOnlyStringSchema = external_exports.string().regex(DATE_PATTERN, "Must be YYYY-MM-DD format").refine((value) => {
-  const [year, month, day] = value.split("-").map(Number);
-  const date5 = parseDateOnly(value);
-  return date5.getFullYear() === year && date5.getMonth() === month - 1 && date5.getDate() === day;
-}, "Must be a valid calendar date");
-var GET_TRACE_VERDICTS_MAX_IDS = 100;
-var GET_TRACES_DEFAULT_SPAN_LIMIT = 50;
-var SPAN_READ_MAX_RESPONSE_CHARS = 32e3;
-var GET_TRACES_MAX_SPAN_LIMIT = 200;
-var GET_TRACES_MAX_SPAN_NAMES = 50;
-var spanTypeSchema = external_exports.enum([
-  "llm",
-  "agent",
-  "function",
-  "guardrail",
-  "handoff",
-  "custom"
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/watchRunningExperiments.js
+var MIN_REFRESH_GAP_MS = 5e3;
+var STREAM_FALLBACK_REFRESH_MS = 6e4;
+var POLL_FALLBACK_REFRESH_MS = 2e4;
+var STREAM_RETRY_MS = 5e3;
+var SETTLE_AFTER_FINISH_MS = 2e4;
+var STALL_AFTER_MS = 10 * 6e4;
+var REQUEST_TIMEOUT_MS = 3e4;
+var MAX_RUNNING_LISTED = 20;
+var MAX_CONSECUTIVE_REFRESH_FAILURES = 3;
+var DISCOVER_CLOCK_SKEW_MS = 6e4;
+var NEVER2 = new Promise(() => {
+});
+var EXPERIMENT_EVENT_TYPES = /* @__PURE__ */ new Set([
+  "experiment:updated",
+  "experiment-stats:updated"
 ]);
-var spanFieldSchema = external_exports.enum([
-  "input",
-  "output",
-  "reasoning",
-  "content",
-  "errors",
-  "contexts"
-]);
-var GET_TRACE_ASSERTIONS_MAX_IDS = 100;
-var MAX_ASSERTIONS_PER_REQUEST = 50;
-var MAX_ASSIGNEE_EMAIL_LENGTH = 320;
-var GET_GRADER_VERDICTS_MAX_IDS = 100;
-var DEFAULT_GRADER_VERDICT_LIMIT = 50;
-var MAX_GRADER_VERDICT_LIMIT = 200;
-var SAVE_GRADER_VERDICTS_MAX_ENTRIES = 200;
-function parseJsonString(val) {
-  if (typeof val !== "string") {
-    return val;
+var Waker = class {
+  resolveWake;
+  pending;
+  constructor() {
+    this.pending = this.fresh();
   }
-  try {
-    return JSON.parse(val);
-  } catch {
-    return val;
-  }
-}
-function toolConfig(contract) {
-  return {
-    title: contract.title,
-    description: contract.description,
-    inputSchema: external_exports.strictObject(contract.inputSchema)
-  };
-}
-function isRecord(value) {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-function appendToolParameterWarning(result, warning) {
-  if (!isRecord(result) || !Array.isArray(result.content)) {
-    return result;
-  }
-  return {
-    ...result,
-    content: [...result.content, { type: "text", text: warning }]
-  };
-}
-var ASSERTION_STATUS_VALUES = '"draft" (was "pending"), "confirmed" (was "approved"), or "rejected"';
-function renamedAssertionStatusRefusal(args) {
-  if ("approvalStates" in args) {
-    return `approvalStates was renamed to statuses. Send statuses instead, with ${ASSERTION_STATUS_VALUES}.`;
-  }
-  const entries = parseJsonString(args.assertions);
-  if (Array.isArray(entries) && entries.some((entry) => isRecord(entry) && "approvalState" in entry)) {
-    return `approvalState was renamed to status. Send status on each assertion instead, with ${ASSERTION_STATUS_VALUES}.`;
-  }
-  return null;
-}
-function installToolParameterWarnings(protocolServer, contracts, receiver) {
-  const method = "tools/call";
-  const originalHandler = protocolServer._requestHandlers.get(method);
-  if (!originalHandler) {
-    throw new Error("Cannot install tool parameter warnings before tools register");
-  }
-  const contractsByName = new Map(contracts.map((toolContract) => [toolContract.name, toolContract]));
-  protocolServer._requestHandlers.set(method, async (request, extra) => {
-    if (!isRecord(request) || !isRecord(request.params)) {
-      return originalHandler(request, extra);
-    }
-    const { name, arguments: args } = request.params;
-    if (typeof name !== "string" || !isRecord(args)) {
-      return originalHandler(request, extra);
-    }
-    const toolContract = contractsByName.get(name);
-    if (!toolContract) {
-      return originalHandler(request, extra);
-    }
-    const refusal = renamedAssertionStatusRefusal(args);
-    if (refusal !== null) {
-      return { content: [{ type: "text", text: refusal }], isError: true };
-    }
-    const supportedNames = new Set(Object.keys(toolContract.inputSchema));
-    const unsupportedNames = Object.keys(args).filter((key) => !supportedNames.has(key));
-    if (unsupportedNames.length === 0) {
-      return originalHandler(request, extra);
-    }
-    const supportedArgs = Object.fromEntries(Object.entries(args).filter(([key]) => supportedNames.has(key)));
-    const result = await originalHandler({
-      ...request,
-      params: { ...request.params, arguments: supportedArgs }
-    }, extra);
-    const parameterLabel = unsupportedNames.length === 1 ? "parameter" : "parameters";
-    return appendToolParameterWarning(result, `Warning: ${receiver} ignored unsupported ${parameterLabel} for ${name}: ${unsupportedNames.join(", ")}. Update Bitfab if you expected ${unsupportedNames.length === 1 ? "it" : "them"} to take effect.`);
-  });
-}
-var getBitfabApiKey = {
-  name: "get_bitfab_api_key",
-  title: "Get Bitfab API Key",
-  description: "Get your Bitfab API key for SDK initialization. Returns the plaintext key to use in environment variables. The SDK setup reference (install commands, initialization, instrumentation patterns) lives at https://docs.bitfab.ai; fetch pages as plain markdown by appending .md (TypeScript: /typescript-sdk.md, Python: /python-sdk.md, Ruby: /ruby-sdk.md, Go: /go-sdk.md), or fetch https://docs.bitfab.ai/llms.txt for the full page index. Read the relevant page when setting up.",
-  inputSchema: {}
-};
-var getApiKeyContext = {
-  name: "get_api_key_context",
-  title: "Get API Key Context",
-  description: "Returns which Bitfab org this API key reads from and writes to (it can differ from the org open in the user's Bitfab tab). Call before the first MCP write of a session, and whenever the user says data you just wrote isn't visible in their Bitfab: the `Organization:` field is the answer to 'which org should I switch the Bitfab to?'.",
-  inputSchema: {}
-};
-var listOrganizations = {
-  name: "list_organizations",
-  title: "List Organizations",
-  description: "Lists the Bitfab organizations the signed-in user belongs to, marking the one the plugin currently reads and writes ([current]). Use this to answer 'which org can I switch to?' or before switching the plugin's active org. Each entry includes the org id to pass to the switchOrg plugin command (which performs the switch and replaces the local API key).",
-  inputSchema: {}
-};
-var getDatabaseConnectionStatus = {
-  name: "get_database_connection_status",
-  title: "Get Database Connection Status",
-  description: "Check whether this organization has connected a database for per-trace snapshot replay (DB branching). Returns one of: connected (ready - replay can branch the database to each trace's capture time), checking (provisioning in progress, poll again in ~15s), failed (the saved connection could not be provisioned), or none (no database connected yet). Connected integrations identify their type as direct Neon or managed Postgres mirror; direct Neon connections also include the pinned project name and ID. Use this during db-branching setup to wait until the customer's database is connected before enabling dbSnapshot.",
-  inputSchema: {}
-};
-var listTraceFunctions = {
-  name: "list_trace_functions",
-  title: "List Trace Functions",
-  description: "List all traced functions in your organization. Use this to discover which functions are instrumented with the Bitfab SDK.",
-  inputSchema: {}
-};
-var searchTraces = {
-  name: "search_traces",
-  title: "Search Traces",
-  description: "Search and filter traces for a traced function. Returns matching traces with IDs, status, timestamps, total duration (ms), total token usage (in/out/cached/total), model, and output preview (all when available). Replay traces (from experiments) carry the same totals. Use get_traces for per-span duration, tokens, time-to-first-token, and model. Supports keyword search, date range, status filter, and regex matching. Use drillDown to refine previous results.",
-  inputSchema: {
-    traceFunctionKey: external_exports.string().describe("The trace function key to search"),
-    searchQuery: external_exports.string().optional().describe("Full-text keyword search"),
-    status: external_exports.enum(["pending", "completed", "failed"]).optional().describe("Filter by trace status"),
-    createdAfter: dateOnlyStringSchema.optional().describe("Only traces after this date (YYYY-MM-DD)"),
-    createdBefore: dateOnlyStringSchema.optional().describe("Only traces before this date (YYYY-MM-DD)"),
-    traceFilterRegex: external_exports.string().optional().describe("Regex to filter trace output"),
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max traces to return (default 10, max 50)"),
-    drillDown: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("If true, merge with previous search filters to narrow results"),
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid())).optional().describe("Specific trace IDs to fetch"),
-    environment: external_exports.string().optional().describe("Filter by environment (e.g., production, staging, development, preview). Omit to search across all environments."),
-    callerMetadata: external_exports.record(external_exports.string().regex(/^[A-Za-z0-9_.:-]{1,40}$/), external_exports.string().max(500)).refine((value) => Object.keys(value).length <= 10).transform((value) => Object.fromEntries(Object.entries(value).map(([key, item]) => [
-      key.toLowerCase(),
-      item.toLowerCase()
-    ]))).optional().describe("Filter by up to 10 caller metadata key/value pairs. Matches exact values case-insensitively; all pairs must match."),
-    name: external_exports.string().trim().min(1).max(256).transform((value) => value.toLowerCase()).optional().describe("Filter by the trace's name, the title set by setName or seedTrace. Matches the name's words in order, so 'Order ABC' also matches 'Order ABC 123', and it matches whole words rather than inside a word. Case-insensitive. Use nameContains to match inside a word or on a partial word."),
-    nameContains: external_exports.string().trim().min(3).max(256).transform((value) => value.toLowerCase()).optional().describe("Filter by any part of the trace's name, including inside a word, matched case-insensitively. Needs at least 3 characters. Use name instead to match whole words in order."),
-    verdictSource: external_exports.enum(["human", "agent", "bitfab_judge"]).optional().describe('Filter by who gave the verdict: "human" for verdicts a person gave, "agent" for verdicts a coding agent gave (save_agent_verdicts or the SDKs), "bitfab_judge" for verdicts Bitfab\'s assertion judge gave. Omit to include any source. This filters on authorship only; for trust, use the separate `validated` parameter.'),
-    labelSource: external_exports.enum(["human", "agent", "bitfab_judge"]).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdictSource. Ignored when verdictSource is also sent."),
-    validated: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe('If true, only return traces with a validated verdict: one a person gave, or one an agent gave that a person has confirmed (`confirmedAt` is set). Use this when you want verdicts someone has reviewed. Combine with `verdictSource: "agent"` to get only confirmed agent verdicts (leaving out the ones a person gave). Omit (or pass false) to include unconfirmed verdicts too.'),
-    verdictResult: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Filter by verdict: true for passing verdicts, false for failing verdicts"),
-    labelResult: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdictResult. Ignored when verdictResult is also sent."),
-    includeReplays: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Include replayed traces (traces from experiments) in results. Defaults to false because replays have new inputs, not the original production inputs, so they're not useful when selecting traces to judge or when sampling real user behavior. Set to true only when you specifically want to inspect replay results."),
-    experimentId: external_exports.uuid().optional().describe("Filter to traces from a specific experiment ID. Automatically sets includeReplays to true."),
-    datasetId: external_exports.uuid().optional().describe("Filter to traces belonging to a specific dataset. Combine with other filters (status, verdictResult, etc.) to narrow within the dataset."),
-    hasDbSnapshot: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Filter by whether the trace captured a database snapshot reference. true returns only traces that can be replayed against a pinned historical DB branch (the 'Snapshot captured' traces); false returns only traces with no snapshot. Omit to include both.")
-  }
-};
-var getTraces = {
-  name: "get_traces",
-  title: "Get Traces",
-  description: `Read one or more traces by ID. Includes inputs, outputs, status, environment tag, trace-level duration (ms), token usage (in/out/cached/total), and model (when available). Use these to compare latency and cost between a trace and its replay. Returns span details (input, output, reasoning, content, context, errors) plus per-span duration, tokens, time-to-first-token, and model when available. Use \`scope: "summary"\` when scanning many traces to keep the response small; \`scope: "full"\` when you need the complete untruncated detail of a few traces. Spans come back one page at a time (${GET_TRACES_DEFAULT_SPAN_LIMIT} per trace by default) and the whole response is capped in size, so it always fits in context. When a trace has more spans than one page, the response lists every span name and span type with its count and says which spanOffset reads the next page: narrow with spanNames (only spans with those names), spanTypes (only spans of those types, e.g. ["llm"] for the model calls) and spanFields (only those fields) rather than paging through thousands of spans, and fetch any one truncated field in full with get_span_field. To load only verdicts + annotations for many traces at once (no span content), use get_trace_verdicts instead.`,
-  inputSchema: {
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(10)).describe("Trace IDs to read (1-10)"),
-    scope: external_exports.enum(["summary", "full"]).optional().default("summary").describe('Level of span detail. "summary" (default) renders the same span structure as full but caps each span (its fields share a ~1500-char budget) and each trace-level field (~2000 chars), and leaves out any span field over 10k chars, printing its size instead (name it in spanFields to preview it anyway, or read it in full with get_span_field): prefer it when scanning or identifying candidate traces. "full" renders every field untruncated up to 10k chars each, with no per-span ceiling, until the response size cap: use it when you need complete detail on a handful of spans, ideally narrowed with spanNames.'),
-    spanNames: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.string().min(1)).min(1).max(GET_TRACES_MAX_SPAN_NAMES)).optional().describe("Only show spans whose name exactly matches one of these. A trace with more spans than one page lists its span names and counts, so read that list first and pass the names you need. Omit to show every span."),
-    spanTypes: external_exports.preprocess(parseJsonString, external_exports.array(spanTypeSchema).min(1).max(spanTypeSchema.options.length)).optional().describe('Only show spans of these types: llm (model calls), agent, function, guardrail, handoff, custom. Pass ["llm"] with spanLimit: 1 to read just the first model call, including its input. Combined with spanNames, a span must match both. Omit to show every type.'),
-    spanOffset: external_exports.preprocess(parseJsonString, external_exports.number().int().min(0)).optional().describe("Skip this many spans in each trace, counted after the spanNames and spanTypes filters (default 0). The response says which offset reads the next page."),
-    spanLimit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(GET_TRACES_MAX_SPAN_LIMIT)).optional().describe(`Show at most this many spans per trace (default ${GET_TRACES_DEFAULT_SPAN_LIMIT}, max ${GET_TRACES_MAX_SPAN_LIMIT}). The response size cap can stop a page early, and says so when it does.`),
-    spanFields: external_exports.preprocess(parseJsonString, external_exports.array(spanFieldSchema).max(6)).optional().describe("Only show these span fields (input, output, reasoning, content, errors, contexts). Omit to show all of them, with fields over 10k chars left out in summary scope. A field named here is previewed even when it is large. Pass [] to list spans with only their name, ID, duration, tokens, and model, which is the cheapest way to see a large trace's shape.")
-  }
-};
-var getTraceVerdicts = {
-  name: "get_trace_verdicts",
-  title: "Get Trace Verdicts",
-  description: `Read just the verdicts for one or more traces by ID: returns each trace's pass/fail verdict, its annotation (the reviewer's reasoning), its saved { spanId, text } evidence, and whether the verdict is human-validated (a person gave or confirmed it). Per-assertion verdicts follow on indented lines, one per assertion, keyed by the assertionId the write used, each with its own verdict, annotation, evidence, confidence, and author, so a verdict written per assertion reads back per assertion rather than as a tally. A verdict reads ABSTAINED when the judge could not find the evidence the assertion needed: it counts as a fail in the passed/failed tally and the trace's verdict, and the tally also says how many of the fails were abstentions, so you can tell judge coverage from the agent's behavior. No span content, inputs, or outputs are loaded, so the response is small and one call accepts up to ${GET_TRACE_VERDICTS_MAX_IDS} IDs. Use this to load a whole dataset's verdicts into context in a single call (e.g. when building or confirming a dataset). When you need a trace's actual inputs/outputs/spans, use get_traces instead. This returns verdicts on runs that already happened; for what a trace SHOULD do on its next replay, use get_trace_assertions.`,
-  inputSchema: {
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(GET_TRACE_VERDICTS_MAX_IDS)).describe(`Trace IDs to read verdicts for (1-${GET_TRACE_VERDICTS_MAX_IDS})`)
-  }
-};
-var generateVerdictEvidence = {
-  name: "generate_verdict_evidence",
-  title: "Generate Verdict Evidence",
-  description: "Suggest span-by-span evidence that could support a verdict on one assertion on a specific evaluated trace. Pass the original or replay trace being judged; an inherited assertion is checked against that replay's spans. The service narrows the selected trace to spans relevant to the assertion, then returns evidence items with traceId, assertionId, spanId, text, spanName, signature-only parameters (names and runtime types, never values), spanType, and isMocked. Use get_trace_assertions to obtain assertion IDs. Saved `{ spanId, text }` evidence is read with get_trace_verdicts instead.",
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The original or replay trace whose spans should be evaluated."),
-    assertionId: external_exports.uuid().describe("The assertion the evidence would support.")
-  }
-};
-var getSpanField = {
-  name: "get_span_field",
-  title: "Get Span Field",
-  description: `Fetch the COMPLETE, untruncated value of a single span field. get_traces truncates or leaves out large span fields and prints a note telling you to call this when you need the full text. Pass the traceId, the spanId (the \`[ID: ...]\` shown for that span in get_traces output), and the field to retrieve. Returns up to ${SPAN_READ_MAX_RESPONSE_CHARS} chars per call so the response fits in context; when the field is longer, the response says which offset reads the next part. Prefer this over re-reading the whole trace when you only need one large field in full.`,
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The trace ID the span belongs to"),
-    spanId: external_exports.uuid().describe("The span ID to read, taken from the `[ID: ...]` shown for the span in get_traces output"),
-    field: spanFieldSchema.describe("Which span field to return in full: input, output, reasoning, content, errors, or contexts"),
-    maxChars: external_exports.preprocess(parseJsonString, external_exports.number().int().positive()).optional().describe(`Maximum characters to return (default and upper limit ${SPAN_READ_MAX_RESPONSE_CHARS}). Larger values are treated as ${SPAN_READ_MAX_RESPONSE_CHARS}.`),
-    offset: external_exports.preprocess(parseJsonString, external_exports.number().int().min(0)).optional().describe("Character position to start reading from (default 0). Pass the offset a previous response gave to read the next part of a long field.")
-  }
-};
-var getSpan = {
-  name: "get_span",
-  title: "Get Span",
-  description: `Read one span from its span ID alone, with no trace ID: the span's output, and the trace and traced function it belongs to, so you can follow up with get_traces, get_span_field, or get_trace_assertions. Accepts the Bitfab span ID (the \`[ID: ...]\` get_traces prints) or the span ID your code's SDK sent. The output is returned up to ${SPAN_READ_MAX_RESPONSE_CHARS} chars per call; when it is longer, the response says which offset reads the next part. A span that cannot be found names the organization that was searched, because a span from another organization reads as not found: switch organizations and try again.`,
-  inputSchema: {
-    spanId: external_exports.string().trim().min(1).max(256).describe("The span ID: Bitfab's span ID, or the span ID your code's SDK sent"),
-    maxChars: external_exports.preprocess(parseJsonString, external_exports.number().int().positive()).optional().describe(`Maximum characters of the span's output to return (default and upper limit ${SPAN_READ_MAX_RESPONSE_CHARS}). Larger values are treated as ${SPAN_READ_MAX_RESPONSE_CHARS}.`),
-    offset: external_exports.preprocess(parseJsonString, external_exports.number().int().min(0)).optional().describe("Character position in the span's output to start reading from (default 0). Pass the offset a previous response gave to read the next part of a long output.")
-  }
-};
-var verdictEvidenceShape = external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
-  spanId: external_exports.uuid(),
-  text: external_exports.string().trim().min(1).max(1e4)
-})).min(1).max(50));
-var confidenceShape = external_exports.enum(["VeryLow", "Low", "Medium", "High", "VeryHigh"]);
-var MAX_VERDICTS_PER_REQUEST = 200;
-var agentVerdictEntryShape = external_exports.object({
-  traceId: external_exports.uuid().optional().describe("The trace ID to update. Provide this OR originalTraceId, not both."),
-  assertionId: external_exports.uuid().optional().describe("The assertion this verdict scores, taken from the `[ID: ...]` get_trace_assertions prints. Required unless `archive` is true: verdicts are never written directly on a trace. A replay may name an assertion it inherited from the original trace it was replayed from."),
-  originalTraceId: external_exports.uuid().optional().describe("For replay verdicts: the original trace ID the replay item was replayed from (the replay item's originalTraceId). The server resolves it to the replay trace via lineage, so you never need a server replay trace id. Requires the top-level experimentId. Provide this OR traceId, not both."),
-  sourceTraceId: external_exports.uuid().optional().meta({ deprecated: true }).describe("Deprecated alias for originalTraceId. Prefer originalTraceId; accepted for back-compat."),
-  attempt: external_exports.number().int().min(0).optional().describe("For replay verdicts on an experiment that ran each trace more than once: which attempt of originalTraceId this verdict is for (0-based, the replay item's attempt). Defaults to 0, so single-attempt callers never need it."),
-  verdict: external_exports.enum(["pass", "fail", "abstained"]).optional().describe('"pass" or "fail" for your judgment of the assertion. "abstained" when the evidence does not show the part of the run this assertion checks, so there was nothing to judge: it counts as a FAIL in every pass rate but is stored and shown as an abstention, apart from a fail. Required unless `archive` or `skip` is true.'),
-  label: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict. true is "pass", false is "fail". Refused when verdict is also sent.'),
-  abstain: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict "abstained".'),
-  archive: external_exports.boolean().optional().describe("If true, archive the existing agent verdict on this assertion and ignore verdict/annotation/skip/confidence. Default false."),
-  skip: external_exports.boolean().optional().describe("If true, record an explicit skip (cannot judge) and ignore verdict/confidence. Pass `annotation` alongside it to record why the verdict was withheld. Default false."),
-  annotation: external_exports.string().min(1).optional().describe('Your reasoning, shown to the human reviewer beside the verdict. Required for a "pass" or "fail" verdict. Optional alongside `skip: true`, where it says why the verdict was withheld, and alongside verdict "abstained", where it says what the evidence would have had to show.'),
-  confidence: confidenceShape.optional().describe('How confident you are in this verdict: VeryLow / Low / Medium / High / VeryHigh. Shown beside the verdict; low-confidence verdicts are put first for human review. Optional; only meaningful with a "pass" or "fail" verdict.'),
-  evidence: verdictEvidenceShape.nullable().optional().describe("Span-by-span evidence for this verdict. Omit it to preserve existing evidence. Pass null to clear existing evidence.")
-});
-var saveAgentVerdicts = {
-  name: "save_agent_verdicts",
-  title: "Save Agent Verdicts",
-  description: "Set, skip, abstain on, or archive the agent's pass/fail verdict on one or more of a trace's confirmed assertions (`verdictSource=\"agent\"`). Every verdict, skip, and abstention scores ONE assertion and must carry its `assertionId` (the `[ID: ...]` get_trace_assertions prints). Verdicts are only ever written on assertions, never directly on a trace: a trace with no confirmed assertions gets no verdict, so add assertions first (save_trace_assertions) or report your judgment in the conversation. Use this AFTER you have read the traces with get_traces and decided yourself whether each one looks like a pass, a fail, or genuinely cannot be judged. To set a verdict, pass `verdict` (\"pass\" or \"fail\") and `annotation` (your reasoning, shown to the human reviewer beside the verdict). Add `evidence` as `{ spanId, text }` entries to ground that reasoning in spans on the evaluated trace. Optionally pass `confidence` (`VeryLow|Low|Medium|High|VeryHigh`) to record how confident you are, shown beside the verdict so reviewers can look at low-confidence verdicts first. To explicitly skip an assertion you cannot decide on (instead of leaving it with no verdict), pass `skip: true` and omit verdict. That records an explicit skip so coverage checks know you intentionally did not judge it, and `annotation` still applies: pass it to say why the verdict was withheld (the check never ran, the tape was punctured, the run never terminated), which is the only place a reader learns that. A skip with no annotation clears the note the previous verdict carried, so a stale reason never sits under a withheld verdict. When you read the trace and the evidence does not show the part of the run the assertion checks at all (the message it sent, the call it made, the answer it gave), so nothing can confirm or deny the assertion, pass `verdict: \"abstained\"`. That is counted as a FAIL in every pass rate, since anything short of an evidenced pass is a fail, but it is stored and shown as an abstention so a reader sees judge coverage rather than the agent's behavior; `annotation` says what the evidence would have had to show. Abstaining is not a skip: a skip is for a check that never ran, an abstention is for a check that ran and found nothing to judge. To clear a previously-set agent verdict (e.g., you changed your mind or judged the wrong trace), pass `archive: true` and omit verdict/annotation; an archive may omit `assertionId` to clear an old whole-trace agent verdict. A verdict counts as soon as it is written; there is no confirmation step, and a person can override it with their own verdict. You can also give a verdict on an assertion Bitfab's judge already decided (shown with source `bitfab_judge`): yours is saved beside the judge's and becomes the one counted, unless a person gave one, and archiving yours makes the judge's count again. Archiving is non-destructive: the row is hidden from all reads but kept for audit, and you can immediately judge the assertion again from scratch. For replay results, key each verdict by the replay item's `originalTraceId` (the original trace it was replayed from; `sourceTraceId` is accepted as a deprecated alias) plus the top-level `experimentId` instead of a `traceId`: the server resolves it to the replay trace via lineage, so you never need a server-generated replay trace id. When the experiment ran each trace more than once, also pass the item's `attempt` so each attempt gets its own verdict. Returns an agent-readable summary with one parseable effective verdict line per entry you sent (so a trace scored on several assertions gets one line per assertion), keyed by the id you supplied (`originalTraceId` for replay verdicts, otherwise `traceId`), so command callers can verify persistence. Before judging a replay, call get_trace_assertions on the original trace ids: an assertion says what the user asked this specific case to do, so the verdict is measured against that rather than a guess. When an assertion's target cannot be found on the trace you are judging, the check never ran, so pass `skip: true` for that assertion rather than recording a FAIL. Send one entry per assertion, all in the same call. get_trace_verdicts reads these back one line per assertion, keyed by the same assertionId, so a per-assertion write is verifiable per assertion. The old `labels` array, with `label` (true or false) and `abstain` on each entry, is still accepted.",
-  inputSchema: {
-    experimentId: external_exports.uuid().optional().describe("The experiment ID. Required when any verdict targets a trace by originalTraceId (replay verdicts); ignored otherwise."),
-    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(agentVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().describe(`One entry per confirmed assertion, each carrying its assertionId; an archive entry may omit it (1-${MAX_VERDICTS_PER_REQUEST}). Required unless the deprecated labels is sent.`),
-    labels: external_exports.preprocess(parseJsonString, external_exports.array(agentVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdicts. Refused when verdicts is also sent.")
-  }
-};
-var humanVerdictEntryShape = external_exports.object({
-  traceId: external_exports.uuid().describe("The trace ID the verdict is on"),
-  assertionId: external_exports.uuid().describe("The assertion this verdict scores, taken from the `[ID: ...]` get_trace_assertions prints. Required: verdicts are never written directly on a trace."),
-  verdict: external_exports.enum(["pass", "fail"]).optional().describe('"pass" or "fail". Required unless the deprecated label is sent. A person never abstains.'),
-  label: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict. true is "pass", false is "fail". Refused when verdict is also sent.'),
-  annotation: external_exports.string().min(1).describe("The reasoning behind the verdict. Required."),
-  confidence: confidenceShape.optional().describe("How confident the verdict is: VeryLow / Low / Medium / High / VeryHigh. Optional."),
-  evidence: verdictEvidenceShape.nullable().optional().describe("Span-by-span evidence for this verdict. Omit it to preserve existing evidence. Pass null to clear existing evidence.")
-});
-var saveHumanVerdicts = {
-  name: "save_human_verdicts",
-  title: "Save Human Verdicts",
-  description: "Record one or more pass/fail verdicts a person gave, which are VALIDATED immediately (`verdictSource=\"human\"`), on one or more of a trace's confirmed assertions. Unlike save_agent_verdicts (the agent's own verdicts), verdicts set here join the validated dataset the instant they are written and satisfy `search_traces` with `validated: true`. Pass `verdict` (\"pass\" or \"fail\"), `annotation` (the reasoning behind the verdict), and optionally `evidence` as `{ spanId, text }` entries grounded in the evaluated trace. Optionally pass `confidence` (`VeryLow|Low|Medium|High|VeryHigh`). USE ONLY when a person has explicitly decided the verdict, for example saving a known production bug as a test case. This records a verdict on a run that already happened; to record what a trace should do on its next replay, use save_trace_assertions. Do NOT use this for the agent's own first-pass guesses; use save_agent_verdicts for those. Every entry must carry the `assertionId` of the ONE assertion the person judged (the `[ID: ...]` get_trace_assertions prints), one entry per assertion. A person's verdict on an assertion Bitfab's judge already decided is saved beside the judge's and becomes the one counted; the judge's stays readable with source `bitfab_judge`. Verdicts are never written directly on a trace, so a trace with no confirmed assertions needs assertions first (save_trace_assertions). get_trace_verdicts reads these back one line per assertion, keyed by the same assertionId, so a per-assertion write is verifiable per assertion. The old `labels` array, with `label` (true or false) on each entry, is still accepted.",
-  inputSchema: {
-    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(humanVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().describe(`One entry per confirmed assertion, each carrying its assertionId (1-${MAX_VERDICTS_PER_REQUEST}). Required unless the deprecated labels is sent.`),
-    labels: external_exports.preprocess(parseJsonString, external_exports.array(humanVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdicts. Refused when verdicts is also sent.")
-  }
-};
-var externalAssertionVerdictEntryShape = external_exports.object({
-  assertionId: external_exports.uuid().describe("The external assertion this verdict scores, taken from the `[ID: ...]` get_trace_assertions prints. The trace is the one the assertion is on, so no trace ID is needed."),
-  attempt: external_exports.number().int().min(0).optional().describe("With experimentId, on an experiment that ran each trace more than once: which attempt this verdict is for (0-based). Defaults to 0."),
-  verdict: external_exports.enum(["pass", "fail"]).describe('"pass" or "fail".'),
-  annotation: external_exports.string().min(1).optional().describe("The reasoning behind the verdict. Optional."),
-  confidence: confidenceShape.optional().describe("How confident the verdict is: VeryLow / Low / Medium / High / VeryHigh. Optional."),
-  evidence: verdictEvidenceShape.nullable().optional().describe("Span-by-span evidence for this verdict. Omit it to preserve existing evidence. Pass null to clear existing evidence.")
-});
-var saveAssertionVerdicts = {
-  name: "save_assertion_verdicts",
-  title: "Save Assertion Verdicts",
-  description: `Record verdicts for EXTERNAL assertions: assertions created with save_trace_assertions \`kind: "external"\`, which Bitfab never judges because the user evaluates the trace somewhere else (their own eval harness, CI, a review queue). Key each verdict by \`assertionId\` alone: the server finds the trace the assertion is on. For a replay, also pass the top-level \`experimentId\` (and \`attempt\` when the experiment ran each trace more than once), and the verdict is saved on that experiment's replay of the assertion's trace. The verdict is stored where Bitfab's judge would store its own, so it counts in every pass rate as soon as it is written, with no confirmation step; a person's verdict (save_human_verdicts) or an agent's (save_agent_verdicts) on the same assertion still counts over it. Saving again for the same assertion and trace replaces the earlier verdict. Rejects any assertion that is not external, since Bitfab decides those itself, and any assertion that is not confirmed. Up to ${MAX_VERDICTS_PER_REQUEST} entries per call; the whole call is rejected if any entry is invalid.`,
-  inputSchema: {
-    experimentId: external_exports.uuid().optional().describe("For replay verdicts: the experiment whose replay of each assertion's trace the verdicts are on. Omit it for verdicts on the trace the assertion is on."),
-    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(externalAssertionVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).describe(`One entry per external assertion (1-${MAX_VERDICTS_PER_REQUEST}).`)
-  }
-};
-var assertionTargetShape = external_exports.discriminatedUnion("kind", [
-  external_exports.object({ kind: external_exports.literal("output") }).describe("Check only the trace's final output, ignoring everything that happened on the way there."),
-  external_exports.object({
-    kind: external_exports.literal("span"),
-    name: external_exports.string().min(1).describe(`The span's name as it appears on the trace being evaluated, e.g. "search_flights". Names only, never span ids: an id belongs to one trace, so an id read off the original resolves to nothing on its replay and the check would never run.`),
-    occurrence: external_exports.union([
-      external_exports.literal("first"),
-      external_exports.literal("last"),
-      external_exports.number().int().min(0)
-    ]).optional().describe('Which call to check when the trace runs that span more than once, e.g. a retry loop. "first", "last" (the default), or a 0-based index. Leave it off unless the repetition matters.')
-  }).describe("Check one span by name rather than the whole trace, e.g. that a particular tool call was made with the right arguments.")
-]).describe('SCOPE: what part of the trace under evaluation this assertion is checked against. OMIT IT for the whole trace, which is the common case and the right default when unsure. On an edit, omitting it keeps the current scope, and passing null returns the assertion to the whole trace. Pass { "kind": "output" } to check only the final output, or { "kind": "span", "name": "..." } to check one span. Scoping narrows what a judge looks at, so a wrong scope hides real failures. A target naming something the evaluated trace does not contain makes the check ERRORED, never passed, because a check that could not run must never look like a check that succeeded.');
-var assertionKindShape = external_exports.enum(["bitfab", "external"]).describe(`KIND: optional, and only on the call that creates the assertion. Omit it (or send "bitfab") for the normal case: Bitfab decides the assertion on every replay, with its code where it has some and the LLM judge otherwise. Send "external" when the user's own system evaluates the trace (their eval harness, CI, a review queue): Bitfab never judges an external assertion, it takes no code, and the user posts each verdict with save_assertion_verdicts. An assertion's kind never changes after it is created, so sending a different kind on an edit is refused; omit it on an edit.`);
-var assertionCodeShape = external_exports.object({
-  source: external_exports.string().trim().min(1).max(2e4).describe('Body of an async function in plain JavaScript, with no type annotations, called with `spans` (every span of the run in start order, each { name, index, hasData } without its data), `input`, and `output` (the run\'s root input and output). Read span data with `await named("span name")`, which returns the spans with that name with { name, index, input, output, metadata }, or `await span.data()`. Count or order spans from `spans` without loading data. It returns "pass", "fail", or "defer", or { result, reason } with a short reason. Return "pass" or "fail" when the facts the code read settle the assertion, and "defer" to hand the run to the LLM judge, for example when the part the code can read holds and the rest needs reading what text means. A defer may carry data, { result: "defer", reason, data }, with the values the code found that the judge needs to decide, such as the sent email\'s subject and body; the judge reads the reason and data alongside the run. A thrown error counts as "defer" with no data. Copy ids, recipients, and times from the trace as literals, never match the wording of prose, and guard every read so it never throws on a missing field. It runs in a sandbox with no network, files, or timers, gets one second of compute, and may load the data of at most 50 spans within ten seconds.'),
-  spanNames: external_exports.array(external_exports.string().min(1)).max(50).describe("Every span name the code expects a correct run to produce. Leave out names it only checks did not run. When one of these is missing from a replay and from the other replays sampled for the same function, the code is reported as broken rather than failing the replay.")
-}).describe(`CODE: optional. Passes or fails this assertion from the trace's spans where it can, and defers the rest to the LLM judge, so replays it decides cost no judge call and give the same verdict every time. Write it only when facts a program reads settle the claim, or a necessary part of it: which spans ran and how often, argument and output values, ordering, or an exact literal in a message. Leave it off when deciding needs reading meaning throughout. Bitfab decides whether an assertion should have code, and drafts it, after saving one without code. The code is run on this trace before it is saved, and refused with the reason when it throws, times out, or returns anything other than "pass", "fail", or "defer". On an edit, omit it to keep the current code, and pass null to remove it.`);
-var justificationShape = external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
-  spanId: external_exports.uuid().describe("The span this reason comes from, taken from the `[ID: ...]` shown for that span in get_traces output."),
-  text: external_exports.string().trim().min(1).max(1e4).describe("What that span shows, in one or two sentences.")
-})).min(1).max(50)).describe("Evidence: one entry per span you are relying on, each with its own reason, so a reviewer can open the span and check the claim. Quote what the span actually shows rather than restating the assertion. 1-50 entries.");
-var ASSERTION_STATUS_DESCRIPTION = 'Status to record on an assertion that already exists, so it needs that assertion\'s `id` and is refused on a new one: write it first, then decide it, so putting a claim into force is never the same call that made it up. "confirmed" means it holds up, so replays start checking it and it counts as validated; "rejected" means it does not, so replays keep ignoring it; "draft" returns it to a draft and clears who decided it. Omit to leave the current status alone. Confirming decides what every later replay of the trace is judged against, so read the assertion and the spans it cites before deciding, and put what you checked in the justification.';
-var optionalAssertionStatus = () => external_exports.enum(["draft", "confirmed", "rejected"]).optional().describe(ASSERTION_STATUS_DESCRIPTION);
-var saveCategory = {
-  name: "save_category",
-  title: "Save Category",
-  description: "Create or edit a category shared within this organization. A category groups assertions and scenarios. Returns its ID, which save_trace_assertions takes as category_id. Omit id to create. Pass an existing id to edit. Omit description on an edit to preserve it. Pass an empty description to clear it. Editing the title or description returns every assertion filed under it to draft.",
-  inputSchema: {
-    id: external_exports.uuid().optional().describe("Existing category ID to edit. Omit to create a category."),
-    title: external_exports.string().trim().min(1).describe("The category title."),
-    description: external_exports.string().optional().describe("What the assertions and scenarios in this category have in common. Omit on an edit to preserve it. Pass an empty string to clear it.")
-  }
-};
-var listCategories = {
-  name: "list_categories",
-  title: "List Categories",
-  description: "List the categories in this organization with their IDs, titles, and descriptions. Use a returned ID as category_id in save_trace_assertions.",
-  inputSchema: {}
-};
-var listOrganizationMembers = {
-  name: "list_organization_members",
-  title: "List Organization Members",
-  description: "List the people in this organization, each with their name and email. Call it before save_trace_assertions when routing an assertion to a reviewer, so `assigneeEmail` carries an address someone here actually holds rather than a guess: an email belonging to nobody in the organization fails that call. It also names who confirmed or wrote an assertion when a read shows only an email. This is the organization the API key belongs to, so it takes no arguments.",
-  inputSchema: {}
-};
-var getCategory = {
-  name: "get_category",
-  title: "Get Category",
-  description: "Read one category in this organization by ID, including its title and description.",
-  inputSchema: { id: external_exports.uuid().describe("ID of the category to read.") }
-};
-var deleteCategory = {
-  name: "delete_category",
-  title: "Delete Category",
-  description: "Delete a category from this organization. The assertions and scenarios filed under it are kept and lose only that category. Existing verdicts are kept.",
-  inputSchema: { id: external_exports.uuid().describe("ID of the category to delete.") }
-};
-function deprecatedAlias(current, name, title) {
-  return {
-    ...current,
-    name,
-    title,
-    description: `Deprecated: use ${current.name}, which does the same thing. ${current.description}`
-  };
-}
-var saveAssertionCategory = deprecatedAlias(saveCategory, "save_assertion_category", "Save Assertion Category");
-var listAssertionCategories = deprecatedAlias(listCategories, "list_assertion_categories", "List Assertion Categories");
-var getAssertionCategory = deprecatedAlias(getCategory, "get_assertion_category", "Get Assertion Category");
-var deleteAssertionCategory = deprecatedAlias(deleteCategory, "delete_assertion_category", "Delete Assertion Category");
-var getTraceLabels = deprecatedAlias(getTraceVerdicts, "get_trace_labels", "Get Trace Labels");
-var generateLabelEvidence = deprecatedAlias(generateVerdictEvidence, "generate_label_evidence", "Generate Label Evidence");
-var saveAgentLabels = deprecatedAlias(saveAgentVerdicts, "save_agent_labels", "Save Agent Labels");
-var saveHumanLabels = deprecatedAlias(saveHumanVerdicts, "save_human_labels", "Save Human Labels");
-var generateTraceAssertions = {
-  name: "generate_trace_assertions",
-  title: "Generate Trace Assertions",
-  description: 'Generate review-ready assertion drafts from what one original trace actually did. Call this when the user asks Bitfab to generate assertions, infer expected behavior from a trace, or turn a known root cause into regression checks. Bitfab reads the organization\'s existing categories, selects the categories supported by trace evidence, and generates assertions one category at a time. The generated assertions are saved as drafts, so they are not checked on replays until a person confirms them. Read them back with get_trace_assertions and `statuses: ["draft"]`. Generation runs on Bitfab and this call waits up to four minutes for it. If it is still running after that, the result says so, and calling again with the same traceId and without regenerate checks on it. A trace has one generation at a time, so a repeat call joins the running or finished generation instead of spending model calls again, and regenerate while one is running joins that one too. Set regenerate to true after it finishes to archive the prior generated drafts and replace them. A failed generation is returned as an error with its reason. Human-authored assertions are never replaced. Pass guidance when the user knows what the assertions should be about, most often a root cause analysis of why the trace was wrong; it narrows the evidence and produces smaller assertions. Pass categoryIds to limit generation to those categories. A replay trace id is refused because assertions belong to the original trace.',
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The ORIGINAL trace to generate assertions for. A replay trace id is refused, and the error names the original to retry with."),
-    guidance: external_exports.string().trim().min(1).max(1e4).optional().describe("Optional assertion guidance, such as a root cause analysis of why the trace went wrong. Use it to focus generation on the smallest assertions that would catch this failure."),
-    categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1)).optional().describe("Optional category ids from list_categories. Limits generation to these categories. Omit to let Bitfab choose from every category in the organization. An id outside the organization fails the call before any work starts."),
-    regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to rerun generation and replace prior generated drafts. Omit or set false to reuse the existing generation result.")
-  }
-};
-var regenerateAssertion = {
-  name: "regenerate_assertion",
-  title: "Regenerate Assertion",
-  description: "Have Bitfab write one existing assertion again, and save the new wording in place of the old. Call this when the user names one assertion that is wrong, vague, or checks the wrong thing and wants Bitfab to write it again, optionally saying how with guidance. Pass only the assertion's id: Bitfab finds the trace it belongs to, reads that trace's input, what the recorded run did, the spans the assertion's justification cites, and the trace's other assertions, then writes a new claim with its code hints and no pass or fail criteria. The assertion keeps its id, trace, category, assignee, human note, and justification. Everything else is saved as if it were a new assertion: the wording and code hints are replaced and any pass and fail criteria removed, and it is saved without code, so any code it had is dropped, along with the span it was limited to and every verdict given on the old wording. It always goes back to draft, even when it was confirmed or rejected, so it is not checked on replays until a person confirms it again, in Bitfab or with save_trace_assertions `status`. After this call returns, Bitfab decides whether code can check the new wording and writes that code, the same as for any new assertion. The response names the trace and gives the new assertion and code hints, the old wording, and what changed. To replace every generated draft on a trace, use generate_trace_assertions with regenerate. To write the new wording yourself, use save_trace_assertions. An archived assertion is refused.",
-  inputSchema: {
-    assertionId: external_exports.uuid().describe("The assertion to write again, from get_trace_assertions or list_trace_assertions. It must be an active assertion in this organization."),
-    guidance: external_exports.string().trim().min(1).max(1e4).optional().describe("Optional instruction for the new wording, such as what the current assertion gets wrong, what it should check instead, or a root cause analysis of why the trace went wrong. Omit to have Bitfab check the same behavior and write it better.")
-  }
-};
-var saveTraceAssertions = {
-  name: "save_trace_assertions",
-  title: "Save Trace Assertions",
-  description: `Record what SHOULD happen when this trace is replayed. Bitfab stores two kinds of record on a trace. A VERDICT says how a run that already happened turned out, and that is save_agent_verdicts / save_human_verdicts. An ASSERTION, which is what this tool writes, says what a correct run looks like for THIS specific input, carries no pass/fail of its own, and is checked against a later replay once a reviewer confirms it. A trace holds any number of assertions, and each verdict is recorded on one of them. Call it when the user describes the right answer for a particular case, for example "this booking should have picked the 6am flight, not the 9am". This is not a verdict on a run that already happened, which is save_agent_verdicts,. Pass \`assertion\`, stated specifically enough that a judge needs nothing else, plus optional \`codeHints\`: pointers for whoever writes code to check it, such as which span holds the answer, which the judge never reads. \`passCriteria\` / \`failCriteria\` are deprecated and still accepted. \`humanNote\` stores people-only context on the assertion; preserve and return it, but never use it to judge whether a replay passed. \`assigneeEmail\` names the member who should review it, which routes the assertion to that person without deciding anything, so it never changes the status. Pass an entry's \`id\` to edit an existing assertion, or omit it to add a new one, so two callers adding different assertions to one trace never overwrite each other. What this tool writes is saved as a draft, so nothing checks it yet; a reviewer confirms it, in Bitfab or with \`status\` on a later call here, and from then on every replay of the trace is judged against it. \`status\` decides an assertion that already exists, so deciding one is \`{ id, status }\` with nothing else: an omitted \`assertion\` keeps the current wording. It is refused on a new assertion, so the call that invents a claim is never the call that puts it into force. One decision covers the assertion and the category it is filed under, so set \`category_id\` and \`status\` in the same entry when you are deciding both; recategorizing on a later call without deciding returns it to draft, since the confirmation covered the old category. What it gates is whether replays check the assertion at all, so decide from the assertion and the spans it cites rather than from memory of having written it. Rewording an assertion, or changing its criteria, target, or category, returns it to draft unless the same call says otherwise; changing only its code hints does not. Call get_trace_assertions first to find the assertion to edit and to avoid creating a duplicate, and read them back before judging a replay, where it lists the confirmed ones by default. Pass it \`statuses: ["draft"]\` to read back drafts, including the ones you just wrote. Each assertion with new text is checked against the writing rules and rewritten when it breaks one, unless \`guidedRewrite\` is false, so read the response for what was saved and for any claim to save separately. Up to ${MAX_ASSERTIONS_PER_REQUEST} per call.`,
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The ORIGINAL trace to attach assertions to. A replay trace id is refused, and the error names the original to retry with, because a replay reads its original's assertions automatically."),
-    assertions: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
-      id: external_exports.uuid().optional().describe("Id of an existing assertion to edit, from a previous save or from get_trace_assertions. Omit to add a new one."),
-      category_id: external_exports.uuid().nullish().describe("Category ID from save_category or list_categories. Omit on an edit to preserve the category. Pass null to remove it."),
-      category_assertion_id: external_exports.uuid().nullish().describe("Deprecated: the old name for category_id. Ignored when category_id is also sent."),
-      assertion: external_exports.string().min(1).optional().describe("The single thing that must hold, in one sentence, stated so a reader who has never seen this trace could check it, e.g. 'The itinerary returned lands before 9am local time'. One claim per assertion: if you are about to write 'and', write two assertions instead, so each can pass or fail on its own. The replay gets this trace's input and world unchanged, so state the answer they settle, with its real names, dates, times, and amounts, never a condition such as 'if the meeting is booked' and never a pointer such as 'the times the user approved'. Never pin a value the recorded run chose where other choices are also correct, such as which of several open slots it offered or the channel it replied on; state the range or set instead. Answer the latest input, not the thread history. Required when adding an assertion. Omit on an edit to preserve the current wording, which is what a call that only records a status wants."),
-      humanNote: external_exports.string().max(1e4).optional().describe("People-only context attached to this assertion. It is returned by reads but must never be used as evidence when assessing a replay. On an edit, omit to preserve it and pass an empty string to clear it."),
-      codeHints: external_exports.string().max(1e4).optional().describe("Pointers for whoever writes code to check the assertion: span names, field paths, and which span holds the answer, e.g. 'The picked span ids are the output of the FilterSpans span, a list of span ids'. The judge never reads them, so never put a requirement here: everything that decides pass or fail goes in the assertion. Optional. On an edit, omit to keep the current value and pass an empty string to clear it. Changing only the code hints keeps the status and has Bitfab write the assertion's code again."),
-      passCriteria: external_exports.string().optional().describe("Deprecated: write the assertion specific enough to need no criteria, and put where to look in codeHints. Still accepted, and still read by the judge on an assertion that has it. On an edit, omit to keep the current value and pass an empty string to clear it."),
-      failCriteria: external_exports.string().optional().describe("Deprecated: write the assertion specific enough to need no criteria, and put where to look in codeHints. Still accepted, and still read by the judge on an assertion that has it. On an edit, omit to keep the current value and pass an empty string to clear it."),
-      targetOnEvaluatedTrace: assertionTargetShape.nullish(),
-      kind: assertionKindShape.nullish(),
-      code: assertionCodeShape.nullish(),
-      codeOff: external_exports.boolean().optional().describe("Pass true to stop this assertion's code from deciding its verdicts while keeping the code, so the LLM judge decides every replay. Use it when the code turns out to be wrong. Pass false to use the code again. Bitfab does not write new code for an assertion whose code is turned off, saving new code leaves the switch where it is, and removing the code (code: null) turns it back on. Omit to keep the current setting."),
-      justification: justificationShape.nullish().describe("Why this assertion is right for THIS trace, cited span by span: the spans that show what the run actually did, each with its own reason. Omit on an edit to preserve it, or pass null to remove it. It is the evidence behind `status`, so an assertion with no justification is one a reviewer has to reconstruct from scratch. Cite spans on this trace only."),
-      categoryJustification: justificationShape.nullish().describe("Why `category_id` is the right category for this assertion, cited span by span. Omit on an edit to preserve it, or pass null to remove it. Changing the category clears it, since it justified the old one. Cite spans on this trace only."),
-      status: optionalAssertionStatus(),
-      assigneeEmail: external_exports.email().max(MAX_ASSIGNEE_EMAIL_LENGTH).nullish().describe("Email of the organization member who should review this assertion, which routes it into their queue in Bitfab. Assigning decides nothing, so it leaves the status alone. The email must belong to a member of this organization, or the call fails naming it. Omit on an edit to preserve the current assignee, and pass null to leave it to nobody.")
-    })).min(1).max(MAX_ASSERTIONS_PER_REQUEST)).describe(`One entry per assertion (1-${MAX_ASSERTIONS_PER_REQUEST})`),
-    guidedRewrite: external_exports.boolean().optional().describe('Check each assertion that carries new text against this trace, and rewrite one that breaks the writing rules (two claims in one, a condition, a value pointed at instead of stated, an id from the recorded run, a word with no clear pass line). Defaults to true. The check runs on Bitfab after the save, usually in under a minute, and this call returns without waiting for it, listing each checked assertion as still being checked. A rewritten assertion replaces what you sent in place. Read it back with get_trace_assertions and statuses ["draft"] right after the save, before relying on its wording: that call waits up to 45 seconds for the check, then shows what you sent, what changed, and, when what you sent bundled more than one claim, each other claim as ready-to-send text to save as its own assertion. Pass false only to save text exactly as sent, for example wording a person dictated.')
-  }
-};
-var getTraceAssertions = {
-  name: "get_trace_assertions",
-  title: "Get Trace Assertions",
-  description: `Read what SHOULD happen when one or more traces are replayed: each trace's assertions, their status, their code hints, any pass/fail criteria an older assertion still carries, people-only human note, who is assigned to review each one, and what part of the evaluated trace each one checks. By default only assertions a person has confirmed are returned, because only those are checked on a replay; a trace whose assertions are all still drafts reads the same as one with none. Pass \`statuses\` to read other statuses: \`["draft"]\` for the draft assertions, including the ones generate_trace_assertions saved, so a batch of them can be reviewed and then decided with save_trace_assertions \`status\`; add \`"rejected"\` to see the ones turned down. Judge a replay only against the confirmed ones. To find assertions without knowing which traces carry them, such as every draft on a function, use list_trace_assertions. When an assertion it is about to return is still being checked against the writing rules after a save, this call waits up to 45 seconds for the check, then returns the rewritten text and what changed; one still being checked after that is listed as such, so call again for its result. Each trace also reports its assertion generation, if one ran: running, completed with how many drafts it saved for review, or failed with the reason. Categorized assertions include category_id and the category's id, title, and description. A human note is returned so it can be read and edited, but it is never assessment evidence, and neither are code hints, which only say where to look: judge only from the assertion, any pass/fail criteria it carries, and evaluated trace. Call this before judging a replay so the verdict is measured against what the user actually asked for rather than a guess, and before save_trace_assertions to find the assertion to edit or to avoid creating a duplicate. No span content is loaded, so one call accepts up to ${GET_TRACE_ASSERTIONS_MAX_IDS} ids. Accepts original trace ids and replay trace ids alike: a replay with no assertions of its own reads its original's, and the response says which original they came from. An assertion whose target cannot be found on the trace being evaluated is errored, never passed, so record it with save_agent_verdicts \`skip\` rather than a FAIL.`,
-  inputSchema: {
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(GET_TRACE_ASSERTIONS_MAX_IDS)).describe(`Original trace IDs to read assertions for (1-${GET_TRACE_ASSERTIONS_MAX_IDS})`),
-    statuses: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.enum(["draft", "confirmed", "rejected"])).min(1).max(3)).optional().describe('Statuses to include: "confirmed" (checked on every replay), "draft" (not reviewed yet, including generated assertions), "rejected" (turned down, never checked). Defaults to ["confirmed"], which is what a replay is judged against. Pass ["draft"] to review drafts, or all three to see everything.')
-  }
-};
-var listTraceAssertions = {
-  name: "list_trace_assertions",
-  title: "List Trace Assertions",
-  description: `Find assertions across traces by status, without knowing which traces carry them: for example every draft assertion on one traced function, which is the review queue. Each result names the trace it belongs to and carries the same fields get_trace_assertions returns, including its \`[ID: ...]\`, criteria, category, assignee, and status. Newest first, one page at a time; pass the cursor a page returns to read the next. The cursor holds its place, so confirming or rejecting the assertions on a page with save_trace_assertions \`status\` before reading the next page never skips any. The first page also reports how many assertions have each status under the same filters. Only an assertion a person has confirmed is checked on a replay, so never score a replay against a draft or rejected one listed here. To read the assertions of traces you already have, use get_trace_assertions.`,
-  inputSchema: {
-    statuses: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.enum(["draft", "confirmed", "rejected"])).min(1).max(3)).describe('Statuses to list: "draft" (not reviewed yet, including generated assertions), "confirmed" (checked on every replay), "rejected" (turned down, never checked). Pass ["draft"] for the review queue.'),
-    traceFunctionKey: external_exports.string().min(1).optional().describe("Only assertions on traces of this traced function, from list_trace_functions. Omit to list across the whole organization."),
-    categoryId: external_exports.union([external_exports.literal("unfiled"), external_exports.uuid()]).optional().describe('Only assertions filed under this category, from list_categories, or "unfiled" for assertions with no category. Omit for every category.'),
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(100)).optional().describe("Max assertions to return (default 25, max 100)"),
-    cursor: external_exports.string().min(1).optional().describe("Opaque cursor from the previous page; reuse the same filters")
-  }
-};
-var archiveTraceAssertions = {
-  name: "archive_trace_assertions",
-  title: "Archive Trace Assertions",
-  description: `Retire assertions on a trace so later replays stop checking them. Non-destructive: the row is hidden from get_trace_assertions and from replay judging but kept for audit, and verdicts already recorded against it stay. Use it for an assertion that was wrong or superseded; to reword one instead, pass its id back to save_trace_assertions, which edits in place. Pass the ids get_trace_assertions prints as \`[ID: ...]\`. All-or-nothing: one unknown, already-archived, or wrong-trace id fails the call naming that id and archives nothing, so re-read and retry with the active ids. Up to ${MAX_ASSERTIONS_PER_REQUEST} per call.`,
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The trace the assertions are attached to. This is the ORIGINAL trace they were written on, not a replay that inherited them."),
-    assertionIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(MAX_ASSERTIONS_PER_REQUEST)).describe(`Ids of the assertions to archive (1-${MAX_ASSERTIONS_PER_REQUEST}), from get_trace_assertions`)
-  }
-};
-var saveGrader = {
-  name: "save_grader",
-  title: "Save Grader",
-  description: 'Edit an existing grader: rename it, rewrite its criteria, switch its judge model, archive it, or restore it. Graders are deprecated and new ones can no longer be created; when the user wants a new check, write assertions with save_trace_assertions instead. Pass graderId (from list_graders) plus only the fields to change. Set status to "archived" to retire a grader; any later save that omits status (or sets "active") restores it. Pass an empty string for passCriteria/failCriteria to clear them. After a successful update, present the returned grader definition to the user, including its evaluation focus and any pass/fail criteria; do not respond with only a generic success confirmation. External graders (ones Bitfab never runs) take no model.',
-  inputSchema: {
-    graderId: external_exports.uuid().describe("Id of the grader to edit, from list_graders."),
-    name: external_exports.string().min(1).optional().describe("New name, unique per trace function (e.g. 'No fabricated order ids'). Pass only to rename."),
-    evaluationFocus: external_exports.string().min(1).optional().describe("What this grader evaluates: the property a trace of this function must satisfy, written as a concrete, checkable statement. Omit to keep the current value."),
-    passCriteria: external_exports.string().optional().describe("Optional: what a PASSING trace looks like. Omit to keep the stored value; pass an empty string to clear it."),
-    failCriteria: external_exports.string().optional().describe("Optional: what a FAILING trace looks like. Omit to keep the stored value; pass an empty string to clear it."),
-    status: external_exports.enum(["active", "archived"]).optional().describe('Set "archived" to retire the grader (hidden from list_graders by default). Omit, or set "active", to keep its current running status; on an archived grader it restores it, as live when it has a trained prompt and as active otherwise.'),
-    model: external_exports.enum(["gemini-2-5-flash", "sol", "terra", "opus-4-8", "gemini-3-1-pro"]).optional().describe("Optional: the judge model this grader runs on. One of: gemini-2-5-flash, sol, terra, opus-4-8, gemini-3-1-pro. Omit to keep the current value (defaults to gemini-2-5-flash).")
-  }
-};
-var listGraders = {
-  name: "list_graders",
-  title: "List Graders",
-  description: "List the graders for a traced function: LLM-as-judge graders Bitfab runs, and external graders (marked 'Runs: externally') whose verdicts the user posts with save_grader_verdicts. Each comes with id, name, status, evaluation focus, and pass/fail criteria. Call before save_grader to find the grader to edit. Results are newest-first and paginated. Archived graders are hidden unless includeArchived is true.",
-  inputSchema: {
-    traceFunctionKey: external_exports.string().min(1).describe("The trace function key to list graders for"),
-    includeArchived: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Include archived graders (default false)"),
-    searchQuery: external_exports.string().min(1).optional().describe("Case-insensitive grader name search"),
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max graders to return (default 20, max 50)"),
-    cursor: external_exports.string().min(1).optional().describe("Opaque cursor from the previous page; reuse the same filters")
-  }
-};
-var saveDataset = {
-  name: "save_dataset",
-  title: "Save Dataset",
-  description: "Create or edit a dataset for a traced function. Datasets are named buckets of traces (e.g. 'Hallucination failures', 'Edge cases for grader X') that humans review and that experiments replay against. To create, pass traceFunctionKey, a short human-readable name, and an optional description. Saving with the name of an existing dataset on the same trace function updates that dataset instead of creating a duplicate, so re-running a flow is safe; pass a new description to change it, or omit it to leave the current one. To rename a dataset or change its description in place, pass its datasetId with a new name and/or description; its id, traces, and graders are kept, and a name already used by another dataset on the same trace function is refused. Pass golden: true to mark the dataset as golden, a trusted reference set to replay and grade changes against (golden datasets are listed first, for the whole organization, in the Bitfab app and in list_datasets), or golden: false to unmark it; omit golden to leave it as it is. This works on create, on a save by name, and with datasetId. Returns the dataset id; use it with add_traces_to_dataset to populate. Call list_datasets first when you need to see what already exists.",
-  inputSchema: {
-    datasetId: external_exports.uuid().optional().describe("Existing dataset id (from list_datasets) to rename or redescribe in place. Omit to create a dataset or save one by name."),
-    traceFunctionKey: external_exports.string().min(1).optional().describe("The trace function key the dataset is scoped to (must match traces you'll add). Required without datasetId."),
-    name: external_exports.string().min(1).optional().describe("Short human-readable name shown in the Bitfab app (e.g. 'Hallucination failures'). Required without datasetId. With datasetId, the new name; omit to keep the current one."),
-    description: external_exports.string().optional().describe("Optional longer description of what's in the dataset. With datasetId, omit to keep the current one or pass an empty string to clear it."),
-    golden: external_exports.boolean().optional().describe("true marks the dataset as golden, false unmarks it. Omit to leave it as it is.")
-  }
-};
-var listDatasets = {
-  name: "list_datasets",
-  title: "List Datasets",
-  description: "List all datasets for a traced function, golden datasets first, with id, name, whether it is golden, description, current trace count, and assigned graders for each. Golden datasets are the ones the team marked as trusted reference sets, so prefer them when choosing a dataset to replay or grade. Call this before changing trace or grader assignments to discover dataset ids and current membership, or before save_dataset to avoid duplicates.",
-  inputSchema: {
-    traceFunctionKey: external_exports.string().min(1).describe("The trace function key to list datasets for")
-  }
-};
-var addTracesToDataset = {
-  name: "add_traces_to_dataset",
-  title: "Add Traces to Dataset",
-  description: "Add one or more traces to a dataset. Idempotent: re-adding a trace already in the dataset is a no-op. Traces are validated against the dataset's traceFunctionKey; ids that don't belong to this organization, or to the dataset's trace function, are silently skipped (the response reports how many were added vs skipped). A replay trace (one an experiment produced) is refused and nothing is added: a dataset holds original traces, and the error names the original to add instead.",
-  inputSchema: {
-    datasetId: external_exports.uuid().describe("The dataset id (from save_dataset or list_datasets)"),
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Trace ids to add (1-100)")
-  }
-};
-var removeTracesFromDataset = {
-  name: "remove_traces_from_dataset",
-  title: "Remove Traces from Dataset",
-  description: "Remove one or more traces from a dataset. Trace ids that aren't currently in the dataset are silently ignored (the response reports how many were actually removed). The traces themselves are not deleted; only their membership in this dataset.",
-  inputSchema: {
-    datasetId: external_exports.uuid().describe("The dataset id"),
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Trace ids to remove (1-100)")
-  }
-};
-var addGradersToDataset = {
-  name: "add_graders_to_dataset",
-  title: "Add Graders to Dataset",
-  description: "Assign one or more graders to a dataset. Idempotent: assigning a grader that is already attached is a no-op. Graders must belong to this organization and match the dataset's traceFunctionKey; invalid ids are skipped and reported.",
-  inputSchema: {
-    datasetId: external_exports.uuid().describe("The dataset id (from save_dataset or list_datasets)"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to assign (1-100)")
-  }
-};
-var removeGradersFromDataset = {
-  name: "remove_graders_from_dataset",
-  title: "Remove Graders from Dataset",
-  description: "Remove one or more grader assignments from a dataset. Grader ids that are not currently assigned are ignored and reported. The graders themselves are not deleted.",
-  inputSchema: {
-    datasetId: external_exports.uuid().describe("The dataset id"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to remove (1-100)")
-  }
-};
-var rerunGradersOnDataset = {
-  name: "rerun_graders_on_dataset",
-  title: "Re-run Graders on Dataset",
-  description: "Re-score every trace in a dataset with its attached graders, overwriting their previous verdicts. This is how you grade traces that were added before a grader existed, or re-score everything after editing a grader's criteria: attaching a grader does not itself grade anything. Omit graderIds to re-run every grader attached to the dataset, or pass a subset; ids that are not attached are rejected rather than silently skipped. Waits up to 90 seconds for the run to finish and reports how many traces were graded; if it is still running, call again with the same arguments to check progress (it reports the running job rather than starting a second one). Read the resulting verdicts with get_grader_verdicts.",
-  inputSchema: {
-    datasetId: external_exports.uuid().describe("The dataset id (from save_dataset or list_datasets)"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Grader ids to re-run (1-100). Omit to re-run every grader attached to the dataset.")
-  }
-};
-var rerunGradersOnExperiment = {
-  name: "rerun_graders_on_experiment",
-  title: "Re-run Graders on Experiment",
-  description: "Re-score an experiment's completed replay traces with its attached graders, overwriting their previous verdicts. Use this after attaching a grader to an already-completed experiment (which persists the assignment but does not grade the existing traces) or after editing a grader's criteria. Only the replays belonging to this experiment are graded, never the originals they were compared against. Omit graderIds to re-run every grader attached to the experiment, or pass a subset; ids that are not attached are rejected. Waits up to 90 seconds and reports how many traces were graded; if it is still running, call again with the same arguments to check progress. Read the resulting verdicts with get_grader_verdicts.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Grader ids to re-run (1-100). Omit to re-run every grader attached to the experiment.")
-  }
-};
-var addGradersToExperiment = {
-  name: "add_graders_to_experiment",
-  title: "Add Graders to Experiment",
-  description: "Attach one or more graders directly to an experiment so they run against its replay traces. Idempotent: attaching a grader already assigned is a no-op. Graders must be active (or live) and belong to this organization and the experiment's trace function; ids that are archived, not runnable, or mismatched are skipped and reported. The effective grader set at completion is the union of these direct attachments and the dataset's current runnable graders. Attaching to an already-completed experiment persists the assignment but does not immediately grade its existing replay traces; those traces are graded only the next time the experiment runs completion again (for example an SDK replay retry that re-runs complete) or a fresh replay runs. Use list_experiments to find experiment ids and list_graders to find grader ids.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to attach (1-100)")
-  }
-};
-var removeGradersFromExperiment = {
-  name: "remove_graders_from_experiment",
-  title: "Remove Graders from Experiment",
-  description: "Detach one or more graders from an experiment. Grader ids that are not currently attached are ignored and reported. The graders themselves are not deleted. Effect depends on run state: for an in-progress experiment, a detached grader that is also assigned to the experiment's dataset is re-added from the dataset when the experiment completes (so it still runs); for an already-completed experiment the grader set is a finalized snapshot with no dataset re-union, so detaching permanently drops that grader from the run's results.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to detach (1-100)")
-  }
-};
-var addGradersToExperimentGroup = {
-  name: "add_graders_to_experiment_group",
-  title: "Add Graders to Experiment Group",
-  description: "Assign one or more graders to every experiment currently in an experiment group. Grader assignments are stored on each experiment, not on the group, so experiments added later do not inherit them automatically. Completed experiments immediately queue any missing grader evaluations; pending experiments use the graders when they complete. Idempotent: assigning a grader already attached to an experiment is a no-op.",
-  inputSchema: {
-    experimentGroupId: external_exports.uuid().describe("The experiment group id"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to assign (1-100)")
-  }
-};
-var removeGradersFromExperimentGroup = {
-  name: "remove_graders_from_experiment_group",
-  title: "Remove Graders from Experiment Group",
-  description: "Detach one or more graders from every experiment currently in an experiment group, undoing add_graders_to_experiment_group. Grader ids not assigned to any experiment in the group are ignored and reported. The graders themselves are not deleted, and archived graders can still be detached. Because assignments live on each experiment rather than on the group, this only affects experiments currently in the group. Effect depends on run state, matching remove_graders_from_experiment: an in-progress experiment re-adds a detached grader from its dataset when it completes if the dataset still assigns it, while an already-completed experiment has a finalized grader set, so detaching permanently drops that grader from its results.",
-  inputSchema: {
-    experimentGroupId: external_exports.uuid().describe("The experiment group id"),
-    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to detach (1-100)")
-  }
-};
-var listExperiments = {
-  name: "list_experiments",
-  title: "List Experiments",
-  description: "List experiments (replays against changed code) newest first, with status, pass/fail totals, delta (fixed/regressed/still-passing/still-failing), and the git state each ran from. Every filter is optional and they combine: narrow by traced function, git branch, coding agent session, dataset, or any mix; with no filters it lists the organization's most recent experiments. Call this to see past experiment results, or before a new replay to see what has been tried. Every replay must name its experiment group with --experiment-group-id. A group is one series of experiments testing one thing, such as baseline against shorter prompt. Reuse a group's id (from list_experiment_groups) only when the new run tests that same thing; when you start testing something else, generate a new UUID and pass --experiment-group-name with a name for what is being tested. Group by what is tested, not by session, branch, or worktree: a branch testing one thing can keep one group, and a session testing several things starts one group per thing.",
-  inputSchema: {
-    traceFunctionKey: external_exports.string().min(1).optional().describe("Only experiments for this trace function key"),
-    gitBranch: external_exports.string().min(1).optional().describe("Only experiments run from this git branch (exact branch name, e.g. feature/shorter-prompt)"),
-    agentSessionId: external_exports.string().min(1).optional().describe("Only experiments launched from this coding agent session (exact session id, the agent_session_id the Bitfab plugin gives you at session start). Use it to find the runs you launched in this session."),
-    datasetId: external_exports.uuid().optional().describe("Only experiments for this dataset, from list_datasets: runs launched against it plus runs that replayed any of its traces"),
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max experiments to return (default 20, max 50)")
-  }
-};
-var listExperimentTraces = {
-  name: "list_experiment_traces",
-  title: "List Experiment Traces",
-  description: "Get individual trace results for an experiment, including each replay trace's verdict (fixed, regressed, still-passing, still-failing, original-no-verdict (the original has no verdict), replay-no-verdict (the replay has no verdict yet), capture-incomplete, unpaired, skipped) by comparing against the original trace's verdict, plus the replay's duration and token usage (input, output, cached, total) for the replay and the paired original so you can reason about latency, cost, and cache-read deltas. It ends with the next step: the `--dataset-id` and `--trace-ids` flags that rerun only the failing traces as a subset of the dataset, or, once a subset passes, the flags that replay the whole dataset to check nothing else broke. Use after list_experiments to drill into a specific experiment's results, and after every replay while fixing failures.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID to get traces for")
-  }
-};
-var getReplayStatus = {
-  name: "get_replay_status",
-  title: "Get Replay Status",
-  description: "Read an experiment's replay progress: status, local to server replay trace IDs, and finished and remaining trace attempts. Call it while a replay runs, or after one crashes to check `resumable` before rerunning with `--resume <experimentId>`. To wait for a replay to finish, do not poll this tool or end your turn: run the Bitfab plugin's waitForExperiment command in the foreground, as the server instructions describe.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID to get status for")
-  }
-};
-var getTemplateReference = {
-  name: "get_template_reference",
-  title: "Get Template Reference",
-  description: "Read the agent-facing reference for Bitfab span templates: the engine (Nunjucks), the render-context schema (variables bound at render time), the composition model (no `{% extends %}` - assembler injects into base.njk), the registered custom filters and tests, common patterns from the live default templates, and error behavior. **Call this once per session before your first `get_template` or `save_template`** - without it, edits typically use the wrong syntax dialect, the wrong variable names, or break the layout. Read-only, no organization data, safe to cache.",
-  inputSchema: {}
-};
-var getTemplate = {
-  name: "get_template",
-  title: "Get Template",
-  description: "Read the rendering template for a span type. Templates control how a span's input/output renders in the Bitfab UI. **Pass `traceFunctionKey` to scope to a specific trace function** (this is the normal mode for the `templates` skill). Resolution: per-key row \u2192 org-global override \u2192 file default. The response labels the source so you know whether you're editing a per-key row, seeding from the org-global, or starting from the file default. Without `traceFunctionKey`, returns the org-global override. Span types: llm, agent, function, guardrail, handoff, custom. Always call this before save_template so your edit starts from the live content. **If you haven't called `get_template_reference` this session, call it first** - it documents the Nunjucks engine, available variables, and base-template composition model, which you'll need to write a correct edit.",
-  inputSchema: {
-    spanType: external_exports.enum(["llm", "agent", "function", "guardrail", "handoff", "custom"]).describe("Span type whose template to read (llm | agent | function | guardrail | handoff | custom)"),
-    traceFunctionKey: external_exports.string().min(1).optional().describe("Trace function key to scope the template to. When set, returns the per-key row if present; otherwise seeds from the org-global override; otherwise the file default. Omit to read the org-global template.")
-  }
-};
-var saveTemplate = {
-  name: "save_template",
-  title: "Save Template",
-  description: "Upsert the rendering template for a span type. **Pass `traceFunctionKey` to scope the override to a single trace function** (this is the normal mode for the `templates` skill); the per-key row is created on first save and applied at render time only for spans on traces of that function. Without `traceFunctionKey`, edits the org-global override (applies when no per-key row matches). Updates are in-place: no version bump, no row juggling. The `template` body is the full template source you want stored, passed verbatim - do NOT wrap in `<![CDATA[ ... ]]>`, triple-backtick code fences, or any other escape construct; the value is stored exactly as received and a stray wrapper will silently break rendering (e.g. an opening `<![CDATA[` swallows the next `<style>` tag). Optional `name` and `description` are metadata shown in the templates UI. Span types: llm, agent, function, guardrail, handoff, custom. Always call get_template first so you're editing the current content rather than overwriting unrelated changes. **If you haven't called `get_template_reference` this session, call it first** - edits that don't match the documented Nunjucks variable shape will silently render empty in production.",
-  inputSchema: {
-    spanType: external_exports.enum(["llm", "agent", "function", "guardrail", "handoff", "custom"]).describe("Span type whose template to upsert (llm | agent | function | guardrail | handoff | custom)"),
-    traceFunctionKey: external_exports.string().min(1).optional().describe("Trace function key to scope the override to. When set, upserts a per-key row that the renderer prefers over the org-global for spans on traces of this function. Omit to edit the org-global template."),
-    template: external_exports.string().min(1).describe("Full template source to store, verbatim (replaces existing content). Pass as a raw string - no CDATA wrapper, no triple-backtick code fence, no escape construct."),
-    name: external_exports.string().min(1).optional().describe("Optional new name. Defaults to 'Default {spanType} template' on first creation."),
-    description: external_exports.string().optional().describe("Optional description. Pass an empty string to clear an existing description.")
-  }
-};
-var saveExperimentGroup = {
-  name: "save_experiment_group",
-  title: "Save Experiment Group",
-  description: "Create or edit an experiment group. An experiment group is one series of experiments testing one thing, such as a baseline and two prompt variants, named after what is being tested. Every replay must name its group with --experiment-group-id, so decide it before launching: reuse a group's id (from list_experiment_groups) only when the run tests the same thing as that group's runs; when you start testing something else, generate a new UUID and pass it with --experiment-group-name, named after what the series tests. Group by what is tested, not by session, branch, or worktree: a branch testing one thing can keep one group, and a session testing several things starts one group per thing. Do not call this tool first for runs you have not launched yet: the first replay that persists creates the group and the rest join it. This tool groups experiments that already exist, for example older runs launched without a group id. To create, omit experimentGroupId and provide experimentIds plus an optional name and notes; the supplied experiments are grouped together. To edit, provide experimentGroupId and at least one of name or notes, but omit experimentIds; editing metadata does not change membership. Editing works only once a replay or a create has made the group. Creation is idempotent when all supplied experiments already share one group. All resources must belong to the active organization.",
-  inputSchema: {
-    experimentGroupId: external_exports.uuid().optional().describe("Existing experiment group id to rename. Omit when creating."),
-    experimentIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Experiment IDs to group (1-100). Required when creating; omit when editing."),
-    name: external_exports.string().trim().min(1).max(120).optional().describe("What this series of runs tests, in a few words, such as 'shorter system prompt'. Always name a group you create, and name any group you find without one."),
-    notes: external_exports.string().max(1e4).optional().describe("Optional group notes. Omit to keep existing notes when editing; pass an empty string to clear them.")
-  }
-};
-var listExperimentGroups = {
-  name: "list_experiment_groups",
-  title: "List Experiment Groups",
-  description: "List recent experiment groups in the active organization, newest first. Each group includes its id, name, notes, creation time, and the experiment ids currently in the group. A group or experiment with no name should be named with save_experiment_group or save_experiment.",
-  inputSchema: {
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max experiment groups to return (default 20, max 50)")
-  }
-};
-var getExperimentGroup = {
-  name: "get_experiment_group",
-  title: "Get Experiment Group",
-  description: "Get one experiment group by id, including its name, notes, creation and update times, and its member experiments with each experiment's id, name, status, and creation time. Use list_experiment_groups to discover recent group ids.",
-  inputSchema: {
-    experimentGroupId: external_exports.uuid().describe("The experiment group id to get")
-  }
-};
-var saveExperiment = {
-  name: "save_experiment",
-  title: "Save Experiment",
-  description: "Update an existing experiment. Every experiment should have a name saying what the run changes: pass --name when launching the replay, and use this tool to name any run that has none. Provide the experiment ID and at least one of name, notes, experimentGroupId, baselineExperimentId, or status. Omitted fields keep their current values; pass an empty notes string to clear notes, or a group id to move the experiment to that existing group. Set baselineExperimentId to the earlier experiment this one is compared against, such as the run before the change it tests, or null to clear it. Set status when a replay stopped without finishing. completed grades the traces that landed, and interrupted marks a pending experiment as stopped so it can be resumed later.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID to update"),
-    name: external_exports.string().trim().min(1).max(120).optional().describe("What this run changes, in a few words, such as 'baseline' or 'shorter system prompt'. Bitfab already records the commit, branch, tree state, datasets, and who ran it with every experiment, so do not repeat them here."),
-    notes: external_exports.string().max(1e4).optional().describe("Run conditions Bitfab cannot see on its own, such as an environment override or a forced feature flag. Omit to keep existing notes; pass an empty string to clear them."),
-    experimentGroupId: external_exports.uuid().optional().describe("Existing experiment group id to move this experiment into, when it belongs with that group's series of runs testing one thing. Omit to keep its current group. An experiment cannot be taken out of a group here."),
-    baselineExperimentId: external_exports.uuid().nullable().optional().describe("The earlier experiment this one is compared against, such as the run of the code before the change this experiment tests. The experiment page and the written summary measure the change against it. Must be another experiment in the same organization. Omit to keep the current baseline; pass null to clear it."),
-    status: external_exports.enum(["completed", "interrupted"]).optional().describe("completed finishes the replay and grades the traces that landed. interrupted marks a pending experiment as stopped. Omit to keep the current status.")
-  }
-};
-var getExperiment = {
-  name: "get_experiment",
-  title: "Get Experiment",
-  description: "Get a single experiment by experiment ID, with its name, notes, status, pass/fail totals, delta, experiment group, and grader results: the aggregate passing/failing checks and pass rate, plus a per-grader breakdown (each assigned grader's own passing/failing and pass rate on the run). Once every verdict is in it also carries the written summary: pass rate, cost, and latency before and after against the baseline (the experiment set as its baseline, else the first finished experiment in its group, else the original traces), the assertions and categories that flipped with example replay trace ids, and the traces worth opening first. Use this when you already have an experiment ID and want just that run's results, instead of paging the whole function's history with list_experiments.",
-  inputSchema: {
-    experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments")
-  }
-};
-var getGraderVerdicts = {
-  name: "get_grader_verdicts",
-  title: "Get Grader Verdicts",
-  description: `Read the INDIVIDUAL verdicts each grader recorded, one row per grader per trace, with the grader's reason, its failure diagnostic, the confidence, and whether the verdict came from a person, a grader Bitfab ran, or an external grader whose verdict was posted from outside Bitfab with save_grader_verdicts. A person's verdict for a grader is given in the dashboard, only on a trace that grader has not judged, so it never replaces a grader's own verdict. This is the per-grader breakdown that get_trace_verdicts does not show: that tool returns one grader-agnostic verdict per trace, so use it for a dataset's overall pass/fail and use this one to see WHICH check failed and why. Pass traceIds to see every grader's verdict on those traces, graderId to see that grader's most recent verdicts across traces (newest first, use it to diagnose a grader that is misfiring), or both to narrow to one grader on specific traces. Call list_graders first if you need grader ids.`,
-  inputSchema: {
-    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(GET_GRADER_VERDICTS_MAX_IDS)).optional().describe(`Trace IDs to read grader verdicts for (1-${GET_GRADER_VERDICTS_MAX_IDS}). Omit to read by grader instead.`),
-    graderId: external_exports.uuid().optional().describe("Restrict to one grader (from list_graders). On its own, returns that grader's most recent verdicts across all traces."),
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(MAX_GRADER_VERDICT_LIMIT)).optional().describe(`Max verdicts to return when reading by grader alone (default ${DEFAULT_GRADER_VERDICT_LIMIT}, max ${MAX_GRADER_VERDICT_LIMIT}). Ignored when traceIds is given.`)
-  }
-};
-var graderVerdictEntryShape = external_exports.object({
-  graderId: external_exports.uuid().describe("The external grader that produced this verdict (from list_graders)."),
-  traceId: external_exports.uuid().describe("The trace the verdict is about."),
-  verdict: external_exports.enum(["pass", "fail"]).optional().describe('"pass" or "fail". Required unless the deprecated label is sent.'),
-  label: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict. true is "pass", false is "fail". Refused when verdict is also sent.'),
-  reason: external_exports.string().min(1).optional().describe("Why the grader reached this verdict. Optional."),
-  failureDiagnostic: external_exports.string().min(1).optional().describe("For a FAIL: what went wrong in the trace, in a form someone fixing it can act on. Optional."),
-  confidence: confidenceShape.optional().describe("How confident the grader is: VeryLow / Low / Medium / High / VeryHigh. Optional.")
-});
-var saveGraderVerdicts = {
-  name: "save_grader_verdicts",
-  title: "Save Grader Verdicts",
-  description: `Record verdicts for EXTERNAL graders: existing graders Bitfab never runs because the user evaluates traces somewhere else (their own eval harness, CI, a review queue). Each entry is one grader's pass/fail on one trace, written as that grader's own verdict, so it shows up everywhere Bitfab-run grader verdicts do: get_grader_verdicts, dataset and experiment pass rates, and the trace's grader panel. Saving again for the same grader and trace replaces the earlier verdict. Rejects every grader that is not external: Bitfab runs its own graders, and a person's verdict on a trace belongs in save_human_verdicts. Up to ${SAVE_GRADER_VERDICTS_MAX_ENTRIES} entries per call; the whole call is rejected if any entry is invalid. The old \`labels\` array, with \`label\` (true or false) on each entry, is still accepted.`,
-  inputSchema: {
-    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(graderVerdictEntryShape).min(1).max(SAVE_GRADER_VERDICTS_MAX_ENTRIES)).optional().describe(`One entry per grader per trace (1-${SAVE_GRADER_VERDICTS_MAX_ENTRIES}). Required unless the deprecated labels is sent.`),
-    labels: external_exports.preprocess(parseJsonString, external_exports.array(graderVerdictEntryShape).min(1).max(SAVE_GRADER_VERDICTS_MAX_ENTRIES)).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdicts. Refused when verdicts is also sent.")
-  }
-};
-var getGraderLabels = deprecatedAlias(getGraderVerdicts, "get_grader_labels", "Get Grader Labels");
-var saveGraderLabels = deprecatedAlias(saveGraderVerdicts, "save_grader_labels", "Save Grader Labels");
-var getSimPlan = {
-  name: "get_sim_plan",
-  title: "Get Sim Plan",
-  description: "Read one trace function's sim plan: its span nodes overlaid from recent traces, each with its span type, call count, how many traces it appears in, and whether its content (inputs and outputs) is captured. Call it to learn the exact node names before save_sim_plan, or to answer what a workflow records today.",
-  inputSchema: {
-    traceFunctionKey: external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it."),
-    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(100)).optional().describe("Recent traces to overlay, taken from the function's own traces and again from its replays (1-100 of each). Defaults to 40.")
-  }
-};
-var saveSimPlan = {
-  name: "save_sim_plan",
-  title: "Save Sim Plan",
-  description: "Turn content capture (inputs and outputs) off or on for span nodes of one trace function. A span with capture off is no longer sent. The trace's root, a span recorded by a framework integration, a span that recorded an error, and a span that recorded LLM usage (token counts or a cost in its contexts) are still sent without inputs and outputs, and a node declared in code always keeps its content. Call it when the user wants a span to stop recording its payloads, or to record them again. A node is its span name inside the trace function key, exactly as get_sim_plan lists it. A node recorded by a framework integration (OpenAI Agents, LangGraph, Claude Agent SDK, Vercel AI SDK), a node that is the root of its traces, a node imported from another platform, or a node named by Bitfab rather than the SDK keeps its content; asking to turn it off is refused with the reason. Turning a node off also turns content off for every node beneath it in the sim plan; a node beneath it that keeps its content stays on, and a node you name in the same call keeps the value you give it. Turning a node back on leaves the nodes beneath it as they are, so turn those on by name. Returns the updated sim plan.",
-  inputSchema: {
-    traceFunctionKey: external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it."),
-    nodes: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
-      name: external_exports.string().min(1),
-      captureContent: external_exports.preprocess(parseJsonString, external_exports.boolean())
-    })).min(1).max(500)).describe("Nodes to change (1-500). `name` is the span name; `captureContent` false stops recording that span's inputs and outputs and does the same for every node beneath it, true records them again for that node only.")
-  }
-};
-var scenarioTemplateFunctionKey = external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it.");
-var getScenarioTemplate = {
-  name: "get_scenario_template",
-  title: "Get Scenario Template",
-  description: "Read the scenario template of one trace function: the React component the scenario page uses to show that function's scenarios to a reviewer. Bitfab's template agent writes it by itself when the function first gets scenarios. Returns which version is shown, whether a generation is running or failed, the last note given to the agent, the template's source, and the rules a template must follow (its props, the components it may import, and how it should read and look). Call it before editing a template with save_scenario_template.",
-  inputSchema: {
-    traceFunctionKey: scenarioTemplateFunctionKey
-  }
-};
-var saveScenarioTemplate = {
-  name: "save_scenario_template",
-  title: "Save Scenario Template",
-  description: "Save an edited scenario template for one trace function as its new version, shown on the scenario page right away. The source is the whole template, a React component as get_scenario_template returns it. It is compiled and rendered on a sample of the function's scenarios first; if it does not compile or a scenario does not render, nothing is saved and the errors come back to fix. Saving replaces any generation that is running. Call it when the user wants to change how their scenarios are shown and you have made the change yourself; call generate_scenario_template instead to have Bitfab's agent make it.",
-  inputSchema: {
-    traceFunctionKey: scenarioTemplateFunctionKey,
-    source: external_exports.string().min(1).max(2e5).describe("The whole template source: one React component, the default export.")
-  }
-};
-var generateScenarioTemplate = {
-  name: "generate_scenario_template",
-  title: "Generate Scenario Template",
-  description: "Have Bitfab's template agent write a new version of one trace function's scenario template. It starts from the current version, follows the note when one is given, checks its work on a sample of the function's scenarios, and saves a new version in one to three minutes. Returns right away; call get_scenario_template to see the result. A newer request replaces one still running.",
-  inputSchema: {
-    traceFunctionKey: scenarioTemplateFunctionKey,
-    note: external_exports.string().trim().max(2e3).optional().describe("What to change, in plain words (for example, show the messages the agent sent before its actions). Omit to rewrite the template from the function's scenarios.")
-  }
-};
-var scenarioTargetSchema = {
-  traceId: external_exports.uuid().optional().describe("ID of a trace whose scenario to use. Send this or scenarioId, not both."),
-  scenarioId: external_exports.uuid().optional().describe("ID of the scenario, as get_scenario prints it. Send this or traceId, not both.")
-};
-var listScenarios = {
-  name: "list_scenarios",
-  title: "List Scenarios",
-  description: `List scenarios, newest first, with each one's id, name, trace function, and review status: needs updating (a person flagged the scenario itself as wrong or incomplete, for example missing history or records), updated (the flag was resolved and waits for the person to check the fix), needs label, drafting (assertions are being drafted from the label), drafting failed, no assertions (the draft found nothing checkable), needs review (draft assertions wait for review), done, or waiting on data (the organization has a scenario callback and it has not filled the scenario's data yet, so the scenario stays out of the inbox until the data arrives or a person labels it anyway). A scenario that needs updating is printed with its note. Pass queue "needs_updating" to find the scenarios people flagged for fixing, then read each with get_scenario and fix it with save_scenario, sending needsUpdatingResolution to say what you changed. That puts it back in the person's inbox, under needs review, to check. Returns a cursor when more remain.`,
-  inputSchema: {
-    traceFunctionKey: external_exports.string().min(1).optional().describe("Key of the trace function whose scenarios to list. Leave it out to list every trace function's."),
-    queue: external_exports.enum(["inbox", "needs_label", "needs_review", "needs_updating", "done"]).optional().describe("inbox: waiting on a person, everything in needs_label and needs_review. needs_label: needs a label, or its draft failed and the label needs sending again. needs_review: drafting, draft assertions waiting for review, a draft that found nothing to check, or a resolved update waiting to be checked. needs_updating: a person flagged the scenario itself with a note. done: every assertion reviewed, or accepted with none. Scenarios waiting on data are in no queue. Leave it out to list all."),
-    cursor: external_exports.string().min(1).optional().describe("The cursor a previous call returned, to read the next page."),
-    limit: external_exports.number().int().min(1).max(100).optional().describe("How many scenarios to return, up to 100. Defaults to 25.")
-  }
-};
-var getScenario = {
-  name: "get_scenario",
-  title: "Get Scenario",
-  description: "Read one scenario, found by its id or by a trace it was built from: the situation the trace function's run was in, as the trigger that started the run and the data available when it arrived, with a name and a description. The trigger and data describe the situation, and the description also says what is supposed to happen; what the run did is in the trace. Returns the creation status (empty until something starts building it, generating while Bitfab builds it or waits for the scenario callback to save it, created once built, or error with the reason), the review status, the note saying what needs updating when a person flagged the scenario (and the resolution once one was sent), then the trigger and data summaries, then the actual outcome when one was saved (what the run actually did: one example, not what it should have done), then the name, description, trigger, data, and actualOutcome as JSON in exactly the shape save_scenario accepts, including the categories it is filed under. When the organization has a scenario callback, it also says how the callback last went for this scenario and when: waiting to run, filled the scenario, answered with nothing to add, accepted the request to fill it later, skipped, or failed, with the reason for a skip or failure. A scenario not generated yet has no trigger or data of its own: it is returned with its review status, its categories, and the assertions on the trace it was made from, whose input and output stand in for its trigger and data. data.sources, when saved, says where the records came from and, for each kind of data, whether it was read in full, as of the run or as of capture, with columns the capture predates, or not captured at all. Call it before save_scenario so an edit starts from what is saved.",
-  inputSchema: scenarioTargetSchema
-};
-var saveScenario = {
-  name: "save_scenario",
-  title: "Save Scenario",
-  description: "Create or update one scenario. Before writing a name, description, trigger, data, records, or actual outcome, read https://docs.bitfab.ai/primitives/building-scenarios.md: it says what belongs in each part and what never does, with examples to copy. To create a scenario, or to replace its records, send traceId with records or recordsPath: the records your own system holds that relate to that trace's run, as of the run. Create the scenario first by sending traceId with records as an empty list: Bitfab builds only the trigger from the trace (so far only for traces of Noah's noah-agent-turn function), and the data starts empty, with no records. For a trace of any other function, create the scenario by sending traceId with trigger, data, or both, in the shape get_scenario returns; the part not sent starts empty and can be sent later. A scenario that holds only categories is filled in the same way. The data holds only what you send afterwards: the trace shows what happened in the run, not all the data your system held when it ran. Check that the returned trigger is not empty before sending records. Records that are not empty are refused for a trace with no scenario yet, and for a scenario whose trigger is empty. Bitfab looks for each record's quote, and failing that its text, in the inputs and outputs of the trace's spans. A record found in a span cites that span and can back an assertion; a record found in no span is kept as context the run never saw. A trace that is a replay is refused, because a scenario belongs on the original. Send sources beside records to say where the records came from and how much of each kind of data was read; recordsPath forwards the file's sources on its own. records and recordsPath replace the saved records and sources whole (records with no sources clear the saved sources), need traceId rather than scenarioId, and cannot be sent with any field other than sources. To edit a scenario that already exists, find it by its id or by a trace it was built from and send name, description, trigger, data, or appendData, for example to add history the run had available, record data it was missing, or correct the trigger. name, description, trigger, and data each replace the saved value whole, and fields left out are kept. To record what the run actually did, send actualOutcome, read from the trace: its final output for the summary and the tool calls that ran for the actions. It is shown below the trigger as one example of how the run handled the situation, never as what it should have done, and it is not evidence for assertions. Bitfab does not fill it. Send null to clear it. To say the scenario itself needs fixing, send needsUpdatingNote with what is wrong. Once a scenario flagged that way is fixed, send needsUpdatingResolution saying what you changed, in the same call as the fix: the note and the resolution are kept, and the scenario goes back to the person's inbox, under needs review, to check the fix. To file the scenario under categories, send categoryIds with every category it belongs to; a scenario can be in any number. To add to the data without resending it, use appendData instead of data: its history entries go after the saved ones and its missing items after the saved missing items, in one step that cannot lose another caller's append made at the same time. Send data or appendData, not both. trigger, data, and appendData entries must keep the shape get_scenario returns. A history entry's source names the span its text came from, on any trace linked to the scenario (a trace that finds it by traceId is one); set it to null or leave it out when the text is not in such a trace, and the entry still counts as data the run had but cannot be cited as evidence when the scenario is turned into assertions. A source naming a span on any other trace is refused. The trigger and data summaries are rebuilt from what is saved. Any other edit to a trace with no scenario, or to a scenario id that does not exist, is refused. Returns the saved scenario.",
-  inputSchema: {
-    ...scenarioTargetSchema,
-    name: external_exports.string().min(1).optional().describe("The scenario's name."),
-    description: external_exports.string().min(1).optional().describe("The scenario's description."),
-    trigger: external_exports.preprocess(parseJsonString, external_exports.record(external_exports.string(), external_exports.unknown())).optional().describe("The whole trigger object, in the shape get_scenario returns: what started the run."),
-    data: external_exports.preprocess(parseJsonString, external_exports.record(external_exports.string(), external_exports.unknown())).optional().describe("The whole data object, in the shape get_scenario returns: topic, history (earlier facts in time order, each with its source span), and missing (what the run did not have). Replaces the saved data, except that the saved records are kept when it has no records field. Leave it out when sending appendData."),
-    appendData: external_exports.preprocess(parseJsonString, external_exports.object({
-      history: external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown())).optional(),
-      missing: external_exports.array(external_exports.string()).optional()
-    })).optional().describe("Data to add to the saved data: history entries (same shape as data.history, source optional, in time order, after the saved ones) and missing items. At least one of the two must be non-empty. Leave data out when sending this."),
-    actualOutcome: external_exports.preprocess(parseJsonString, external_exports.strictObject({
-      summary: external_exports.string().describe("The run's outcome in a few sentences, in your own words."),
-      actions: external_exports.array(external_exports.strictObject({
-        name: external_exports.string().min(1).describe('The action the run took, such as "send_sms_message".'),
-        details: external_exports.record(external_exports.string(), external_exports.unknown()).describe("The action's arguments, as an object."),
-        result: external_exports.string().nullable().describe("What came back from the action, or null."),
-        failed: external_exports.boolean().describe("Whether the action did not go through."),
-        at: external_exports.string().nullable().describe("When the action happened (ISO 8601), or null.")
-      })).describe("What the run did, in order. Leave out lookups that changed nothing. Empty when the run took no action."),
-      source: external_exports.strictObject({
-        spanId: external_exports.uuid().describe("The span the summary came from."),
-        sourceField: external_exports.enum(["input", "output"]).describe("Which side of the span holds the text."),
-        text: external_exports.string().describe("The text, as it appears in the span.")
-      }).nullable().optional().describe("The span the summary came from, on a trace linked to the scenario, or null.")
-    }).nullable()).optional().describe("What the run actually did. Replaces the saved actual outcome whole. Send null to clear it."),
-    categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid())).optional().describe("Every category this scenario is filed under, from list_categories. Replaces the saved categories whole: send an empty list to remove them all, and leave it out to keep them. An id outside the organization fails the call."),
-    records: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown()))).optional().describe(`The records related to this run, each { kind, ref, at, asOf, title, text, quote }. kind is one of "message", "contact", "preference", "memory", "email", "calendar_event", "action_item". ref is your own pointer to the row, such as "Input:234605". at is when the record came to exist, or null. asOf is "run" when the record is as it was at the run, or "now" when no history is kept for it. quote is a short exact string to look for in the run's spans, or null to look for the whole text. Prefer recordsPath, so the records never pass through the conversation. Send records or recordsPath, not both.`),
-    needsUpdatingNote: external_exports.string().trim().min(1).optional().describe("Flag the scenario itself as wrong or incomplete, saying what is wrong or missing. Moves it out of review until the note is resolved, and replaces any earlier note and resolution."),
-    needsUpdatingResolution: external_exports.string().trim().min(1).optional().describe("What you changed to resolve the scenario's needs-updating note. Only for a scenario flagged as needing an update; send it with the fix. The scenario goes back to the person's inbox, under needs review, to check the fix."),
-    recordsPath: external_exports.string().min(1).optional().describe("Path to a local JSON file holding the records, either as an array or as an object with a records array. The Bitfab plugin reads the file and sends its records, so they never pass through the conversation. When the object also has frameAt, capturedAt, windows, and coverage, as Noah's scenario builder writes them, the plugin sends those as sources. Send records or recordsPath, not both."),
-    sources: external_exports.preprocess(parseJsonString, external_exports.record(external_exports.string(), external_exports.unknown())).optional().describe(`Where the records came from, as { frameAt, capturedAt, windows, coverage }: when the run started, when its data was captured (or null), how many days each windowed kind reaches (such as { "messagesDays": 3, "calendarDays": 7 }), and coverage, which gives each kind of data its capture status ("rewound-to-frame" for as of the run, "current-at-capture" for as of capture, "not-recorded" or "unavailable" for not captured) plus filledColumns { absentNullable, defaultedNonNullable }, the "table.column" names the capture predates. Only with records, never with recordsPath, which sends the file's own.`)
-  }
-};
-var saveTraceCategories = {
-  name: "save_trace_categories",
-  title: "Save Trace Categories",
-  description: "File one trace under categories, replacing its whole set. Send categoryIds with every category the trace belongs to; an empty list clears them. Categories are held by the trace's scenario, so every trace linked to that scenario shows the same categories. A trace with no scenario yet gets a dummy one, which has no trigger or data until save_scenario generates it and keeps its categories when it does. Category ids come from save_category or list_categories, and an id not in this organization is refused. Returns the trace's categories after the save and the scenario that holds them.",
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The trace to file."),
-    categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).max(100)).describe("Every category the trace belongs to, replacing its saved set. An empty list clears it.")
-  }
-};
-var generateScenario = {
-  name: "generate_scenario",
-  title: "Generate Scenario",
-  description: "Start building the scenario for one trace and return at once, without waiting for it. The scenario's creation status becomes generating, and the answer names the scenario and its creation status. Read it later with get_scenario, which shows the creation status until the scenario is created or building it failed. Asking again while it is generating starts nothing more, and asking for one whose build failed starts it over. Bitfab builds the trigger itself for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, fills in the rest for any trace. When Bitfab's scenario agent is turned on for the organization, Bitfab builds the whole scenario itself for any other trace with no callback, reading the trace and checking every quote against it. A trace that already has a scenario is left as it is and answers with that scenario's id, unless regenerate is true. Add force to regenerate when the scenario callback is still working on the scenario, for example after it answered 202 and its data never came. A replay, a trace outside this organization, or a trace Bitfab cannot build a scenario for (not noah-agent-turn, no scenario callback, and the scenario agent not turned on) is refused. Adding traces to a dataset links each one to an empty scenario, and starts this same build for each only when the organization has a scenario callback or the scenario agent turned on. What a good scenario holds, to check the built one against: https://docs.bitfab.ai/primitives/building-scenarios.md",
-  inputSchema: {
-    traceId: external_exports.uuid().describe("The trace to build a scenario for."),
-    regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to build a scenario that already exists again: its name, description, trigger, data, and actual outcome are cleared, Bitfab builds the trigger again for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, is asked again. Its categories, review status, labels, and assertions are kept. Asking while it is generating, or while the scenario callback is still working on it, starts nothing more unless force is true. Omit or set false to leave an existing scenario as it is."),
-    force: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true together with regenerate to start over even while the scenario is generating or the scenario callback is still working on it (it is waiting for the callback, or the callback answered 202 less than a day ago). The scenario is cleared and the callback is asked again. Refused without regenerate.")
-  }
-};
-var generateScenarioAssertions = {
-  name: "generate_scenario_assertions",
-  title: "Generate Scenario Assertions",
-  description: "Turn a person's label on one scenario, found by its id or by a trace it was built from, into up to four assertions, saved as draft agent assertions for review on the trace the scenario was built from. For a generated scenario, check its trigger, data, and records with get_scenario before calling this. A scenario not generated yet drafts from its trace's top-level input and output instead, and cites the trace's top-level span. The note says what the run got right or wrong, or what a correct run does; the verdict says whether the run was right overall. Each assertion cites the spans that settle its values, from the scenario's trigger, history, and records the run saw, and is saved on the trace those spans are on; records the run never saw are context only. A note that gives nothing a reviewer could check against a replay yields no assertions. An assertion never concludes that something did not exist from a kind of data the scenario's sources say was not read in full as of the run. A trace with no scenario, a scenario id that does not exist, or a scenario built from a replay is refused. Each drafted assertion then goes through the same check and rewrite as save_trace_assertions, and this call returns without waiting for it, so read the drafts back with get_trace_assertions for what the rewrite changed, any claim to save as its own assertion, and anything still to fix.",
-  inputSchema: {
-    ...scenarioTargetSchema,
-    verdict: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("true when the person said the run was right, false when wrong. Leave it out when they gave no verdict."),
-    note: external_exports.string().min(1).describe("What the person said was right or wrong about the run, or what a correct run does, in their words.")
-  }
-};
-var ALL_TOOL_CONTRACTS = [
-  getGraderVerdicts,
-  saveGraderVerdicts,
-  saveAssertionVerdicts,
-  getGraderLabels,
-  saveGraderLabels,
-  getExperiment,
-  getExperimentGroup,
-  saveExperiment,
-  saveExperimentGroup,
-  listExperimentGroups,
-  getBitfabApiKey,
-  getApiKeyContext,
-  listOrganizations,
-  getDatabaseConnectionStatus,
-  listTraceFunctions,
-  searchTraces,
-  getTraces,
-  getTraceVerdicts,
-  generateVerdictEvidence,
-  getTraceLabels,
-  generateLabelEvidence,
-  getSpanField,
-  getSpan,
-  saveAgentVerdicts,
-  saveHumanVerdicts,
-  saveAgentLabels,
-  saveHumanLabels,
-  saveCategory,
-  listCategories,
-  getCategory,
-  deleteCategory,
-  saveAssertionCategory,
-  listAssertionCategories,
-  getAssertionCategory,
-  deleteAssertionCategory,
-  generateTraceAssertions,
-  regenerateAssertion,
-  saveTraceAssertions,
-  getTraceAssertions,
-  listTraceAssertions,
-  archiveTraceAssertions,
-  listOrganizationMembers,
-  saveGrader,
-  listGraders,
-  saveDataset,
-  listDatasets,
-  addTracesToDataset,
-  removeTracesFromDataset,
-  addGradersToDataset,
-  removeGradersFromDataset,
-  rerunGradersOnDataset,
-  rerunGradersOnExperiment,
-  addGradersToExperiment,
-  removeGradersFromExperiment,
-  addGradersToExperimentGroup,
-  removeGradersFromExperimentGroup,
-  listExperiments,
-  listExperimentTraces,
-  getReplayStatus,
-  getTemplateReference,
-  getTemplate,
-  saveTemplate,
-  getSimPlan,
-  saveSimPlan,
-  getScenarioTemplate,
-  saveScenarioTemplate,
-  generateScenarioTemplate,
-  listScenarios,
-  getScenario,
-  saveScenario,
-  saveTraceCategories,
-  generateScenario,
-  generateScenarioAssertions
-];
-var TOOL_NAMES = ALL_TOOL_CONTRACTS.map((contract) => contract.name).sort();
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpProxy.js
-function errorResult(message) {
-  return {
-    content: [{ type: "text", text: message }],
-    isError: true
-  };
-}
-function parseSSEData(text) {
-  const dataLine = text.split("\n").find((line) => line.startsWith("data: "));
-  return dataLine ? dataLine.slice(6) : null;
-}
-async function parseResponse(response) {
-  const contentType = response.headers.get("content-type") ?? "";
-  if (contentType.includes("text/event-stream")) {
-    const text = await response.text();
-    const data = parseSSEData(text);
-    if (!data) {
-      throw new Error("Empty SSE response");
-    }
-    return JSON.parse(data);
-  }
-  return response.json();
-}
-var McpProxy = class {
-  sessionId = null;
-  platform;
-  pluginVersion;
-  constructor(platform, pluginVersion) {
-    this.platform = platform;
-    this.pluginVersion = pluginVersion;
-  }
-  async fetch(config2, method, params) {
-    const headers = {
-      ...buildBitfabRequestHeaders(config2.apiKey ?? "", this.pluginVersion, this.platform),
-      Accept: "application/json, text/event-stream"
-    };
-    if (this.sessionId) {
-      headers["mcp-session-id"] = this.sessionId;
-    }
-    const response = await fetch(`${config2.serviceUrl}/mcp`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
+  fresh() {
+    return new Promise((resolve2) => {
+      this.resolveWake = resolve2;
     });
-    const newSessionId = response.headers.get("mcp-session-id");
-    if (newSessionId) {
-      this.sessionId = newSessionId;
-    }
-    return response;
   }
-  async ensureSession(config2) {
-    if (this.sessionId) {
-      return;
-    }
-    const response = await this.fetch(config2, "initialize", {
-      protocolVersion: "2025-03-26",
-      capabilities: {},
-      clientInfo: {
-        name: `bitfab-${this.platform.cliBinary}-plugin`,
-        version: this.pluginVersion
-      }
-    });
-    if (!response.ok) {
-      throw new Error(`Initialize failed (${response.status})`);
-    }
-    await parseResponse(response);
+  get next() {
+    return this.pending;
   }
-  async toolCall(config2, toolName, args) {
-    if (config2.serviceUrl === DSM_NOT_STARTED_URL) {
-      return errorResult("No Bitfab dev server running in this worktree. Start one with /bitfab-dev:server (or `dsm up -p bitfab`).");
-    }
-    if (!config2.apiKey) {
-      return errorResult(`Not authenticated. Run ${this.platform.loginHint} to connect your Bitfab account.`);
-    }
-    try {
-      await this.ensureSession(config2);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return errorResult(`Failed to initialize Bitfab session: ${message}`);
-    }
-    let response;
-    try {
-      response = await this.fetch(config2, "tools/call", {
-        name: toolName,
-        arguments: args
-      });
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return errorResult(`Network error connecting to Bitfab: ${message}`);
-    }
-    if (response.status === 404) {
-      this.sessionId = null;
-      try {
-        await this.ensureSession(config2);
-        response = await this.fetch(config2, "tools/call", {
-          name: toolName,
-          arguments: args
-        });
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        return errorResult(`Failed to reconnect to Bitfab: ${message}`);
-      }
-    }
-    if (!response.ok) {
-      return errorResult(`Bitfab API error (${response.status}): ${await response.text().catch(() => "unknown")}`);
-    }
-    let data;
-    try {
-      data = await parseResponse(response);
-    } catch {
-      return errorResult("Failed to parse response from Bitfab API");
-    }
-    if (data.error) {
-      return errorResult(`Bitfab error: ${data.error.message}`);
-    }
-    return data.result ?? errorResult("Empty response from Bitfab API");
+  wake() {
+    this.resolveWake?.();
   }
-  getSessionId() {
-    return this.sessionId;
-  }
-  clearSession() {
-    this.sessionId = null;
+  reset() {
+    this.pending = this.fresh();
   }
 };
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpClient.js
-function createMcpClient(platform, pluginVersion) {
-  const proxy = new McpProxy(platform, pluginVersion);
-  const config2 = getConfig();
-  return {
-    call: (tool, args) => proxy.toolCall(config2, tool, args),
-    ensureSession: () => proxy.ensureSession(config2),
-    serviceUrl: config2.serviceUrl
-  };
+function snapshotKey(snapshot) {
+  return JSON.stringify(snapshot);
 }
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/waitForExperiment.js
-var WAIT_MINUTES_UNDER_TOOL_CALL_LIMIT = 9;
-var POLL_SECONDS = 10;
-var STILL_RUNNING_PREFIX = "STILL RUNNING:";
-var FINISHED_PREFIX = "FINISHED:";
-var MAX_TAGGED_EXPERIMENTS = 100;
-var LOOKUP_TIMEOUT_MS = 3e4;
-var FLAGS3 = [
-  {
-    name: "metadata",
-    description: "key=value tag passed to bitfab-replay with --metadata. Waits for the experiments carrying it, so cloud replays can be followed before their experiment IDs are known. Give every replay started together the same tag."
-  },
-  {
-    name: "count",
-    format: "number",
-    default: 1,
-    description: "With --metadata: how many tagged experiments to wait for (one per replay started with the tag)."
-  },
-  {
-    name: "max-minutes",
-    format: "number",
-    default: WAIT_MINUTES_UNDER_TOOL_CALL_LIMIT,
-    description: "Stop waiting after this many minutes, under a coding agent's ten-minute tool call limit, and say to run it again."
-  }
-];
-function parseMetadataFlag(raw) {
-  const separator = raw.indexOf("=");
-  if (separator <= 0 || separator === raw.length - 1) {
-    return null;
-  }
-  return { key: raw.slice(0, separator), value: raw.slice(separator + 1) };
+function progressTotal(status) {
+  return status.remainingCount === null ? null : status.finishedCount + status.remainingCount;
 }
-function parseExperimentIdArgs(args) {
-  const ids = args.flatMap((arg) => arg.split(",")).map((id) => id.trim()).filter((id) => id.length > 0);
-  const invalid = ids.find((id) => !UUID_RE.test(id));
-  if (invalid !== void 0) {
-    throw new Error(`"${invalid}" is not a valid experiment ID`);
-  }
-  return Array.from(new Set(ids.map((id) => id.toLowerCase())));
-}
-function describeProgress(status) {
-  const counted = status.remainingCount === null ? `${status.finishedCount} replayed` : `${status.finishedCount}/${status.finishedCount + status.remainingCount} replayed`;
-  return `${counted}, status ${status.status}`;
-}
-function tagLabel(tag) {
-  return `${tag.key}=${tag.value}`;
-}
-function waitArguments(target) {
-  const parts = [...target.experimentIds];
-  if (target.metadata) {
-    parts.push(`--metadata ${tagLabel(target.metadata)}`);
-    if (target.count > 1) {
-      parts.push(`--count ${target.count}`);
-    }
-  }
-  return parts.join(" ");
-}
-async function findTagged(target, known, tagged, deps) {
-  if (!target.metadata || tagged.size >= target.count) {
-    return;
-  }
-  const found = await deps.findByMetadata(target.metadata, Math.min(target.count, MAX_TAGGED_EXPERIMENTS));
-  for (const id of found) {
-    if (tagged.has(id)) {
-      continue;
-    }
-    tagged.add(id);
-    if (!known.has(id)) {
-      known.add(id);
-      deps.log(`[wait] Experiment ${id}: ${deps.experimentUrl(id)}`);
-    }
-  }
-}
-async function waitForExperiments(target, maxMs, deps, pollMs = POLL_SECONDS * 1e3) {
-  const deadline = deps.now() + maxMs;
-  const known = new Set(target.experimentIds);
-  const tagged = /* @__PURE__ */ new Set();
-  const statuses = /* @__PURE__ */ new Map();
+async function watchRunningExperiments(discoverMs, deps) {
+  const discoverUntil = deps.now() + discoverMs;
+  const createdAfter = discoverMs > 0 ? new Date(deps.now() - DISCOVER_CLOCK_SKEW_MS).toISOString() : null;
+  const names = /* @__PURE__ */ new Map();
   const lastProgress = /* @__PURE__ */ new Map();
-  let announcedSearch = false;
-  while (true) {
-    await findTagged(target, known, tagged, deps);
-    const missingTagged = target.metadata ? Math.max(0, target.count - tagged.size) : 0;
-    if (target.metadata && missingTagged > 0 && !announcedSearch) {
-      deps.log(`[wait] Waiting for ${missingTagged} more experiment(s) tagged ${tagLabel(target.metadata)}. A cloud replay creates its experiment once its GitHub run starts.`);
-      announcedSearch = true;
+  const isStalled = (id, status) => {
+    const now = deps.now();
+    const seen = lastProgress.get(id);
+    if (seen === void 0 || seen.finished !== status.finishedCount) {
+      lastProgress.set(id, { finished: status.finishedCount, at: now });
+      return false;
     }
-    for (const id of known) {
-      if (statuses.has(id) && statuses.get(id) !== "pending") {
+    const tracesLeft = status.remainingCount === null || status.remainingCount > 0;
+    return tracesLeft && now - seen.at >= STALL_AFTER_MS;
+  };
+  const finished = /* @__PURE__ */ new Map();
+  const waker = new Waker();
+  const streamAbort = new AbortController();
+  let streamState = "closed";
+  let lastEmitted = "";
+  let lastSnapshot = { running: [], finished: [] };
+  let failures = 0;
+  let lastRunningAt = null;
+  const onEvent = (event) => {
+    const tracked = names.has(event.experimentId);
+    const ours = event.agentSessionId === deps.agentSessionId;
+    if ((tracked || ours) && !finished.has(event.experimentId)) {
+      waker.wake();
+    }
+  };
+  const keepStreamOpen = async () => {
+    while (!streamAbort.signal.aborted) {
+      const outcome = await deps.openStream(onEvent, streamAbort.signal).catch(() => "ended");
+      if (outcome === "unavailable") {
+        streamState = "unavailable";
+        waker.wake();
+        return;
+      }
+      if (!streamAbort.signal.aborted) {
+        await deps.wait(STREAM_RETRY_MS, NEVER2);
+      }
+    }
+  };
+  const refresh = async () => {
+    const listed = await deps.listExperiments(createdAfter);
+    for (const experiment of listed) {
+      names.set(experiment.id, experiment.name);
+    }
+    const running = [];
+    for (const [id, name] of names) {
+      if (finished.has(id)) {
         continue;
       }
       const status = await deps.readStatus(id);
-      statuses.set(id, status.status);
-      const progress = describeProgress(status);
-      if (lastProgress.get(id) !== progress) {
-        deps.log(`[wait] ${id}: ${progress}`);
-        lastProgress.set(id, progress);
+      if (status.status === "pending") {
+        running.push({
+          id,
+          name,
+          finished: status.finishedCount,
+          total: progressTotal(status),
+          url: deps.experimentUrl(id),
+          stalled: isStalled(id, status)
+        });
+      } else {
+        finished.set(id, {
+          id,
+          name,
+          status: status.status,
+          url: deps.experimentUrl(id)
+        });
       }
     }
-    const experiments = [...known].map((experimentId) => ({
-      experimentId,
-      status: statuses.get(experimentId) ?? "pending"
-    }));
-    const allDone = experiments.every((e) => e.status !== "pending");
-    if (allDone && missingTagged === 0) {
-      return { kind: "finished", experiments };
+    return { running, finished: [...finished.values()] };
+  };
+  try {
+    while (true) {
+      waker.reset();
+      const refreshedAt = deps.now();
+      const refreshed = await refresh().catch((error62) => {
+        failures += 1;
+        if (failures >= MAX_CONSECUTIVE_REFRESH_FAILURES) {
+          throw error62;
+        }
+        return null;
+      });
+      if (refreshed !== null) {
+        failures = 0;
+        lastSnapshot = refreshed;
+      }
+      const snapshot = lastSnapshot;
+      const key = snapshotKey(snapshot);
+      if (refreshed !== null && key !== lastEmitted) {
+        deps.emit(snapshot);
+        lastEmitted = key;
+      }
+      if (refreshed !== null && snapshot.running.length > 0) {
+        lastRunningAt = deps.now();
+      }
+      const lookUntil = names.size > 0 && lastRunningAt !== null ? lastRunningAt + SETTLE_AFTER_FINISH_MS : discoverUntil;
+      const looking = deps.now() < lookUntil;
+      if (refreshed !== null && snapshot.running.length === 0 && !looking) {
+        return snapshot;
+      }
+      if (streamState === "closed") {
+        streamState = "open";
+        void keepStreamOpen();
+      }
+      const fallbackMs = streamState === "open" && refreshed !== null ? STREAM_FALLBACK_REFRESH_MS : POLL_FALLBACK_REFRESH_MS;
+      const untilDiscoveryEnds = snapshot.running.length === 0 ? Math.max(0, lookUntil - deps.now()) : fallbackMs;
+      await deps.wait(Math.min(fallbackMs, untilDiscoveryEnds), waker.next);
+      const sinceRefresh = deps.now() - refreshedAt;
+      if (sinceRefresh < MIN_REFRESH_GAP_MS) {
+        await deps.wait(MIN_REFRESH_GAP_MS - sinceRefresh, NEVER2);
+      }
     }
-    const remaining = deadline - deps.now();
-    if (remaining <= 0) {
-      return { kind: "still-running", experiments, missingTagged };
-    }
-    await deps.sleep(Math.min(pollMs, remaining));
+  } finally {
+    streamAbort.abort();
   }
 }
-function listResults(experiments) {
-  return experiments.map((e) => `  ${e.experimentId}: ${e.status}`);
-}
-function outcomeMessage(target, outcome) {
-  if (outcome.kind === "finished") {
-    const failed = outcome.experiments.filter((e) => e.status !== "completed");
-    const lines2 = [
-      `${FINISHED_PREFIX} ${outcome.experiments.length} experiment(s) finished.`,
-      ...listResults(outcome.experiments),
-      "Read their results now, in this same turn, with get_experiment and list_experiment_traces."
-    ];
-    if (failed.length > 0) {
-      lines2.push("For any that did not complete, read the replay's own output for the error, and get_replay_status for whether it is resumable, before running it again.");
-    }
-    return lines2;
+function isListedExperiment(value) {
+  if (typeof value !== "object" || value === null) {
+    return false;
   }
-  const pending = outcome.experiments.filter((e) => e.status === "pending");
-  const lines = [
-    `${STILL_RUNNING_PREFIX} ${pending.length + outcome.missingTagged} experiment(s) have not finished. Do not end your turn: run this command again with ${waitArguments(target)}, in the foreground.`,
-    ...listResults(outcome.experiments)
-  ];
-  if (outcome.missingTagged > 0) {
-    lines.push(`${outcome.missingTagged} tagged experiment(s) have not appeared. If one never does, read that replay's own output, or bitfab-replay --cloud-status <execution UUID> for a cloud replay, to see whether it failed before it started.`);
-  }
-  if (pending.length > 0) {
-    lines.push("First check that each local replay's process is still running: one that crashed leaves its experiment pending.");
-  }
-  return lines;
+  const record2 = value;
+  return typeof record2.id === "string" && (record2.name === null || typeof record2.name === "string");
 }
-async function readStatusFromMcp(client, experimentId) {
-  const result = await client.call(getReplayStatus.name, { experimentId });
-  const text = result.content.map((part) => part.text).join("\n");
-  if (result.isError) {
-    throw new Error(text);
+function parseExperimentEvent(message) {
+  if (message.event === null || !EXPERIMENT_EVENT_TYPES.has(message.event)) {
+    return null;
   }
-  return JSON.parse(text);
+  let parsed;
+  try {
+    parsed = JSON.parse(message.data);
+  } catch {
+    return null;
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    return null;
+  }
+  const data = parsed;
+  const experimentId = data.experimentId ?? data.testRunId;
+  if (typeof experimentId !== "string") {
+    return null;
+  }
+  const agentSessionId = data.experiment?.agentSessionId;
+  return {
+    experimentId,
+    agentSessionId: typeof agentSessionId === "string" ? agentSessionId : null
+  };
 }
-function isExperimentWithStatus(value) {
-  return typeof value === "object" && value !== null && typeof value.id === "string" && typeof value.status === "string";
+function fieldValue(line, field) {
+  return line.startsWith(`${field}:`) ? line.slice(field.length + 1).trimStart() : null;
 }
-async function listTaggedExperiments(serviceUrl, headers, tag, limit, timeoutMs = LOOKUP_TIMEOUT_MS) {
-  const params = new URLSearchParams({
-    metadata: JSON.stringify({ [tag.key]: tag.value }),
-    limit: String(limit)
+function splitSseData(buffer) {
+  const blocks = buffer.split(/\r?\n\r?\n/);
+  const rest = blocks.pop() ?? "";
+  const messages = blocks.flatMap((block) => {
+    const lines = block.split(/\r?\n/);
+    const data = lines.map((line) => fieldValue(line, "data")).filter((value) => value !== null).join("\n");
+    const event = lines.map((line) => fieldValue(line, "event")).find((value) => value !== null) ?? null;
+    return data.length > 0 ? [{ event, data }] : [];
   });
-  const response = await fetch(`${serviceUrl}/api/sdk/experiments?${params.toString()}`, { headers, signal: AbortSignal.timeout(timeoutMs) });
+  return { messages, rest };
+}
+async function readEventStream(url2, headers, onEvent, signal) {
+  const response = await fetch(url2, {
+    headers: { ...headers, Accept: "text/event-stream" },
+    signal
+  });
+  if (response.status === 404) {
+    return "unavailable";
+  }
+  if (!response.ok || response.body === null) {
+    return "ended";
+  }
+  const decoder = new TextDecoder();
+  const reader = response.body.getReader();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      return "ended";
+    }
+    buffer += decoder.decode(value, { stream: true });
+    const { messages, rest } = splitSseData(buffer);
+    buffer = rest;
+    for (const message of messages) {
+      const event = parseExperimentEvent(message);
+      if (event !== null) {
+        onEvent(event);
+      }
+    }
+  }
+}
+async function listExperimentsPage(serviceUrl, headers, filters) {
+  const params = new URLSearchParams({
+    ...filters,
+    limit: String(MAX_RUNNING_LISTED)
+  });
+  const response = await fetch(`${serviceUrl}/api/sdk/experiments?${params.toString()}`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
   if (!response.ok) {
-    throw new Error(`Bitfab returned ${response.status} looking up experiments tagged ${tagLabel(tag)}`);
+    throw new Error(`Bitfab returned ${response.status} listing experiments`);
   }
   const body = await response.json();
-  return (body.experiments ?? []).filter(isExperimentWithStatus).map((e) => ({ experimentId: e.id, status: e.status }));
+  return (body.experiments ?? []).filter(isListedExperiment).map((experiment) => ({ id: experiment.id, name: experiment.name }));
 }
-function parseWaitTarget(positional, flags) {
-  const metadataRaw = typeof flags.metadata === "string" ? flags.metadata : void 0;
-  const metadata = metadataRaw === void 0 ? void 0 : parseMetadataFlag(metadataRaw);
-  if (metadata === null) {
-    throw new Error(`--metadata expects key=value, got '${metadataRaw}'`);
-  }
-  const experimentIds = parseExperimentIdArgs(positional);
-  if (experimentIds.length === 0 && metadata === void 0) {
-    throw new Error("Pass experiment IDs or --metadata key=value.");
-  }
-  const count = Number(flags.count ?? 1);
-  if (!Number.isInteger(count) || count > MAX_TAGGED_EXPERIMENTS) {
-    throw new Error(`--count must be a whole number from 1 to ${MAX_TAGGED_EXPERIMENTS}`);
-  }
-  return { experimentIds, count, ...metadata ? { metadata } : {} };
-}
-async function runWaitForExperiment(platform, pluginVersion) {
-  const { positional, flags } = parseArgs({
-    positional: [
-      {
-        name: "experimentId",
-        required: false,
-        variadic: true,
-        description: "Experiment IDs that bitfab-replay printed, space- or comma-separated. Omit them and pass --metadata to find the experiments by their tag."
-      }
-    ],
-    flags: FLAGS3,
-    description: `Wait in the foreground until every given experiment finishes, printing progress. Exits after about ${WAIT_MINUTES_UNDER_TOOL_CALL_LIMIT} minutes so it stays under a tool call's time limit; when it prints ${STILL_RUNNING_PREFIX}, run it again.`
+async function listSessionExperimentsFromApi(serviceUrl, headers, agentSessionId, createdAfter) {
+  const pending = await listExperimentsPage(serviceUrl, headers, {
+    agentSessionId,
+    status: "pending"
   });
-  const target = parseWaitTarget(positional, flags);
+  if (createdAfter === null) {
+    return pending;
+  }
+  const recent = await listExperimentsPage(serviceUrl, headers, {
+    agentSessionId,
+    createdAfter
+  });
+  const byId = new Map([...pending, ...recent].map((experiment) => [experiment.id, experiment]));
+  return [...byId.values()];
+}
+async function readStatusFromApi(serviceUrl, headers, experimentId) {
+  const response = await fetch(`${serviceUrl}/api/sdk/replay/status`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ experimentId }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  });
+  if (!response.ok) {
+    throw new Error(`Bitfab returned ${response.status} reading experiment ${experimentId}`);
+  }
+  return await response.json();
+}
+var FLAGS3 = [
+  {
+    name: "agent-session-id",
+    description: "The coding agent session whose experiments to follow: only experiments launched from it are listed."
+  },
+  {
+    name: "discover-seconds",
+    format: "number",
+    default: 0,
+    description: "Keep looking this long for an experiment to start before exiting with none running. Use it right after starting a replay."
+  }
+];
+async function runWatchRunningExperiments(platform, pluginVersion) {
+  const { flags } = parseArgs({
+    positional: [],
+    flags: FLAGS3,
+    description: "Print the experiments running from one coding agent session as JSON, one line each time they change, and exit once none is running. Follows Bitfab's pushed experiment events while any runs, with a slow refresh as a fallback."
+  });
+  const agentSessionId = flags["agent-session-id"];
+  if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
+    throw new Error("Pass --agent-session-id <session id>.");
+  }
   const config2 = getConfig();
   if (!config2.apiKey) {
-    throw new Error(`Not authenticated. Run ${platform.loginHint} first.`);
+    console.log(JSON.stringify({ running: [], finished: [] }));
+    return;
   }
-  const client = createMcpClient(platform, pluginVersion);
   const headers = buildBitfabRequestHeaders(config2.apiKey, pluginVersion, platform);
   const serviceUrl = config2.serviceUrl.replace(/\/$/, "");
-  const maxMinutes = Number(flags["max-minutes"] ?? WAIT_MINUTES_UNDER_TOOL_CALL_LIMIT);
-  const outcome = await waitForExperiments(target, maxMinutes * 60 * 1e3, {
-    readStatus: (id) => readStatusFromMcp(client, id),
-    findByMetadata: async (tag, limit) => (await listTaggedExperiments(serviceUrl, headers, tag, limit)).map((e) => e.experimentId),
+  const discoverSeconds = Number(flags["discover-seconds"] ?? 0);
+  await watchRunningExperiments(discoverSeconds * 1e3, {
+    agentSessionId,
+    listExperiments: (createdAfter) => listSessionExperimentsFromApi(serviceUrl, headers, agentSessionId, createdAfter),
+    readStatus: (id) => readStatusFromApi(serviceUrl, headers, id),
     experimentUrl: (id) => `${serviceUrl}${buildExperimentsPath([id])}`,
-    log: (line) => console.log(line),
+    openStream: (onEvent, signal) => readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal),
+    emit: (snapshot) => console.log(JSON.stringify(snapshot)),
     now: () => Date.now(),
-    sleep: (ms) => new Promise((resolve2) => setTimeout(resolve2, ms))
+    wait: (ms, wake) => Promise.race([
+      wake,
+      new Promise((resolve2) => setTimeout(resolve2, ms))
+    ])
   });
-  for (const line of outcomeMessage(target, outcome)) {
-    console.log(line);
-  }
-  const anyFailed = outcome.kind === "finished" && outcome.experiments.some((e) => e.status !== "completed");
-  if (anyFailed) {
-    process.exitCode = 1;
-  }
+  process.exit(0);
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
-import fs11 from "node:fs";
+import fs9 from "node:fs";
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/index.js
 import { execFileSync } from "node:child_process";
@@ -32553,12 +31588,6 @@ function localOffsetPath(sessionId) {
 }
 function ampTranscriptPath(sessionId) {
   return path7.join(sessionsDir(), `${sessionId}.transcript.jsonl`);
-}
-function replayWaitsPath(sessionId) {
-  return path7.join(sessionsDir(), `${sessionId}.replay-waits.json`);
-}
-function replayLaunchesPath(sessionId) {
-  return path7.join(sessionsDir(), `${sessionId}.replay-launches.jsonl`);
 }
 var BITFAB_MCP_PREFIXES = [
   "mcp__plugin_bitfab_Bitfab__",
@@ -33130,283 +32159,10 @@ function readGitBranch(cwd) {
   }
 }
 
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/replayStopGuard.js
-import fs10 from "node:fs";
-import path10 from "node:path";
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpInstructions.js
-import fs9 from "node:fs";
-import path9 from "node:path";
-var MCP_INSTRUCTIONS_LIMIT = 4096;
-var WAIT_COMMAND_FILE = "waitForExperiment.js";
-var WAIT_COMMAND_FALLBACK = `<plugin dir>/dist/commands/${WAIT_COMMAND_FILE}`;
-function findWaitCommand(serverEntry) {
-  if (serverEntry === void 0) {
-    return WAIT_COMMAND_FALLBACK;
-  }
-  let dir = path9.dirname(path9.resolve(serverEntry));
-  while (true) {
-    const candidate = path9.join(dir, "commands", WAIT_COMMAND_FILE);
-    if (fs9.existsSync(candidate)) {
-      return candidate;
-    }
-    const parent = path9.dirname(dir);
-    if (parent === dir) {
-      return WAIT_COMMAND_FALLBACK;
-    }
-    dir = parent;
-  }
-}
-function buildMcpInstructions(platform, waitCommand = WAIT_COMMAND_FALLBACK) {
-  const instructions = renderMcpInstructions(platform, waitCommand);
-  if (instructions.length <= MCP_INSTRUCTIONS_LIMIT) {
-    return instructions;
-  }
-  return renderMcpInstructions(platform, WAIT_COMMAND_FALLBACK);
-}
-function renderMcpInstructions(platform, waitCommand) {
-  return `Bitfab records traces of AI agent runs and helps the user improve the code that produced them.
-There is no special command for this work: use these tools and the SDK's commands.
-
-Replaying traces against the current code:
-- A replay runs a trace's recorded inputs through the current code via the SDK's \`bitfab-replay\` command, not these tools.
-- It needs a replay registry (\`scripts/replayRegistry.*\`, \`scripts/replay_registry.*\`, or \`cmd/registry/main.go\`); \`${platform.setupHint}\` creates one if missing.
-- Run it from the project directory. TypeScript: \`pnpm exec bitfab-replay --registry <registry-path> <trace-function-key> --dataset-id <dataset-id>\`. Python: \`uv run\` or \`poetry run bitfab-replay ...\`. Ruby: \`bundle exec bitfab-replay ...\`. Go: \`go run ./cmd/registry <trace-function-key> ...\`.
-- Every replay needs \`--code-change\`: \`working-tree\`, \`last-branch\`, \`default-branch\`, \`ref\` with \`--code-change-base <branch|sha>\`, \`skip\`, or \`manual\` with \`--code-change-file <path>\`. Ask if unclear.
-- \`--trace-ids <id>,<id>\` replays specific traces; with \`--dataset-id\`, as a subset of that dataset. \`--attempts <n>\` repeats each trace. \`--cloud\` runs it on GitHub Actions. \`--help\` lists every option.
-- Each replay creates an experiment. ${getReplayStatus.name} reports its progress. If it stopped early, resume it with the same command plus \`--resume <experiment-id>\`, minus the flags that pick traces.
-
-Recording a fresh run of a trace:
-- \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` reruns the function on a trace's inputs under the same trace ID. It runs side effects for real, so warn the user first.
-
-Waiting for replays:
-- Keep your turn open until your replays finish. Start each in the background, all with one \`--metadata bitfab-wait=<new-uuid>\` (plus \`--cloud-detach\` with \`--cloud\`). Then wait in the foreground, never the background: \`node ${waitCommand} --metadata bitfab-wait=<uuid> --count <replays>\`, and rerun it until it prints FINISHED.
-
-Fixing a dataset's failing traces:
-- After a dataset replay, ${listExperimentTraces.name} ends with the flags that rerun only the failing traces as a subset.
-- \`--only-drafts\` with \`--dataset-id\` replays only the dataset traces with a draft assertion.
-- Fix and rerun that subset until it passes. Then replay the whole dataset once to check nothing else broke.
-
-Experiment groups:
-- Every replay needs \`--experiment-group-id\`: one series of runs testing one thing. Reuse one from ${listExperimentGroups.name} for the same thing, else a new UUID; group by what is tested, not session or branch.
-- Name each run with \`--name\` (what changed) and each new group with \`--experiment-group-name\` (what it tests); name unnamed ones with ${saveExperiment.name} or ${saveExperimentGroup.name}.
-- Compare against an earlier run with \`--baseline-experiment-id <experiment-id>\` or ${saveExperiment.name}.
-- Read results with ${listExperiments.name}, ${listExperimentGroups.name}, ${getExperiment.name}, and ${listExperimentTraces.name}. Report what improved and regressed against the baseline.
-
-Finding out what happened:
-- Find the traced function with ${listTraceFunctions.name} and its traces with ${searchTraces.name}. Read them with ${getTraces.name}, and read a long value with ${getSpanField.name}.
-
-Writing down what should happen:
-- An assertion says what should happen when a trace is replayed: draft with ${generateTraceAssertions.name}, write with ${saveTraceAssertions.name} (drafts until confirmed), retire with ${archiveTraceAssertions.name}.
-- A verdict says whether a run passed an assertion: read assertions with ${getTraceAssertions.name}, record yours with ${saveAgentVerdicts.name}; ${saveHumanVerdicts.name} is only for the user's own.
-- A scenario describes one run's situation: read with ${getScenario.name}, build with ${saveScenario.name}.
-
-Building datasets:
-- Datasets (traces replayed together): ${listDatasets.name}, ${saveDataset.name}, ${addTracesToDataset.name}.
-
-Use \`${platform.setupHint}\` to instrument code, set up replay or cloud replay, log in, or switch organization. Use \`${platform.updateHint}\` to update the plugin or SDK.`;
-}
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/replayStopGuard.js
-var WAIT_TAG_KEY = "bitfab-wait";
-var GUARD_MAX_MINUTES = 60;
-var GUARD_MAX_BLOCKS = 6;
-var GUARD_LOOKUP_TIMEOUT_MS = 5e3;
-var MAX_TRACKED_REPLAYS = 100;
-var REPLAY_TAG_RE = new RegExp(`--metadata(?:=|\\s+)["']?${WAIT_TAG_KEY}=([A-Za-z0-9._:-]+)`);
-function commandText(toolInput) {
-  if (typeof toolInput !== "object" || toolInput === null) {
-    return "";
-  }
-  const command = toolInput.command;
-  if (typeof command === "string") {
-    return command;
-  }
-  if (Array.isArray(command)) {
-    return command.filter((part) => typeof part === "string").join(" ");
-  }
-  return "";
-}
-function findReplayTags(toolInput) {
-  return commandText(toolInput).split("bitfab-replay").slice(1).filter((launch) => !launch.includes("--resume")).map((launch) => REPLAY_TAG_RE.exec(launch)?.[1]).filter((tag) => tag !== void 0);
-}
-function trackedFromLaunches(launches, state) {
-  const byTag = /* @__PURE__ */ new Map();
-  for (const launch of launches) {
-    byTag.set(launch.tag, [...byTag.get(launch.tag) ?? [], launch]);
-  }
-  const tracked = [];
-  for (const [tag, tagLaunches] of byTag) {
-    const cleared = state[tag]?.clearedLaunches ?? 0;
-    const uncleared = tagLaunches.slice(cleared);
-    if (uncleared.length === 0) {
-      continue;
-    }
-    tracked.push({
-      tag,
-      replays: Math.min(tagLaunches.length, MAX_TRACKED_REPLAYS),
-      firstSeenMs: Math.min(...uncleared.map((launch) => launch.atMs)),
-      blocks: state[tag]?.blocks ?? 0
-    });
-  }
-  return tracked;
-}
-function nextGuardState(state, launches, tracked, remaining) {
-  const next = { ...state };
-  for (const entry of tracked) {
-    const kept = remaining.find((r) => r.tag === entry.tag);
-    next[entry.tag] = kept ? {
-      blocks: kept.blocks,
-      clearedLaunches: state[entry.tag]?.clearedLaunches ?? 0
-    } : {
-      blocks: 0,
-      clearedLaunches: launches.filter((l) => l.tag === entry.tag).length
-    };
-  }
-  return next;
-}
-function isPastGuardLimits(entry, nowMs) {
-  return nowMs - entry.firstSeenMs > GUARD_MAX_MINUTES * 60 * 1e3 || entry.blocks >= GUARD_MAX_BLOCKS;
-}
-async function countUnfinished(entry, deps) {
-  try {
-    const found = await deps.listTagged({ key: WAIT_TAG_KEY, value: entry.tag }, entry.replays);
-    const pending = found.filter((e) => e.status === "pending").length;
-    return pending + Math.max(0, entry.replays - found.length);
-  } catch {
-    return null;
-  }
-}
-function blockMessage(stillRunning, waitCommand) {
-  const commands = stillRunning.map(({ entry }) => {
-    const count = entry.replays > 1 ? ` --count ${entry.replays}` : "";
-    return `node ${waitCommand} --metadata ${WAIT_TAG_KEY}=${entry.tag}${count}`;
-  });
-  const unfinished = stillRunning.reduce((sum, s2) => sum + s2.unfinished, 0);
-  return [
-    `${unfinished} Bitfab replay(s) you started have not finished. Do not end your turn yet.`,
-    `Wait for them in the foreground, never the background: ${commands.join(" ; then ")}.`,
-    "Rerun it until it prints FINISHED, then read the results in this turn."
-  ].join(" ");
-}
-async function evaluateStop(tracked, waitCommand, deps) {
-  const nowMs = deps.nowMs();
-  const remaining = [];
-  const stillRunning = [];
-  for (const entry of tracked) {
-    if (isPastGuardLimits(entry, nowMs)) {
-      continue;
-    }
-    const unfinished = await countUnfinished(entry, deps);
-    if (unfinished === 0) {
-      continue;
-    }
-    if (unfinished === null) {
-      remaining.push(entry);
-      continue;
-    }
-    const blocked = { ...entry, blocks: entry.blocks + 1 };
-    remaining.push(blocked);
-    stillRunning.push({ entry: blocked, unfinished });
-  }
-  return {
-    message: stillRunning.length === 0 ? null : blockMessage(stillRunning, waitCommand),
-    remaining
-  };
-}
-function stopHookOutput(agent, message) {
-  if (agent === "cursor") {
-    return { followup_message: message };
-  }
-  return { decision: "block", reason: message };
-}
-function isReplayLaunch(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const launch = value;
-  return typeof launch.tag === "string" && typeof launch.atMs === "number";
-}
-function isTagGuardState(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const entry = value;
-  return typeof entry.blocks === "number" && typeof entry.clearedLaunches === "number";
-}
-function parseLaunchLine(line) {
-  try {
-    const parsed = JSON.parse(line);
-    return isReplayLaunch(parsed) ? parsed : null;
-  } catch {
-    return null;
-  }
-}
-function readLaunches(sessionId) {
-  try {
-    return fs10.readFileSync(replayLaunchesPath(sessionId), "utf-8").split("\n").map(parseLaunchLine).filter((launch) => launch !== null);
-  } catch {
-    return [];
-  }
-}
-function readGuardState(sessionId) {
-  try {
-    const parsed = JSON.parse(fs10.readFileSync(replayWaitsPath(sessionId), "utf-8"));
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-      return {};
-    }
-    return Object.fromEntries(Object.entries(parsed).filter(([, entry]) => isTagGuardState(entry)));
-  } catch {
-    return {};
-  }
-}
-function writeGuardState(sessionId, state) {
-  const file2 = replayWaitsPath(sessionId);
-  fs10.mkdirSync(path10.dirname(file2), { recursive: true });
-  fs10.writeFileSync(file2, JSON.stringify(state));
-}
-function recordReplayLaunches(sessionId, toolInput) {
-  const tags = findReplayTags(toolInput);
-  if (tags.length === 0) {
-    return;
-  }
-  const file2 = replayLaunchesPath(sessionId);
-  const atMs = Date.now();
-  fs10.mkdirSync(path10.dirname(file2), { recursive: true });
-  fs10.appendFileSync(file2, tags.map((tag) => `${JSON.stringify({ tag, atMs })}
-`).join(""));
-}
-async function guardStop(sessionId, agent, hookEntry) {
-  const launches = readLaunches(sessionId);
-  const state = readGuardState(sessionId);
-  const tracked = trackedFromLaunches(launches, state);
-  if (tracked.length === 0) {
-    return null;
-  }
-  const config2 = getConfig();
-  if (!config2.apiKey) {
-    writeGuardState(sessionId, nextGuardState(state, launches, tracked, []));
-    return null;
-  }
-  const apiKey = config2.apiKey;
-  const serviceUrl = config2.serviceUrl.replace(/\/$/, "");
-  const result = await evaluateStop(tracked, findWaitCommand(hookEntry), {
-    listTagged: (tag, limit) => listTaggedExperiments(serviceUrl, { Authorization: `Bearer ${apiKey}` }, tag, limit, GUARD_LOOKUP_TIMEOUT_MS),
-    nowMs: () => Date.now()
-  });
-  writeGuardState(sessionId, nextGuardState(state, launches, tracked, result.remaining));
-  return result.message === null ? null : stopHookOutput(agent, result.message);
-}
-
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
-var HOSTS_THAT_KEEP_THE_TURN_OPEN = /* @__PURE__ */ new Set([
-  "claude-code",
-  "codex",
-  "cursor"
-]);
 function readHookStdin() {
   try {
-    const raw = fs11.readFileSync(0, "utf-8").trim();
+    const raw = fs9.readFileSync(0, "utf-8").trim();
     if (!raw) {
       return null;
     }
@@ -33415,36 +32171,16 @@ function readHookStdin() {
     return null;
   }
 }
-function recordLaunches(hookType, input2, agent) {
-  if (hookType !== "PreToolUse" || !HOSTS_THAT_KEEP_THE_TURN_OPEN.has(agent)) {
-    return;
-  }
-  try {
-    recordReplayLaunches(input2.session_id, input2.tool_input);
-  } catch {
-  }
-}
-async function guardTurnEnd(hookType, input2, agent) {
-  if (hookType !== "Stop" || !HOSTS_THAT_KEEP_THE_TURN_OPEN.has(agent)) {
-    return;
-  }
-  const output2 = await guardStop(input2.session_id, agent, process.argv[1]);
-  if (output2 !== null) {
-    process.stdout.write(JSON.stringify(output2));
-  }
-}
 async function runCaptureHook(hookType, agent = "claude-code", preParsedInput, pluginVersion) {
   const input2 = preParsedInput ?? readHookStdin();
   if (!input2?.session_id) {
     return;
   }
-  recordLaunches(hookType, input2, agent);
   await captureFromHook(hookType, input2, agent, pluginVersion).catch(() => void 0);
-  await guardTurnEnd(hookType, input2, agent).catch(() => void 0);
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/userPromptSubmit.js
-import fs12 from "node:fs";
+import fs10 from "node:fs";
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/trackSkill.js
 async function runTrackSkill(skillName, pluginVersion, platform) {
@@ -33473,7 +32209,7 @@ async function runTrackSkill(skillName, pluginVersion, platform) {
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/userPromptSubmit.js
 function readHookInput() {
   try {
-    const stdin = fs12.readFileSync(0, "utf-8");
+    const stdin = fs10.readFileSync(0, "utf-8");
     if (!stdin.trim()) {
       return null;
     }
@@ -33956,8 +32692,8 @@ function getErrorMap2() {
 
 // _target/node_modules/.pnpm/zod@4.6.7/node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
-  const { data, path: path12, errorMaps, issueData } = params;
-  const fullPath = [...path12, ...issueData.path || []];
+  const { data, path: path10, errorMaps, issueData } = params;
+  const fullPath = [...path10, ...issueData.path || []];
   const fullIssue = {
     ...issueData,
     path: fullPath
@@ -34072,11 +32808,11 @@ var errorUtil;
 
 // _target/node_modules/.pnpm/zod@4.6.7/node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-  constructor(parent, value, path12, key) {
+  constructor(parent, value, path10, key) {
     this._cachedPath = [];
     this.parent = parent;
     this.data = value;
-    this._path = path12;
+    this._path = path10;
     this._key = key;
   }
   get path() {
@@ -37627,11 +36363,11 @@ function normalizeObjectSchema(schema) {
   }
   return void 0;
 }
-function getDotPath(path12) {
-  if (path12.length === 0) {
+function getDotPath(path10) {
+  if (path10.length === 0) {
     return "object root";
   }
-  return path12.reduce((acc, seg, index) => {
+  return path10.reduce((acc, seg, index) => {
     if (index === 0) {
       return String(seg);
     }
@@ -43277,11 +42013,11 @@ var DEPRECATED_TOOL_NAMES = {
   create_dataset: "save_dataset",
   add_grader_to_experiment_group: "add_graders_to_experiment_group"
 };
-function isRecord2(value) {
+function isRecord(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function rewriteRenamedToolArguments(deprecatedName, args) {
-  if (deprecatedName !== "add_grader_to_experiment_group" || !isRecord2(args)) {
+  if (deprecatedName !== "add_grader_to_experiment_group" || !isRecord(args)) {
     return args;
   }
   const { graderId, ...rest } = args;
@@ -43305,7 +42041,7 @@ var DEPRECATED_ARGUMENT_NAMES = {
 };
 function rewriteArgumentNames(toolName, args) {
   const renames = DEPRECATED_ARGUMENT_NAMES[toolName];
-  if (!renames || !isRecord2(args)) {
+  if (!renames || !isRecord(args)) {
     return { args, deprecatedNames: [], changed: false };
   }
   const rewritten = { ...args };
@@ -43327,11 +42063,11 @@ function rewriteArgumentNames(toolName, args) {
   return changed ? { args: rewritten, deprecatedNames, changed } : { args, deprecatedNames, changed };
 }
 function rewriteMessage(message) {
-  if (!isRecord2(message) || message.method !== "tools/call") {
+  if (!isRecord(message) || message.method !== "tools/call") {
     return { message, deprecatedNames: [], changed: false };
   }
   const params = message.params;
-  if (!isRecord2(params) || typeof params.name !== "string") {
+  if (!isRecord(params) || typeof params.name !== "string") {
     return { message, deprecatedNames: [], changed: false };
   }
   const renamedTo = DEPRECATED_TOOL_NAMES[params.name];
@@ -43367,9 +42103,1067 @@ function installDeprecatedToolCallRewrites(protocolServer) {
   protocolServer._requestHandlers.set(method, (request, extra) => originalHandler(rewriteMessage(request).message, extra));
 }
 
+// _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/mcpContract.js
+var DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+function parseDateOnly(value) {
+  const [year, month, day] = value.split("-").map(Number);
+  const date5 = /* @__PURE__ */ new Date(0);
+  date5.setHours(0, 0, 0, 0);
+  date5.setFullYear(year, month - 1, day);
+  return date5;
+}
+var dateOnlyStringSchema = external_exports.string().regex(DATE_PATTERN, "Must be YYYY-MM-DD format").refine((value) => {
+  const [year, month, day] = value.split("-").map(Number);
+  const date5 = parseDateOnly(value);
+  return date5.getFullYear() === year && date5.getMonth() === month - 1 && date5.getDate() === day;
+}, "Must be a valid calendar date");
+var GET_TRACE_VERDICTS_MAX_IDS = 100;
+var GET_TRACES_DEFAULT_SPAN_LIMIT = 50;
+var SPAN_READ_MAX_RESPONSE_CHARS = 32e3;
+var GET_TRACES_MAX_SPAN_LIMIT = 200;
+var GET_TRACES_MAX_SPAN_NAMES = 50;
+var spanTypeSchema = external_exports.enum([
+  "llm",
+  "agent",
+  "function",
+  "guardrail",
+  "handoff",
+  "custom"
+]);
+var spanFieldSchema = external_exports.enum([
+  "input",
+  "output",
+  "reasoning",
+  "content",
+  "errors",
+  "contexts"
+]);
+var GET_TRACE_ASSERTIONS_MAX_IDS = 100;
+var MAX_ASSERTIONS_PER_REQUEST = 50;
+var MAX_ASSIGNEE_EMAIL_LENGTH = 320;
+var GET_GRADER_VERDICTS_MAX_IDS = 100;
+var DEFAULT_GRADER_VERDICT_LIMIT = 50;
+var MAX_GRADER_VERDICT_LIMIT = 200;
+var SAVE_GRADER_VERDICTS_MAX_ENTRIES = 200;
+function parseJsonString(val) {
+  if (typeof val !== "string") {
+    return val;
+  }
+  try {
+    return JSON.parse(val);
+  } catch {
+    return val;
+  }
+}
+function toolConfig(contract) {
+  return {
+    title: contract.title,
+    description: contract.description,
+    inputSchema: external_exports.strictObject(contract.inputSchema)
+  };
+}
+function isRecord2(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function appendToolParameterWarning(result, warning) {
+  if (!isRecord2(result) || !Array.isArray(result.content)) {
+    return result;
+  }
+  return {
+    ...result,
+    content: [...result.content, { type: "text", text: warning }]
+  };
+}
+var ASSERTION_STATUS_VALUES = '"draft" (was "pending"), "confirmed" (was "approved"), or "rejected"';
+function renamedAssertionStatusRefusal(args) {
+  if ("approvalStates" in args) {
+    return `approvalStates was renamed to statuses. Send statuses instead, with ${ASSERTION_STATUS_VALUES}.`;
+  }
+  const entries = parseJsonString(args.assertions);
+  if (Array.isArray(entries) && entries.some((entry) => isRecord2(entry) && "approvalState" in entry)) {
+    return `approvalState was renamed to status. Send status on each assertion instead, with ${ASSERTION_STATUS_VALUES}.`;
+  }
+  return null;
+}
+function installToolParameterWarnings(protocolServer, contracts, receiver) {
+  const method = "tools/call";
+  const originalHandler = protocolServer._requestHandlers.get(method);
+  if (!originalHandler) {
+    throw new Error("Cannot install tool parameter warnings before tools register");
+  }
+  const contractsByName = new Map(contracts.map((toolContract) => [toolContract.name, toolContract]));
+  protocolServer._requestHandlers.set(method, async (request, extra) => {
+    if (!isRecord2(request) || !isRecord2(request.params)) {
+      return originalHandler(request, extra);
+    }
+    const { name, arguments: args } = request.params;
+    if (typeof name !== "string" || !isRecord2(args)) {
+      return originalHandler(request, extra);
+    }
+    const toolContract = contractsByName.get(name);
+    if (!toolContract) {
+      return originalHandler(request, extra);
+    }
+    const refusal = renamedAssertionStatusRefusal(args);
+    if (refusal !== null) {
+      return { content: [{ type: "text", text: refusal }], isError: true };
+    }
+    const supportedNames = new Set(Object.keys(toolContract.inputSchema));
+    const unsupportedNames = Object.keys(args).filter((key) => !supportedNames.has(key));
+    if (unsupportedNames.length === 0) {
+      return originalHandler(request, extra);
+    }
+    const supportedArgs = Object.fromEntries(Object.entries(args).filter(([key]) => supportedNames.has(key)));
+    const result = await originalHandler({
+      ...request,
+      params: { ...request.params, arguments: supportedArgs }
+    }, extra);
+    const parameterLabel = unsupportedNames.length === 1 ? "parameter" : "parameters";
+    return appendToolParameterWarning(result, `Warning: ${receiver} ignored unsupported ${parameterLabel} for ${name}: ${unsupportedNames.join(", ")}. Update Bitfab if you expected ${unsupportedNames.length === 1 ? "it" : "them"} to take effect.`);
+  });
+}
+var getBitfabApiKey = {
+  name: "get_bitfab_api_key",
+  title: "Get Bitfab API Key",
+  description: "Get your Bitfab API key for SDK initialization. Returns the plaintext key to use in environment variables. The SDK setup reference (install commands, initialization, instrumentation patterns) lives at https://docs.bitfab.ai; fetch pages as plain markdown by appending .md (TypeScript: /typescript-sdk.md, Python: /python-sdk.md, Ruby: /ruby-sdk.md, Go: /go-sdk.md), or fetch https://docs.bitfab.ai/llms.txt for the full page index. Read the relevant page when setting up.",
+  inputSchema: {}
+};
+var getApiKeyContext = {
+  name: "get_api_key_context",
+  title: "Get API Key Context",
+  description: "Returns which Bitfab org this API key reads from and writes to (it can differ from the org open in the user's Bitfab tab). Call before the first MCP write of a session, and whenever the user says data you just wrote isn't visible in their Bitfab: the `Organization:` field is the answer to 'which org should I switch the Bitfab to?'.",
+  inputSchema: {}
+};
+var listOrganizations = {
+  name: "list_organizations",
+  title: "List Organizations",
+  description: "Lists the Bitfab organizations the signed-in user belongs to, marking the one the plugin currently reads and writes ([current]). Use this to answer 'which org can I switch to?' or before switching the plugin's active org. Each entry includes the org id to pass to the switchOrg plugin command (which performs the switch and replaces the local API key).",
+  inputSchema: {}
+};
+var getDatabaseConnectionStatus = {
+  name: "get_database_connection_status",
+  title: "Get Database Connection Status",
+  description: "Check whether this organization has connected a database for per-trace snapshot replay (DB branching). Returns one of: connected (ready - replay can branch the database to each trace's capture time), checking (provisioning in progress, poll again in ~15s), failed (the saved connection could not be provisioned), or none (no database connected yet). Connected integrations identify their type as direct Neon or managed Postgres mirror; direct Neon connections also include the pinned project name and ID. Use this during db-branching setup to wait until the customer's database is connected before enabling dbSnapshot.",
+  inputSchema: {}
+};
+var listTraceFunctions = {
+  name: "list_trace_functions",
+  title: "List Trace Functions",
+  description: "List all traced functions in your organization. Use this to discover which functions are instrumented with the Bitfab SDK.",
+  inputSchema: {}
+};
+var searchTraces = {
+  name: "search_traces",
+  title: "Search Traces",
+  description: "Search and filter traces for a traced function. Returns matching traces with IDs, status, timestamps, total duration (ms), total token usage (in/out/cached/total), model, and output preview (all when available). Replay traces (from experiments) carry the same totals. Use get_traces for per-span duration, tokens, time-to-first-token, and model. Supports keyword search, date range, status filter, and regex matching. Use drillDown to refine previous results.",
+  inputSchema: {
+    traceFunctionKey: external_exports.string().describe("The trace function key to search"),
+    searchQuery: external_exports.string().optional().describe("Full-text keyword search"),
+    status: external_exports.enum(["pending", "completed", "failed"]).optional().describe("Filter by trace status"),
+    createdAfter: dateOnlyStringSchema.optional().describe("Only traces after this date (YYYY-MM-DD)"),
+    createdBefore: dateOnlyStringSchema.optional().describe("Only traces before this date (YYYY-MM-DD)"),
+    traceFilterRegex: external_exports.string().optional().describe("Regex to filter trace output"),
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max traces to return (default 10, max 50)"),
+    drillDown: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("If true, merge with previous search filters to narrow results"),
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid())).optional().describe("Specific trace IDs to fetch"),
+    environment: external_exports.string().optional().describe("Filter by environment (e.g., production, staging, development, preview). Omit to search across all environments."),
+    callerMetadata: external_exports.record(external_exports.string().regex(/^[A-Za-z0-9_.:-]{1,40}$/), external_exports.string().max(500)).refine((value) => Object.keys(value).length <= 10).transform((value) => Object.fromEntries(Object.entries(value).map(([key, item]) => [
+      key.toLowerCase(),
+      item.toLowerCase()
+    ]))).optional().describe("Filter by up to 10 caller metadata key/value pairs. Matches exact values case-insensitively; all pairs must match."),
+    name: external_exports.string().trim().min(1).max(256).transform((value) => value.toLowerCase()).optional().describe("Filter by the trace's name, the title set by setName or seedTrace. Matches the name's words in order, so 'Order ABC' also matches 'Order ABC 123', and it matches whole words rather than inside a word. Case-insensitive. Use nameContains to match inside a word or on a partial word."),
+    nameContains: external_exports.string().trim().min(3).max(256).transform((value) => value.toLowerCase()).optional().describe("Filter by any part of the trace's name, including inside a word, matched case-insensitively. Needs at least 3 characters. Use name instead to match whole words in order."),
+    verdictSource: external_exports.enum(["human", "agent", "bitfab_judge"]).optional().describe('Filter by who gave the verdict: "human" for verdicts a person gave, "agent" for verdicts a coding agent gave (save_agent_verdicts or the SDKs), "bitfab_judge" for verdicts Bitfab\'s assertion judge gave. Omit to include any source. This filters on authorship only; for trust, use the separate `validated` parameter.'),
+    labelSource: external_exports.enum(["human", "agent", "bitfab_judge"]).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdictSource. Ignored when verdictSource is also sent."),
+    validated: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe('If true, only return traces with a validated verdict: one a person gave, or one an agent gave that a person has confirmed (`confirmedAt` is set). Use this when you want verdicts someone has reviewed. Combine with `verdictSource: "agent"` to get only confirmed agent verdicts (leaving out the ones a person gave). Omit (or pass false) to include unconfirmed verdicts too.'),
+    verdictResult: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Filter by verdict: true for passing verdicts, false for failing verdicts"),
+    labelResult: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdictResult. Ignored when verdictResult is also sent."),
+    includeReplays: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Include replayed traces (traces from experiments) in results. Defaults to false because replays have new inputs, not the original production inputs, so they're not useful when selecting traces to judge or when sampling real user behavior. Set to true only when you specifically want to inspect replay results."),
+    experimentId: external_exports.uuid().optional().describe("Filter to traces from a specific experiment ID. Automatically sets includeReplays to true."),
+    datasetId: external_exports.uuid().optional().describe("Filter to traces belonging to a specific dataset. Combine with other filters (status, verdictResult, etc.) to narrow within the dataset."),
+    hasDbSnapshot: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Filter by whether the trace captured a database snapshot reference. true returns only traces that can be replayed against a pinned historical DB branch (the 'Snapshot captured' traces); false returns only traces with no snapshot. Omit to include both.")
+  }
+};
+var getTraces = {
+  name: "get_traces",
+  title: "Get Traces",
+  description: `Read one or more traces by ID. Includes inputs, outputs, status, environment tag, trace-level duration (ms), token usage (in/out/cached/total), and model (when available). Use these to compare latency and cost between a trace and its replay. Returns span details (input, output, reasoning, content, context, errors) plus per-span duration, tokens, time-to-first-token, and model when available. Use \`scope: "summary"\` when scanning many traces to keep the response small; \`scope: "full"\` when you need the complete untruncated detail of a few traces. Spans come back one page at a time (${GET_TRACES_DEFAULT_SPAN_LIMIT} per trace by default) and the whole response is capped in size, so it always fits in context. When a trace has more spans than one page, the response lists every span name and span type with its count and says which spanOffset reads the next page: narrow with spanNames (only spans with those names), spanTypes (only spans of those types, e.g. ["llm"] for the model calls) and spanFields (only those fields) rather than paging through thousands of spans, and fetch any one truncated field in full with get_span_field. To load only verdicts + annotations for many traces at once (no span content), use get_trace_verdicts instead.`,
+  inputSchema: {
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(10)).describe("Trace IDs to read (1-10)"),
+    scope: external_exports.enum(["summary", "full"]).optional().default("summary").describe('Level of span detail. "summary" (default) renders the same span structure as full but caps each span (its fields share a ~1500-char budget) and each trace-level field (~2000 chars), and leaves out any span field over 10k chars, printing its size instead (name it in spanFields to preview it anyway, or read it in full with get_span_field): prefer it when scanning or identifying candidate traces. "full" renders every field untruncated up to 10k chars each, with no per-span ceiling, until the response size cap: use it when you need complete detail on a handful of spans, ideally narrowed with spanNames.'),
+    spanNames: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.string().min(1)).min(1).max(GET_TRACES_MAX_SPAN_NAMES)).optional().describe("Only show spans whose name exactly matches one of these. A trace with more spans than one page lists its span names and counts, so read that list first and pass the names you need. Omit to show every span."),
+    spanTypes: external_exports.preprocess(parseJsonString, external_exports.array(spanTypeSchema).min(1).max(spanTypeSchema.options.length)).optional().describe('Only show spans of these types: llm (model calls), agent, function, guardrail, handoff, custom. Pass ["llm"] with spanLimit: 1 to read just the first model call, including its input. Combined with spanNames, a span must match both. Omit to show every type.'),
+    spanOffset: external_exports.preprocess(parseJsonString, external_exports.number().int().min(0)).optional().describe("Skip this many spans in each trace, counted after the spanNames and spanTypes filters (default 0). The response says which offset reads the next page."),
+    spanLimit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(GET_TRACES_MAX_SPAN_LIMIT)).optional().describe(`Show at most this many spans per trace (default ${GET_TRACES_DEFAULT_SPAN_LIMIT}, max ${GET_TRACES_MAX_SPAN_LIMIT}). The response size cap can stop a page early, and says so when it does.`),
+    spanFields: external_exports.preprocess(parseJsonString, external_exports.array(spanFieldSchema).max(6)).optional().describe("Only show these span fields (input, output, reasoning, content, errors, contexts). Omit to show all of them, with fields over 10k chars left out in summary scope. A field named here is previewed even when it is large. Pass [] to list spans with only their name, ID, duration, tokens, and model, which is the cheapest way to see a large trace's shape.")
+  }
+};
+var getTraceVerdicts = {
+  name: "get_trace_verdicts",
+  title: "Get Trace Verdicts",
+  description: `Read just the verdicts for one or more traces by ID: returns each trace's pass/fail verdict, its annotation (the reviewer's reasoning), its saved { spanId, text } evidence, and whether the verdict is human-validated (a person gave or confirmed it). Per-assertion verdicts follow on indented lines, one per assertion, keyed by the assertionId the write used, each with its own verdict, annotation, evidence, confidence, and author, so a verdict written per assertion reads back per assertion rather than as a tally. A verdict reads ABSTAINED when the judge could not find the evidence the assertion needed: it counts as a fail in the passed/failed tally and the trace's verdict, and the tally also says how many of the fails were abstentions, so you can tell judge coverage from the agent's behavior. No span content, inputs, or outputs are loaded, so the response is small and one call accepts up to ${GET_TRACE_VERDICTS_MAX_IDS} IDs. Use this to load a whole dataset's verdicts into context in a single call (e.g. when building or confirming a dataset). When you need a trace's actual inputs/outputs/spans, use get_traces instead. This returns verdicts on runs that already happened; for what a trace SHOULD do on its next replay, use get_trace_assertions.`,
+  inputSchema: {
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(GET_TRACE_VERDICTS_MAX_IDS)).describe(`Trace IDs to read verdicts for (1-${GET_TRACE_VERDICTS_MAX_IDS})`)
+  }
+};
+var generateVerdictEvidence = {
+  name: "generate_verdict_evidence",
+  title: "Generate Verdict Evidence",
+  description: "Suggest span-by-span evidence that could support a verdict on one assertion on a specific evaluated trace. Pass the original or replay trace being judged; an inherited assertion is checked against that replay's spans. The service narrows the selected trace to spans relevant to the assertion, then returns evidence items with traceId, assertionId, spanId, text, spanName, signature-only parameters (names and runtime types, never values), spanType, and isMocked. Use get_trace_assertions to obtain assertion IDs. Saved `{ spanId, text }` evidence is read with get_trace_verdicts instead.",
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The original or replay trace whose spans should be evaluated."),
+    assertionId: external_exports.uuid().describe("The assertion the evidence would support.")
+  }
+};
+var getSpanField = {
+  name: "get_span_field",
+  title: "Get Span Field",
+  description: `Fetch the COMPLETE, untruncated value of a single span field. get_traces truncates or leaves out large span fields and prints a note telling you to call this when you need the full text. Pass the traceId, the spanId (the \`[ID: ...]\` shown for that span in get_traces output), and the field to retrieve. Returns up to ${SPAN_READ_MAX_RESPONSE_CHARS} chars per call so the response fits in context; when the field is longer, the response says which offset reads the next part. Prefer this over re-reading the whole trace when you only need one large field in full.`,
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The trace ID the span belongs to"),
+    spanId: external_exports.uuid().describe("The span ID to read, taken from the `[ID: ...]` shown for the span in get_traces output"),
+    field: spanFieldSchema.describe("Which span field to return in full: input, output, reasoning, content, errors, or contexts"),
+    maxChars: external_exports.preprocess(parseJsonString, external_exports.number().int().positive()).optional().describe(`Maximum characters to return (default and upper limit ${SPAN_READ_MAX_RESPONSE_CHARS}). Larger values are treated as ${SPAN_READ_MAX_RESPONSE_CHARS}.`),
+    offset: external_exports.preprocess(parseJsonString, external_exports.number().int().min(0)).optional().describe("Character position to start reading from (default 0). Pass the offset a previous response gave to read the next part of a long field.")
+  }
+};
+var getSpan = {
+  name: "get_span",
+  title: "Get Span",
+  description: `Read one span from its span ID alone, with no trace ID: the span's output, and the trace and traced function it belongs to, so you can follow up with get_traces, get_span_field, or get_trace_assertions. Accepts the Bitfab span ID (the \`[ID: ...]\` get_traces prints) or the span ID your code's SDK sent. The output is returned up to ${SPAN_READ_MAX_RESPONSE_CHARS} chars per call; when it is longer, the response says which offset reads the next part. A span that cannot be found names the organization that was searched, because a span from another organization reads as not found: switch organizations and try again.`,
+  inputSchema: {
+    spanId: external_exports.string().trim().min(1).max(256).describe("The span ID: Bitfab's span ID, or the span ID your code's SDK sent"),
+    maxChars: external_exports.preprocess(parseJsonString, external_exports.number().int().positive()).optional().describe(`Maximum characters of the span's output to return (default and upper limit ${SPAN_READ_MAX_RESPONSE_CHARS}). Larger values are treated as ${SPAN_READ_MAX_RESPONSE_CHARS}.`),
+    offset: external_exports.preprocess(parseJsonString, external_exports.number().int().min(0)).optional().describe("Character position in the span's output to start reading from (default 0). Pass the offset a previous response gave to read the next part of a long output.")
+  }
+};
+var verdictEvidenceShape = external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
+  spanId: external_exports.uuid(),
+  text: external_exports.string().trim().min(1).max(1e4)
+})).min(1).max(50));
+var confidenceShape = external_exports.enum(["VeryLow", "Low", "Medium", "High", "VeryHigh"]);
+var MAX_VERDICTS_PER_REQUEST = 200;
+var agentVerdictEntryShape = external_exports.object({
+  traceId: external_exports.uuid().optional().describe("The trace ID to update. Provide this OR originalTraceId, not both."),
+  assertionId: external_exports.uuid().optional().describe("The assertion this verdict scores, taken from the `[ID: ...]` get_trace_assertions prints. Required unless `archive` is true: verdicts are never written directly on a trace. A replay may name an assertion it inherited from the original trace it was replayed from."),
+  originalTraceId: external_exports.uuid().optional().describe("For replay verdicts: the original trace ID the replay item was replayed from (the replay item's originalTraceId). The server resolves it to the replay trace via lineage, so you never need a server replay trace id. Requires the top-level experimentId. Provide this OR traceId, not both."),
+  sourceTraceId: external_exports.uuid().optional().meta({ deprecated: true }).describe("Deprecated alias for originalTraceId. Prefer originalTraceId; accepted for back-compat."),
+  attempt: external_exports.number().int().min(0).optional().describe("For replay verdicts on an experiment that ran each trace more than once: which attempt of originalTraceId this verdict is for (0-based, the replay item's attempt). Defaults to 0, so single-attempt callers never need it."),
+  verdict: external_exports.enum(["pass", "fail", "abstained"]).optional().describe('"pass" or "fail" for your judgment of the assertion. "abstained" when the evidence does not show the part of the run this assertion checks, so there was nothing to judge: it counts as a FAIL in every pass rate but is stored and shown as an abstention, apart from a fail. Required unless `archive` or `skip` is true.'),
+  label: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict. true is "pass", false is "fail". Refused when verdict is also sent.'),
+  abstain: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict "abstained".'),
+  archive: external_exports.boolean().optional().describe("If true, archive the existing agent verdict on this assertion and ignore verdict/annotation/skip/confidence. Default false."),
+  skip: external_exports.boolean().optional().describe("If true, record an explicit skip (cannot judge) and ignore verdict/confidence. Pass `annotation` alongside it to record why the verdict was withheld. Default false."),
+  annotation: external_exports.string().min(1).optional().describe('Your reasoning, shown to the human reviewer beside the verdict. Required for a "pass" or "fail" verdict. Optional alongside `skip: true`, where it says why the verdict was withheld, and alongside verdict "abstained", where it says what the evidence would have had to show.'),
+  confidence: confidenceShape.optional().describe('How confident you are in this verdict: VeryLow / Low / Medium / High / VeryHigh. Shown beside the verdict; low-confidence verdicts are put first for human review. Optional; only meaningful with a "pass" or "fail" verdict.'),
+  evidence: verdictEvidenceShape.nullable().optional().describe("Span-by-span evidence for this verdict. Omit it to preserve existing evidence. Pass null to clear existing evidence.")
+});
+var saveAgentVerdicts = {
+  name: "save_agent_verdicts",
+  title: "Save Agent Verdicts",
+  description: "Set, skip, abstain on, or archive the agent's pass/fail verdict on one or more of a trace's confirmed assertions (`verdictSource=\"agent\"`). Every verdict, skip, and abstention scores ONE assertion and must carry its `assertionId` (the `[ID: ...]` get_trace_assertions prints). Verdicts are only ever written on assertions, never directly on a trace: a trace with no confirmed assertions gets no verdict, so add assertions first (save_trace_assertions) or report your judgment in the conversation. Use this AFTER you have read the traces with get_traces and decided yourself whether each one looks like a pass, a fail, or genuinely cannot be judged. To set a verdict, pass `verdict` (\"pass\" or \"fail\") and `annotation` (your reasoning, shown to the human reviewer beside the verdict). Add `evidence` as `{ spanId, text }` entries to ground that reasoning in spans on the evaluated trace. Optionally pass `confidence` (`VeryLow|Low|Medium|High|VeryHigh`) to record how confident you are, shown beside the verdict so reviewers can look at low-confidence verdicts first. To explicitly skip an assertion you cannot decide on (instead of leaving it with no verdict), pass `skip: true` and omit verdict. That records an explicit skip so coverage checks know you intentionally did not judge it, and `annotation` still applies: pass it to say why the verdict was withheld (the check never ran, the tape was punctured, the run never terminated), which is the only place a reader learns that. A skip with no annotation clears the note the previous verdict carried, so a stale reason never sits under a withheld verdict. When you read the trace and the evidence does not show the part of the run the assertion checks at all (the message it sent, the call it made, the answer it gave), so nothing can confirm or deny the assertion, pass `verdict: \"abstained\"`. That is counted as a FAIL in every pass rate, since anything short of an evidenced pass is a fail, but it is stored and shown as an abstention so a reader sees judge coverage rather than the agent's behavior; `annotation` says what the evidence would have had to show. Abstaining is not a skip: a skip is for a check that never ran, an abstention is for a check that ran and found nothing to judge. To clear a previously-set agent verdict (e.g., you changed your mind or judged the wrong trace), pass `archive: true` and omit verdict/annotation; an archive may omit `assertionId` to clear an old whole-trace agent verdict. A verdict counts as soon as it is written; there is no confirmation step, and a person can override it with their own verdict. You can also give a verdict on an assertion Bitfab's judge already decided (shown with source `bitfab_judge`): yours is saved beside the judge's and becomes the one counted, unless a person gave one, and archiving yours makes the judge's count again. Archiving is non-destructive: the row is hidden from all reads but kept for audit, and you can immediately judge the assertion again from scratch. For replay results, key each verdict by the replay item's `originalTraceId` (the original trace it was replayed from; `sourceTraceId` is accepted as a deprecated alias) plus the top-level `experimentId` instead of a `traceId`: the server resolves it to the replay trace via lineage, so you never need a server-generated replay trace id. When the experiment ran each trace more than once, also pass the item's `attempt` so each attempt gets its own verdict. Returns an agent-readable summary with one parseable effective verdict line per entry you sent (so a trace scored on several assertions gets one line per assertion), keyed by the id you supplied (`originalTraceId` for replay verdicts, otherwise `traceId`), so command callers can verify persistence. Before judging a replay, call get_trace_assertions on the original trace ids: an assertion says what the user asked this specific case to do, so the verdict is measured against that rather than a guess. When an assertion's target cannot be found on the trace you are judging, the check never ran, so pass `skip: true` for that assertion rather than recording a FAIL. Send one entry per assertion, all in the same call. get_trace_verdicts reads these back one line per assertion, keyed by the same assertionId, so a per-assertion write is verifiable per assertion. The old `labels` array, with `label` (true or false) and `abstain` on each entry, is still accepted.",
+  inputSchema: {
+    experimentId: external_exports.uuid().optional().describe("The experiment ID. Required when any verdict targets a trace by originalTraceId (replay verdicts); ignored otherwise."),
+    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(agentVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().describe(`One entry per confirmed assertion, each carrying its assertionId; an archive entry may omit it (1-${MAX_VERDICTS_PER_REQUEST}). Required unless the deprecated labels is sent.`),
+    labels: external_exports.preprocess(parseJsonString, external_exports.array(agentVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdicts. Refused when verdicts is also sent.")
+  }
+};
+var humanVerdictEntryShape = external_exports.object({
+  traceId: external_exports.uuid().describe("The trace ID the verdict is on"),
+  assertionId: external_exports.uuid().describe("The assertion this verdict scores, taken from the `[ID: ...]` get_trace_assertions prints. Required: verdicts are never written directly on a trace."),
+  verdict: external_exports.enum(["pass", "fail"]).optional().describe('"pass" or "fail". Required unless the deprecated label is sent. A person never abstains.'),
+  label: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict. true is "pass", false is "fail". Refused when verdict is also sent.'),
+  annotation: external_exports.string().min(1).describe("The reasoning behind the verdict. Required."),
+  confidence: confidenceShape.optional().describe("How confident the verdict is: VeryLow / Low / Medium / High / VeryHigh. Optional."),
+  evidence: verdictEvidenceShape.nullable().optional().describe("Span-by-span evidence for this verdict. Omit it to preserve existing evidence. Pass null to clear existing evidence.")
+});
+var saveHumanVerdicts = {
+  name: "save_human_verdicts",
+  title: "Save Human Verdicts",
+  description: "Record one or more pass/fail verdicts a person gave, which are VALIDATED immediately (`verdictSource=\"human\"`), on one or more of a trace's confirmed assertions. Unlike save_agent_verdicts (the agent's own verdicts), verdicts set here join the validated dataset the instant they are written and satisfy `search_traces` with `validated: true`. Pass `verdict` (\"pass\" or \"fail\"), `annotation` (the reasoning behind the verdict), and optionally `evidence` as `{ spanId, text }` entries grounded in the evaluated trace. Optionally pass `confidence` (`VeryLow|Low|Medium|High|VeryHigh`). USE ONLY when a person has explicitly decided the verdict, for example saving a known production bug as a test case. This records a verdict on a run that already happened; to record what a trace should do on its next replay, use save_trace_assertions. Do NOT use this for the agent's own first-pass guesses; use save_agent_verdicts for those. Every entry must carry the `assertionId` of the ONE assertion the person judged (the `[ID: ...]` get_trace_assertions prints), one entry per assertion. A person's verdict on an assertion Bitfab's judge already decided is saved beside the judge's and becomes the one counted; the judge's stays readable with source `bitfab_judge`. Verdicts are never written directly on a trace, so a trace with no confirmed assertions needs assertions first (save_trace_assertions). get_trace_verdicts reads these back one line per assertion, keyed by the same assertionId, so a per-assertion write is verifiable per assertion. The old `labels` array, with `label` (true or false) on each entry, is still accepted.",
+  inputSchema: {
+    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(humanVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().describe(`One entry per confirmed assertion, each carrying its assertionId (1-${MAX_VERDICTS_PER_REQUEST}). Required unless the deprecated labels is sent.`),
+    labels: external_exports.preprocess(parseJsonString, external_exports.array(humanVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdicts. Refused when verdicts is also sent.")
+  }
+};
+var externalAssertionVerdictEntryShape = external_exports.object({
+  assertionId: external_exports.uuid().describe("The external assertion this verdict scores, taken from the `[ID: ...]` get_trace_assertions prints. The trace is the one the assertion is on, so no trace ID is needed."),
+  attempt: external_exports.number().int().min(0).optional().describe("With experimentId, on an experiment that ran each trace more than once: which attempt this verdict is for (0-based). Defaults to 0."),
+  verdict: external_exports.enum(["pass", "fail"]).describe('"pass" or "fail".'),
+  annotation: external_exports.string().min(1).optional().describe("The reasoning behind the verdict. Optional."),
+  confidence: confidenceShape.optional().describe("How confident the verdict is: VeryLow / Low / Medium / High / VeryHigh. Optional."),
+  evidence: verdictEvidenceShape.nullable().optional().describe("Span-by-span evidence for this verdict. Omit it to preserve existing evidence. Pass null to clear existing evidence.")
+});
+var saveAssertionVerdicts = {
+  name: "save_assertion_verdicts",
+  title: "Save Assertion Verdicts",
+  description: `Record verdicts for EXTERNAL assertions: assertions created with save_trace_assertions \`kind: "external"\`, which Bitfab never judges because the user evaluates the trace somewhere else (their own eval harness, CI, a review queue). Key each verdict by \`assertionId\` alone: the server finds the trace the assertion is on. For a replay, also pass the top-level \`experimentId\` (and \`attempt\` when the experiment ran each trace more than once), and the verdict is saved on that experiment's replay of the assertion's trace. The verdict is stored where Bitfab's judge would store its own, so it counts in every pass rate as soon as it is written, with no confirmation step; a person's verdict (save_human_verdicts) or an agent's (save_agent_verdicts) on the same assertion still counts over it. Saving again for the same assertion and trace replaces the earlier verdict. Rejects any assertion that is not external, since Bitfab decides those itself, and any assertion that is not confirmed. Up to ${MAX_VERDICTS_PER_REQUEST} entries per call; the whole call is rejected if any entry is invalid.`,
+  inputSchema: {
+    experimentId: external_exports.uuid().optional().describe("For replay verdicts: the experiment whose replay of each assertion's trace the verdicts are on. Omit it for verdicts on the trace the assertion is on."),
+    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(externalAssertionVerdictEntryShape).min(1).max(MAX_VERDICTS_PER_REQUEST)).describe(`One entry per external assertion (1-${MAX_VERDICTS_PER_REQUEST}).`)
+  }
+};
+var assertionTargetShape = external_exports.discriminatedUnion("kind", [
+  external_exports.object({ kind: external_exports.literal("output") }).describe("Check only the trace's final output, ignoring everything that happened on the way there."),
+  external_exports.object({
+    kind: external_exports.literal("span"),
+    name: external_exports.string().min(1).describe(`The span's name as it appears on the trace being evaluated, e.g. "search_flights". Names only, never span ids: an id belongs to one trace, so an id read off the original resolves to nothing on its replay and the check would never run.`),
+    occurrence: external_exports.union([
+      external_exports.literal("first"),
+      external_exports.literal("last"),
+      external_exports.number().int().min(0)
+    ]).optional().describe('Which call to check when the trace runs that span more than once, e.g. a retry loop. "first", "last" (the default), or a 0-based index. Leave it off unless the repetition matters.')
+  }).describe("Check one span by name rather than the whole trace, e.g. that a particular tool call was made with the right arguments.")
+]).describe('SCOPE: what part of the trace under evaluation this assertion is checked against. OMIT IT for the whole trace, which is the common case and the right default when unsure. On an edit, omitting it keeps the current scope, and passing null returns the assertion to the whole trace. Pass { "kind": "output" } to check only the final output, or { "kind": "span", "name": "..." } to check one span. Scoping narrows what a judge looks at, so a wrong scope hides real failures. A target naming something the evaluated trace does not contain makes the check ERRORED, never passed, because a check that could not run must never look like a check that succeeded.');
+var assertionKindShape = external_exports.enum(["bitfab", "external"]).describe(`KIND: optional, and only on the call that creates the assertion. Omit it (or send "bitfab") for the normal case: Bitfab decides the assertion on every replay, with its code where it has some and the LLM judge otherwise. Send "external" when the user's own system evaluates the trace (their eval harness, CI, a review queue): Bitfab never judges an external assertion, it takes no code, and the user posts each verdict with save_assertion_verdicts. An assertion's kind never changes after it is created, so sending a different kind on an edit is refused; omit it on an edit.`);
+var assertionCodeShape = external_exports.object({
+  source: external_exports.string().trim().min(1).max(2e4).describe('Body of an async function in plain JavaScript, with no type annotations, called with `spans` (every span of the run in start order, each { name, index, hasData } without its data), `input`, and `output` (the run\'s root input and output). Read span data with `await named("span name")`, which returns the spans with that name with { name, index, input, output, metadata }, or `await span.data()`. Count or order spans from `spans` without loading data. It returns "pass", "fail", or "defer", or { result, reason } with a short reason. Return "pass" or "fail" when the facts the code read settle the assertion, and "defer" to hand the run to the LLM judge, for example when the part the code can read holds and the rest needs reading what text means. A defer may carry data, { result: "defer", reason, data }, with the values the code found that the judge needs to decide, such as the sent email\'s subject and body; the judge reads the reason and data alongside the run. A thrown error counts as "defer" with no data. Copy ids, recipients, and times from the trace as literals, never match the wording of prose, and guard every read so it never throws on a missing field. It runs in a sandbox with no network, files, or timers, gets one second of compute, and may load the data of at most 50 spans within ten seconds.'),
+  spanNames: external_exports.array(external_exports.string().min(1)).max(50).describe("Every span name the code expects a correct run to produce. Leave out names it only checks did not run. When one of these is missing from a replay and from the other replays sampled for the same function, the code is reported as broken rather than failing the replay.")
+}).describe(`CODE: optional. Passes or fails this assertion from the trace's spans where it can, and defers the rest to the LLM judge, so replays it decides cost no judge call and give the same verdict every time. Write it only when facts a program reads settle the claim, or a necessary part of it: which spans ran and how often, argument and output values, ordering, or an exact literal in a message. Leave it off when deciding needs reading meaning throughout. Bitfab decides whether an assertion should have code, and drafts it, after saving one without code. The code is run on this trace before it is saved, and refused with the reason when it throws, times out, or returns anything other than "pass", "fail", or "defer". On an edit, omit it to keep the current code, and pass null to remove it.`);
+var justificationShape = external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
+  spanId: external_exports.uuid().describe("The span this reason comes from, taken from the `[ID: ...]` shown for that span in get_traces output."),
+  text: external_exports.string().trim().min(1).max(1e4).describe("What that span shows, in one or two sentences.")
+})).min(1).max(50)).describe("Evidence: one entry per span you are relying on, each with its own reason, so a reviewer can open the span and check the claim. Quote what the span actually shows rather than restating the assertion. 1-50 entries.");
+var ASSERTION_STATUS_DESCRIPTION = 'Status to record on an assertion that already exists, so it needs that assertion\'s `id` and is refused on a new one: write it first, then decide it, so putting a claim into force is never the same call that made it up. "confirmed" means it holds up, so replays start checking it and it counts as validated; "rejected" means it does not, so replays keep ignoring it; "draft" returns it to a draft and clears who decided it. Omit to leave the current status alone. Confirming decides what every later replay of the trace is judged against, so read the assertion and the spans it cites before deciding, and put what you checked in the justification.';
+var optionalAssertionStatus = () => external_exports.enum(["draft", "confirmed", "rejected"]).optional().describe(ASSERTION_STATUS_DESCRIPTION);
+var saveCategory = {
+  name: "save_category",
+  title: "Save Category",
+  description: "Create or edit a category shared within this organization. A category groups assertions and scenarios. Returns its ID, which save_trace_assertions takes as category_id. Omit id to create. Pass an existing id to edit. Omit description on an edit to preserve it. Pass an empty description to clear it. Editing the title or description returns every assertion filed under it to draft.",
+  inputSchema: {
+    id: external_exports.uuid().optional().describe("Existing category ID to edit. Omit to create a category."),
+    title: external_exports.string().trim().min(1).describe("The category title."),
+    description: external_exports.string().optional().describe("What the assertions and scenarios in this category have in common. Omit on an edit to preserve it. Pass an empty string to clear it.")
+  }
+};
+var listCategories = {
+  name: "list_categories",
+  title: "List Categories",
+  description: "List the categories in this organization with their IDs, titles, and descriptions. Use a returned ID as category_id in save_trace_assertions.",
+  inputSchema: {}
+};
+var listOrganizationMembers = {
+  name: "list_organization_members",
+  title: "List Organization Members",
+  description: "List the people in this organization, each with their name and email. Call it before save_trace_assertions when routing an assertion to a reviewer, so `assigneeEmail` carries an address someone here actually holds rather than a guess: an email belonging to nobody in the organization fails that call. It also names who confirmed or wrote an assertion when a read shows only an email. This is the organization the API key belongs to, so it takes no arguments.",
+  inputSchema: {}
+};
+var getCategory = {
+  name: "get_category",
+  title: "Get Category",
+  description: "Read one category in this organization by ID, including its title and description.",
+  inputSchema: { id: external_exports.uuid().describe("ID of the category to read.") }
+};
+var deleteCategory = {
+  name: "delete_category",
+  title: "Delete Category",
+  description: "Delete a category from this organization. The assertions and scenarios filed under it are kept and lose only that category. Existing verdicts are kept.",
+  inputSchema: { id: external_exports.uuid().describe("ID of the category to delete.") }
+};
+function deprecatedAlias(current, name, title) {
+  return {
+    ...current,
+    name,
+    title,
+    description: `Deprecated: use ${current.name}, which does the same thing. ${current.description}`
+  };
+}
+var saveAssertionCategory = deprecatedAlias(saveCategory, "save_assertion_category", "Save Assertion Category");
+var listAssertionCategories = deprecatedAlias(listCategories, "list_assertion_categories", "List Assertion Categories");
+var getAssertionCategory = deprecatedAlias(getCategory, "get_assertion_category", "Get Assertion Category");
+var deleteAssertionCategory = deprecatedAlias(deleteCategory, "delete_assertion_category", "Delete Assertion Category");
+var getTraceLabels = deprecatedAlias(getTraceVerdicts, "get_trace_labels", "Get Trace Labels");
+var generateLabelEvidence = deprecatedAlias(generateVerdictEvidence, "generate_label_evidence", "Generate Label Evidence");
+var saveAgentLabels = deprecatedAlias(saveAgentVerdicts, "save_agent_labels", "Save Agent Labels");
+var saveHumanLabels = deprecatedAlias(saveHumanVerdicts, "save_human_labels", "Save Human Labels");
+var generateTraceAssertions = {
+  name: "generate_trace_assertions",
+  title: "Generate Trace Assertions",
+  description: 'Generate review-ready assertion drafts from what one original trace actually did. Call this when the user asks Bitfab to generate assertions, infer expected behavior from a trace, or turn a known root cause into regression checks. Bitfab reads the organization\'s existing categories, selects the categories supported by trace evidence, and generates assertions one category at a time. The generated assertions are saved as drafts, so they are not checked on replays until a person confirms them. Read them back with get_trace_assertions and `statuses: ["draft"]`. Generation runs on Bitfab and this call waits up to four minutes for it. If it is still running after that, the result says so, and calling again with the same traceId and without regenerate checks on it. A trace has one generation at a time, so a repeat call joins the running or finished generation instead of spending model calls again, and regenerate while one is running joins that one too. Set regenerate to true after it finishes to archive the prior generated drafts and replace them. A failed generation is returned as an error with its reason. Human-authored assertions are never replaced. Pass guidance when the user knows what the assertions should be about, most often a root cause analysis of why the trace was wrong; it narrows the evidence and produces smaller assertions. Pass categoryIds to limit generation to those categories. A replay trace id is refused because assertions belong to the original trace.',
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The ORIGINAL trace to generate assertions for. A replay trace id is refused, and the error names the original to retry with."),
+    guidance: external_exports.string().trim().min(1).max(1e4).optional().describe("Optional assertion guidance, such as a root cause analysis of why the trace went wrong. Use it to focus generation on the smallest assertions that would catch this failure."),
+    categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1)).optional().describe("Optional category ids from list_categories. Limits generation to these categories. Omit to let Bitfab choose from every category in the organization. An id outside the organization fails the call before any work starts."),
+    regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to rerun generation and replace prior generated drafts. Omit or set false to reuse the existing generation result.")
+  }
+};
+var regenerateAssertion = {
+  name: "regenerate_assertion",
+  title: "Regenerate Assertion",
+  description: "Have Bitfab write one existing assertion again, and save the new wording in place of the old. Call this when the user names one assertion that is wrong, vague, or checks the wrong thing and wants Bitfab to write it again, optionally saying how with guidance. Pass only the assertion's id: Bitfab finds the trace it belongs to, reads that trace's input, what the recorded run did, the spans the assertion's justification cites, and the trace's other assertions, then writes a new claim with its code hints and no pass or fail criteria. The assertion keeps its id, trace, category, assignee, human note, and justification. Everything else is saved as if it were a new assertion: the wording and code hints are replaced and any pass and fail criteria removed, and it is saved without code, so any code it had is dropped, along with the span it was limited to and every verdict given on the old wording. It always goes back to draft, even when it was confirmed or rejected, so it is not checked on replays until a person confirms it again, in Bitfab or with save_trace_assertions `status`. After this call returns, Bitfab decides whether code can check the new wording and writes that code, the same as for any new assertion. The response names the trace and gives the new assertion and code hints, the old wording, and what changed. To replace every generated draft on a trace, use generate_trace_assertions with regenerate. To write the new wording yourself, use save_trace_assertions. An archived assertion is refused.",
+  inputSchema: {
+    assertionId: external_exports.uuid().describe("The assertion to write again, from get_trace_assertions or list_trace_assertions. It must be an active assertion in this organization."),
+    guidance: external_exports.string().trim().min(1).max(1e4).optional().describe("Optional instruction for the new wording, such as what the current assertion gets wrong, what it should check instead, or a root cause analysis of why the trace went wrong. Omit to have Bitfab check the same behavior and write it better.")
+  }
+};
+var saveTraceAssertions = {
+  name: "save_trace_assertions",
+  title: "Save Trace Assertions",
+  description: `Record what SHOULD happen when this trace is replayed. Bitfab stores two kinds of record on a trace. A VERDICT says how a run that already happened turned out, and that is save_agent_verdicts / save_human_verdicts. An ASSERTION, which is what this tool writes, says what a correct run looks like for THIS specific input, carries no pass/fail of its own, and is checked against a later replay once a reviewer confirms it. A trace holds any number of assertions, and each verdict is recorded on one of them. Call it when the user describes the right answer for a particular case, for example "this booking should have picked the 6am flight, not the 9am". This is not a verdict on a run that already happened, which is save_agent_verdicts,. Pass \`assertion\`, stated specifically enough that a judge needs nothing else, plus optional \`codeHints\`: pointers for whoever writes code to check it, such as which span holds the answer, which the judge never reads. \`passCriteria\` / \`failCriteria\` are deprecated and still accepted. \`humanNote\` stores people-only context on the assertion; preserve and return it, but never use it to judge whether a replay passed. \`assigneeEmail\` names the member who should review it, which routes the assertion to that person without deciding anything, so it never changes the status. Pass an entry's \`id\` to edit an existing assertion, or omit it to add a new one, so two callers adding different assertions to one trace never overwrite each other. What this tool writes is saved as a draft, so nothing checks it yet; a reviewer confirms it, in Bitfab or with \`status\` on a later call here, and from then on every replay of the trace is judged against it. \`status\` decides an assertion that already exists, so deciding one is \`{ id, status }\` with nothing else: an omitted \`assertion\` keeps the current wording. It is refused on a new assertion, so the call that invents a claim is never the call that puts it into force. One decision covers the assertion and the category it is filed under, so set \`category_id\` and \`status\` in the same entry when you are deciding both; recategorizing on a later call without deciding returns it to draft, since the confirmation covered the old category. What it gates is whether replays check the assertion at all, so decide from the assertion and the spans it cites rather than from memory of having written it. Rewording an assertion, or changing its criteria, target, or category, returns it to draft unless the same call says otherwise; changing only its code hints does not. Call get_trace_assertions first to find the assertion to edit and to avoid creating a duplicate, and read them back before judging a replay, where it lists the confirmed ones by default. Pass it \`statuses: ["draft"]\` to read back drafts, including the ones you just wrote. Each assertion with new text is checked against the writing rules and rewritten when it breaks one, unless \`guidedRewrite\` is false, so read the response for what was saved and for any claim to save separately. Up to ${MAX_ASSERTIONS_PER_REQUEST} per call.`,
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The ORIGINAL trace to attach assertions to. A replay trace id is refused, and the error names the original to retry with, because a replay reads its original's assertions automatically."),
+    assertions: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
+      id: external_exports.uuid().optional().describe("Id of an existing assertion to edit, from a previous save or from get_trace_assertions. Omit to add a new one."),
+      category_id: external_exports.uuid().nullish().describe("Category ID from save_category or list_categories. Omit on an edit to preserve the category. Pass null to remove it."),
+      category_assertion_id: external_exports.uuid().nullish().describe("Deprecated: the old name for category_id. Ignored when category_id is also sent."),
+      assertion: external_exports.string().min(1).optional().describe("The single thing that must hold, in one sentence, stated so a reader who has never seen this trace could check it, e.g. 'The itinerary returned lands before 9am local time'. One claim per assertion: if you are about to write 'and', write two assertions instead, so each can pass or fail on its own. The replay gets this trace's input and world unchanged, so state the answer they settle, with its real names, dates, times, and amounts, never a condition such as 'if the meeting is booked' and never a pointer such as 'the times the user approved'. Never pin a value the recorded run chose where other choices are also correct, such as which of several open slots it offered or the channel it replied on; state the range or set instead. Answer the latest input, not the thread history. Required when adding an assertion. Omit on an edit to preserve the current wording, which is what a call that only records a status wants."),
+      humanNote: external_exports.string().max(1e4).optional().describe("People-only context attached to this assertion. It is returned by reads but must never be used as evidence when assessing a replay. On an edit, omit to preserve it and pass an empty string to clear it."),
+      codeHints: external_exports.string().max(1e4).optional().describe("Pointers for whoever writes code to check the assertion: span names, field paths, and which span holds the answer, e.g. 'The picked span ids are the output of the FilterSpans span, a list of span ids'. The judge never reads them, so never put a requirement here: everything that decides pass or fail goes in the assertion. Optional. On an edit, omit to keep the current value and pass an empty string to clear it. Changing only the code hints keeps the status and has Bitfab write the assertion's code again."),
+      passCriteria: external_exports.string().optional().describe("Deprecated: write the assertion specific enough to need no criteria, and put where to look in codeHints. Still accepted, and still read by the judge on an assertion that has it. On an edit, omit to keep the current value and pass an empty string to clear it."),
+      failCriteria: external_exports.string().optional().describe("Deprecated: write the assertion specific enough to need no criteria, and put where to look in codeHints. Still accepted, and still read by the judge on an assertion that has it. On an edit, omit to keep the current value and pass an empty string to clear it."),
+      targetOnEvaluatedTrace: assertionTargetShape.nullish(),
+      kind: assertionKindShape.nullish(),
+      code: assertionCodeShape.nullish(),
+      codeOff: external_exports.boolean().optional().describe("Pass true to stop this assertion's code from deciding its verdicts while keeping the code, so the LLM judge decides every replay. Use it when the code turns out to be wrong. Pass false to use the code again. Bitfab does not write new code for an assertion whose code is turned off, saving new code leaves the switch where it is, and removing the code (code: null) turns it back on. Omit to keep the current setting."),
+      justification: justificationShape.nullish().describe("Why this assertion is right for THIS trace, cited span by span: the spans that show what the run actually did, each with its own reason. Omit on an edit to preserve it, or pass null to remove it. It is the evidence behind `status`, so an assertion with no justification is one a reviewer has to reconstruct from scratch. Cite spans on this trace only."),
+      categoryJustification: justificationShape.nullish().describe("Why `category_id` is the right category for this assertion, cited span by span. Omit on an edit to preserve it, or pass null to remove it. Changing the category clears it, since it justified the old one. Cite spans on this trace only."),
+      status: optionalAssertionStatus(),
+      assigneeEmail: external_exports.email().max(MAX_ASSIGNEE_EMAIL_LENGTH).nullish().describe("Email of the organization member who should review this assertion, which routes it into their queue in Bitfab. Assigning decides nothing, so it leaves the status alone. The email must belong to a member of this organization, or the call fails naming it. Omit on an edit to preserve the current assignee, and pass null to leave it to nobody.")
+    })).min(1).max(MAX_ASSERTIONS_PER_REQUEST)).describe(`One entry per assertion (1-${MAX_ASSERTIONS_PER_REQUEST})`),
+    guidedRewrite: external_exports.boolean().optional().describe('Check each assertion that carries new text against this trace, and rewrite one that breaks the writing rules (two claims in one, a condition, a value pointed at instead of stated, an id from the recorded run, a word with no clear pass line). Defaults to true. The check runs on Bitfab after the save, usually in under a minute, and this call returns without waiting for it, listing each checked assertion as still being checked. A rewritten assertion replaces what you sent in place. Read it back with get_trace_assertions and statuses ["draft"] right after the save, before relying on its wording: that call waits up to 45 seconds for the check, then shows what you sent, what changed, and, when what you sent bundled more than one claim, each other claim as ready-to-send text to save as its own assertion. Pass false only to save text exactly as sent, for example wording a person dictated.')
+  }
+};
+var getTraceAssertions = {
+  name: "get_trace_assertions",
+  title: "Get Trace Assertions",
+  description: `Read what SHOULD happen when one or more traces are replayed: each trace's assertions, their status, their code hints, any pass/fail criteria an older assertion still carries, people-only human note, who is assigned to review each one, and what part of the evaluated trace each one checks. By default only assertions a person has confirmed are returned, because only those are checked on a replay; a trace whose assertions are all still drafts reads the same as one with none. Pass \`statuses\` to read other statuses: \`["draft"]\` for the draft assertions, including the ones generate_trace_assertions saved, so a batch of them can be reviewed and then decided with save_trace_assertions \`status\`; add \`"rejected"\` to see the ones turned down. Judge a replay only against the confirmed ones. To find assertions without knowing which traces carry them, such as every draft on a function, use list_trace_assertions. When an assertion it is about to return is still being checked against the writing rules after a save, this call waits up to 45 seconds for the check, then returns the rewritten text and what changed; one still being checked after that is listed as such, so call again for its result. Each trace also reports its assertion generation, if one ran: running, completed with how many drafts it saved for review, or failed with the reason. Categorized assertions include category_id and the category's id, title, and description. A human note is returned so it can be read and edited, but it is never assessment evidence, and neither are code hints, which only say where to look: judge only from the assertion, any pass/fail criteria it carries, and evaluated trace. Call this before judging a replay so the verdict is measured against what the user actually asked for rather than a guess, and before save_trace_assertions to find the assertion to edit or to avoid creating a duplicate. No span content is loaded, so one call accepts up to ${GET_TRACE_ASSERTIONS_MAX_IDS} ids. Accepts original trace ids and replay trace ids alike: a replay with no assertions of its own reads its original's, and the response says which original they came from. An assertion whose target cannot be found on the trace being evaluated is errored, never passed, so record it with save_agent_verdicts \`skip\` rather than a FAIL.`,
+  inputSchema: {
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(GET_TRACE_ASSERTIONS_MAX_IDS)).describe(`Original trace IDs to read assertions for (1-${GET_TRACE_ASSERTIONS_MAX_IDS})`),
+    statuses: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.enum(["draft", "confirmed", "rejected"])).min(1).max(3)).optional().describe('Statuses to include: "confirmed" (checked on every replay), "draft" (not reviewed yet, including generated assertions), "rejected" (turned down, never checked). Defaults to ["confirmed"], which is what a replay is judged against. Pass ["draft"] to review drafts, or all three to see everything.')
+  }
+};
+var listTraceAssertions = {
+  name: "list_trace_assertions",
+  title: "List Trace Assertions",
+  description: `Find assertions across traces by status, without knowing which traces carry them: for example every draft assertion on one traced function, which is the review queue. Each result names the trace it belongs to and carries the same fields get_trace_assertions returns, including its \`[ID: ...]\`, criteria, category, assignee, and status. Newest first, one page at a time; pass the cursor a page returns to read the next. The cursor holds its place, so confirming or rejecting the assertions on a page with save_trace_assertions \`status\` before reading the next page never skips any. The first page also reports how many assertions have each status under the same filters. Only an assertion a person has confirmed is checked on a replay, so never score a replay against a draft or rejected one listed here. To read the assertions of traces you already have, use get_trace_assertions.`,
+  inputSchema: {
+    statuses: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.enum(["draft", "confirmed", "rejected"])).min(1).max(3)).describe('Statuses to list: "draft" (not reviewed yet, including generated assertions), "confirmed" (checked on every replay), "rejected" (turned down, never checked). Pass ["draft"] for the review queue.'),
+    traceFunctionKey: external_exports.string().min(1).optional().describe("Only assertions on traces of this traced function, from list_trace_functions. Omit to list across the whole organization."),
+    categoryId: external_exports.union([external_exports.literal("unfiled"), external_exports.uuid()]).optional().describe('Only assertions filed under this category, from list_categories, or "unfiled" for assertions with no category. Omit for every category.'),
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(100)).optional().describe("Max assertions to return (default 25, max 100)"),
+    cursor: external_exports.string().min(1).optional().describe("Opaque cursor from the previous page; reuse the same filters")
+  }
+};
+var archiveTraceAssertions = {
+  name: "archive_trace_assertions",
+  title: "Archive Trace Assertions",
+  description: `Retire assertions on a trace so later replays stop checking them. Non-destructive: the row is hidden from get_trace_assertions and from replay judging but kept for audit, and verdicts already recorded against it stay. Use it for an assertion that was wrong or superseded; to reword one instead, pass its id back to save_trace_assertions, which edits in place. Pass the ids get_trace_assertions prints as \`[ID: ...]\`. All-or-nothing: one unknown, already-archived, or wrong-trace id fails the call naming that id and archives nothing, so re-read and retry with the active ids. Up to ${MAX_ASSERTIONS_PER_REQUEST} per call.`,
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The trace the assertions are attached to. This is the ORIGINAL trace they were written on, not a replay that inherited them."),
+    assertionIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(MAX_ASSERTIONS_PER_REQUEST)).describe(`Ids of the assertions to archive (1-${MAX_ASSERTIONS_PER_REQUEST}), from get_trace_assertions`)
+  }
+};
+var saveGrader = {
+  name: "save_grader",
+  title: "Save Grader",
+  description: 'Edit an existing grader: rename it, rewrite its criteria, switch its judge model, archive it, or restore it. Graders are deprecated and new ones can no longer be created; when the user wants a new check, write assertions with save_trace_assertions instead. Pass graderId (from list_graders) plus only the fields to change. Set status to "archived" to retire a grader; any later save that omits status (or sets "active") restores it. Pass an empty string for passCriteria/failCriteria to clear them. After a successful update, present the returned grader definition to the user, including its evaluation focus and any pass/fail criteria; do not respond with only a generic success confirmation. External graders (ones Bitfab never runs) take no model.',
+  inputSchema: {
+    graderId: external_exports.uuid().describe("Id of the grader to edit, from list_graders."),
+    name: external_exports.string().min(1).optional().describe("New name, unique per trace function (e.g. 'No fabricated order ids'). Pass only to rename."),
+    evaluationFocus: external_exports.string().min(1).optional().describe("What this grader evaluates: the property a trace of this function must satisfy, written as a concrete, checkable statement. Omit to keep the current value."),
+    passCriteria: external_exports.string().optional().describe("Optional: what a PASSING trace looks like. Omit to keep the stored value; pass an empty string to clear it."),
+    failCriteria: external_exports.string().optional().describe("Optional: what a FAILING trace looks like. Omit to keep the stored value; pass an empty string to clear it."),
+    status: external_exports.enum(["active", "archived"]).optional().describe('Set "archived" to retire the grader (hidden from list_graders by default). Omit, or set "active", to keep its current running status; on an archived grader it restores it, as live when it has a trained prompt and as active otherwise.'),
+    model: external_exports.enum(["gemini-2-5-flash", "sol", "terra", "opus-4-8", "gemini-3-1-pro"]).optional().describe("Optional: the judge model this grader runs on. One of: gemini-2-5-flash, sol, terra, opus-4-8, gemini-3-1-pro. Omit to keep the current value (defaults to gemini-2-5-flash).")
+  }
+};
+var listGraders = {
+  name: "list_graders",
+  title: "List Graders",
+  description: "List the graders for a traced function: LLM-as-judge graders Bitfab runs, and external graders (marked 'Runs: externally') whose verdicts the user posts with save_grader_verdicts. Each comes with id, name, status, evaluation focus, and pass/fail criteria. Call before save_grader to find the grader to edit. Results are newest-first and paginated. Archived graders are hidden unless includeArchived is true.",
+  inputSchema: {
+    traceFunctionKey: external_exports.string().min(1).describe("The trace function key to list graders for"),
+    includeArchived: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Include archived graders (default false)"),
+    searchQuery: external_exports.string().min(1).optional().describe("Case-insensitive grader name search"),
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max graders to return (default 20, max 50)"),
+    cursor: external_exports.string().min(1).optional().describe("Opaque cursor from the previous page; reuse the same filters")
+  }
+};
+var saveDataset = {
+  name: "save_dataset",
+  title: "Save Dataset",
+  description: "Create or edit a dataset for a traced function. Datasets are named buckets of traces (e.g. 'Hallucination failures', 'Edge cases for grader X') that humans review and that experiments replay against. To create, pass traceFunctionKey, a short human-readable name, and an optional description. Saving with the name of an existing dataset on the same trace function updates that dataset instead of creating a duplicate, so re-running a flow is safe; pass a new description to change it, or omit it to leave the current one. To rename a dataset or change its description in place, pass its datasetId with a new name and/or description; its id, traces, and graders are kept, and a name already used by another dataset on the same trace function is refused. Pass golden: true to mark the dataset as golden, a trusted reference set to replay and grade changes against (golden datasets are listed first, for the whole organization, in the Bitfab app and in list_datasets), or golden: false to unmark it; omit golden to leave it as it is. This works on create, on a save by name, and with datasetId. Returns the dataset id; use it with add_traces_to_dataset to populate. Call list_datasets first when you need to see what already exists.",
+  inputSchema: {
+    datasetId: external_exports.uuid().optional().describe("Existing dataset id (from list_datasets) to rename or redescribe in place. Omit to create a dataset or save one by name."),
+    traceFunctionKey: external_exports.string().min(1).optional().describe("The trace function key the dataset is scoped to (must match traces you'll add). Required without datasetId."),
+    name: external_exports.string().min(1).optional().describe("Short human-readable name shown in the Bitfab app (e.g. 'Hallucination failures'). Required without datasetId. With datasetId, the new name; omit to keep the current one."),
+    description: external_exports.string().optional().describe("Optional longer description of what's in the dataset. With datasetId, omit to keep the current one or pass an empty string to clear it."),
+    golden: external_exports.boolean().optional().describe("true marks the dataset as golden, false unmarks it. Omit to leave it as it is.")
+  }
+};
+var listDatasets = {
+  name: "list_datasets",
+  title: "List Datasets",
+  description: "List all datasets for a traced function, golden datasets first, with id, name, whether it is golden, description, current trace count, and assigned graders for each. Golden datasets are the ones the team marked as trusted reference sets, so prefer them when choosing a dataset to replay or grade. Call this before changing trace or grader assignments to discover dataset ids and current membership, or before save_dataset to avoid duplicates.",
+  inputSchema: {
+    traceFunctionKey: external_exports.string().min(1).describe("The trace function key to list datasets for")
+  }
+};
+var addTracesToDataset = {
+  name: "add_traces_to_dataset",
+  title: "Add Traces to Dataset",
+  description: "Add one or more traces to a dataset. Idempotent: re-adding a trace already in the dataset is a no-op. Traces are validated against the dataset's traceFunctionKey; ids that don't belong to this organization, or to the dataset's trace function, are silently skipped (the response reports how many were added vs skipped). A replay trace (one an experiment produced) is refused and nothing is added: a dataset holds original traces, and the error names the original to add instead.",
+  inputSchema: {
+    datasetId: external_exports.uuid().describe("The dataset id (from save_dataset or list_datasets)"),
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Trace ids to add (1-100)")
+  }
+};
+var removeTracesFromDataset = {
+  name: "remove_traces_from_dataset",
+  title: "Remove Traces from Dataset",
+  description: "Remove one or more traces from a dataset. Trace ids that aren't currently in the dataset are silently ignored (the response reports how many were actually removed). The traces themselves are not deleted; only their membership in this dataset.",
+  inputSchema: {
+    datasetId: external_exports.uuid().describe("The dataset id"),
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Trace ids to remove (1-100)")
+  }
+};
+var addGradersToDataset = {
+  name: "add_graders_to_dataset",
+  title: "Add Graders to Dataset",
+  description: "Assign one or more graders to a dataset. Idempotent: assigning a grader that is already attached is a no-op. Graders must belong to this organization and match the dataset's traceFunctionKey; invalid ids are skipped and reported.",
+  inputSchema: {
+    datasetId: external_exports.uuid().describe("The dataset id (from save_dataset or list_datasets)"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to assign (1-100)")
+  }
+};
+var removeGradersFromDataset = {
+  name: "remove_graders_from_dataset",
+  title: "Remove Graders from Dataset",
+  description: "Remove one or more grader assignments from a dataset. Grader ids that are not currently assigned are ignored and reported. The graders themselves are not deleted.",
+  inputSchema: {
+    datasetId: external_exports.uuid().describe("The dataset id"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to remove (1-100)")
+  }
+};
+var rerunGradersOnDataset = {
+  name: "rerun_graders_on_dataset",
+  title: "Re-run Graders on Dataset",
+  description: "Re-score every trace in a dataset with its attached graders, overwriting their previous verdicts. This is how you grade traces that were added before a grader existed, or re-score everything after editing a grader's criteria: attaching a grader does not itself grade anything. Omit graderIds to re-run every grader attached to the dataset, or pass a subset; ids that are not attached are rejected rather than silently skipped. Waits up to 90 seconds for the run to finish and reports how many traces were graded; if it is still running, call again with the same arguments to check progress (it reports the running job rather than starting a second one). Read the resulting verdicts with get_grader_verdicts.",
+  inputSchema: {
+    datasetId: external_exports.uuid().describe("The dataset id (from save_dataset or list_datasets)"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Grader ids to re-run (1-100). Omit to re-run every grader attached to the dataset.")
+  }
+};
+var rerunGradersOnExperiment = {
+  name: "rerun_graders_on_experiment",
+  title: "Re-run Graders on Experiment",
+  description: "Re-score an experiment's completed replay traces with its attached graders, overwriting their previous verdicts. Use this after attaching a grader to an already-completed experiment (which persists the assignment but does not grade the existing traces) or after editing a grader's criteria. Only the replays belonging to this experiment are graded, never the originals they were compared against. Omit graderIds to re-run every grader attached to the experiment, or pass a subset; ids that are not attached are rejected. Waits up to 90 seconds and reports how many traces were graded; if it is still running, call again with the same arguments to check progress. Read the resulting verdicts with get_grader_verdicts.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Grader ids to re-run (1-100). Omit to re-run every grader attached to the experiment.")
+  }
+};
+var addGradersToExperiment = {
+  name: "add_graders_to_experiment",
+  title: "Add Graders to Experiment",
+  description: "Attach one or more graders directly to an experiment so they run against its replay traces. Idempotent: attaching a grader already assigned is a no-op. Graders must be active (or live) and belong to this organization and the experiment's trace function; ids that are archived, not runnable, or mismatched are skipped and reported. The effective grader set at completion is the union of these direct attachments and the dataset's current runnable graders. Attaching to an already-completed experiment persists the assignment but does not immediately grade its existing replay traces; those traces are graded only the next time the experiment runs completion again (for example an SDK replay retry that re-runs complete) or a fresh replay runs. Use list_experiments to find experiment ids and list_graders to find grader ids.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to attach (1-100)")
+  }
+};
+var removeGradersFromExperiment = {
+  name: "remove_graders_from_experiment",
+  title: "Remove Graders from Experiment",
+  description: "Detach one or more graders from an experiment. Grader ids that are not currently attached are ignored and reported. The graders themselves are not deleted. Effect depends on run state: for an in-progress experiment, a detached grader that is also assigned to the experiment's dataset is re-added from the dataset when the experiment completes (so it still runs); for an already-completed experiment the grader set is a finalized snapshot with no dataset re-union, so detaching permanently drops that grader from the run's results.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to detach (1-100)")
+  }
+};
+var addGradersToExperimentGroup = {
+  name: "add_graders_to_experiment_group",
+  title: "Add Graders to Experiment Group",
+  description: "Assign one or more graders to every experiment currently in an experiment group. Grader assignments are stored on each experiment, not on the group, so experiments added later do not inherit them automatically. Completed experiments immediately queue any missing grader evaluations; pending experiments use the graders when they complete. Idempotent: assigning a grader already attached to an experiment is a no-op.",
+  inputSchema: {
+    experimentGroupId: external_exports.uuid().describe("The experiment group id"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to assign (1-100)")
+  }
+};
+var removeGradersFromExperimentGroup = {
+  name: "remove_graders_from_experiment_group",
+  title: "Remove Graders from Experiment Group",
+  description: "Detach one or more graders from every experiment currently in an experiment group, undoing add_graders_to_experiment_group. Grader ids not assigned to any experiment in the group are ignored and reported. The graders themselves are not deleted, and archived graders can still be detached. Because assignments live on each experiment rather than on the group, this only affects experiments currently in the group. Effect depends on run state, matching remove_graders_from_experiment: an in-progress experiment re-adds a detached grader from its dataset when it completes if the dataset still assigns it, while an already-completed experiment has a finalized grader set, so detaching permanently drops that grader from its results.",
+  inputSchema: {
+    experimentGroupId: external_exports.uuid().describe("The experiment group id"),
+    graderIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).describe("Grader ids to detach (1-100)")
+  }
+};
+var listExperiments = {
+  name: "list_experiments",
+  title: "List Experiments",
+  description: "List experiments (replays against changed code) newest first, with status, pass/fail totals, delta (fixed/regressed/still-passing/still-failing), and the git state each ran from. Every filter is optional and they combine: narrow by traced function, git branch, coding agent session, dataset, or any mix; with no filters it lists the organization's most recent experiments. Call this to see past experiment results, or before a new replay to see what has been tried. Every replay must name its experiment group with --experiment-group-id. A group is one series of experiments testing one thing, such as baseline against shorter prompt. Reuse a group's id (from list_experiment_groups) only when the new run tests that same thing; when you start testing something else, generate a new UUID and pass --experiment-group-name with a name for what is being tested. Group by what is tested, not by session, branch, or worktree: a branch testing one thing can keep one group, and a session testing several things starts one group per thing.",
+  inputSchema: {
+    traceFunctionKey: external_exports.string().min(1).optional().describe("Only experiments for this trace function key"),
+    gitBranch: external_exports.string().min(1).optional().describe("Only experiments run from this git branch (exact branch name, e.g. feature/shorter-prompt)"),
+    agentSessionId: external_exports.string().min(1).optional().describe("Only experiments launched from this coding agent session (exact session id, the agent_session_id the Bitfab plugin gives you at session start). Use it to find the runs you launched in this session."),
+    datasetId: external_exports.uuid().optional().describe("Only experiments for this dataset, from list_datasets: runs launched against it plus runs that replayed any of its traces"),
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max experiments to return (default 20, max 50)")
+  }
+};
+var listExperimentTraces = {
+  name: "list_experiment_traces",
+  title: "List Experiment Traces",
+  description: "Get individual trace results for an experiment, including each replay trace's verdict (fixed, regressed, still-passing, still-failing, original-no-verdict (the original has no verdict), replay-no-verdict (the replay has no verdict yet), capture-incomplete, unpaired, skipped) by comparing against the original trace's verdict, plus the replay's duration and token usage (input, output, cached, total) for the replay and the paired original so you can reason about latency, cost, and cache-read deltas. It ends with the next step: the `--dataset-id` and `--trace-ids` flags that rerun only the failing traces as a subset of the dataset, or, once a subset passes, the flags that replay the whole dataset to check nothing else broke. Use after list_experiments to drill into a specific experiment's results, and after every replay while fixing failures.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID to get traces for")
+  }
+};
+var getReplayStatus = {
+  name: "get_replay_status",
+  title: "Get Replay Status",
+  description: "Read an experiment's replay progress: status, local to server replay trace IDs, and finished and remaining trace attempts. Call it while a replay runs, or after one crashes to check `resumable` before rerunning with `--resume <experimentId>`. Do not poll it to wait for a replay: read the results with get_experiment once it finishes.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID to get status for")
+  }
+};
+var getTemplateReference = {
+  name: "get_template_reference",
+  title: "Get Template Reference",
+  description: "Read the agent-facing reference for Bitfab span templates: the engine (Nunjucks), the render-context schema (variables bound at render time), the composition model (no `{% extends %}` - assembler injects into base.njk), the registered custom filters and tests, common patterns from the live default templates, and error behavior. **Call this once per session before your first `get_template` or `save_template`** - without it, edits typically use the wrong syntax dialect, the wrong variable names, or break the layout. Read-only, no organization data, safe to cache.",
+  inputSchema: {}
+};
+var getTemplate = {
+  name: "get_template",
+  title: "Get Template",
+  description: "Read the rendering template for a span type. Templates control how a span's input/output renders in the Bitfab UI. **Pass `traceFunctionKey` to scope to a specific trace function** (this is the normal mode for the `templates` skill). Resolution: per-key row \u2192 org-global override \u2192 file default. The response labels the source so you know whether you're editing a per-key row, seeding from the org-global, or starting from the file default. Without `traceFunctionKey`, returns the org-global override. Span types: llm, agent, function, guardrail, handoff, custom. Always call this before save_template so your edit starts from the live content. **If you haven't called `get_template_reference` this session, call it first** - it documents the Nunjucks engine, available variables, and base-template composition model, which you'll need to write a correct edit.",
+  inputSchema: {
+    spanType: external_exports.enum(["llm", "agent", "function", "guardrail", "handoff", "custom"]).describe("Span type whose template to read (llm | agent | function | guardrail | handoff | custom)"),
+    traceFunctionKey: external_exports.string().min(1).optional().describe("Trace function key to scope the template to. When set, returns the per-key row if present; otherwise seeds from the org-global override; otherwise the file default. Omit to read the org-global template.")
+  }
+};
+var saveTemplate = {
+  name: "save_template",
+  title: "Save Template",
+  description: "Upsert the rendering template for a span type. **Pass `traceFunctionKey` to scope the override to a single trace function** (this is the normal mode for the `templates` skill); the per-key row is created on first save and applied at render time only for spans on traces of that function. Without `traceFunctionKey`, edits the org-global override (applies when no per-key row matches). Updates are in-place: no version bump, no row juggling. The `template` body is the full template source you want stored, passed verbatim - do NOT wrap in `<![CDATA[ ... ]]>`, triple-backtick code fences, or any other escape construct; the value is stored exactly as received and a stray wrapper will silently break rendering (e.g. an opening `<![CDATA[` swallows the next `<style>` tag). Optional `name` and `description` are metadata shown in the templates UI. Span types: llm, agent, function, guardrail, handoff, custom. Always call get_template first so you're editing the current content rather than overwriting unrelated changes. **If you haven't called `get_template_reference` this session, call it first** - edits that don't match the documented Nunjucks variable shape will silently render empty in production.",
+  inputSchema: {
+    spanType: external_exports.enum(["llm", "agent", "function", "guardrail", "handoff", "custom"]).describe("Span type whose template to upsert (llm | agent | function | guardrail | handoff | custom)"),
+    traceFunctionKey: external_exports.string().min(1).optional().describe("Trace function key to scope the override to. When set, upserts a per-key row that the renderer prefers over the org-global for spans on traces of this function. Omit to edit the org-global template."),
+    template: external_exports.string().min(1).describe("Full template source to store, verbatim (replaces existing content). Pass as a raw string - no CDATA wrapper, no triple-backtick code fence, no escape construct."),
+    name: external_exports.string().min(1).optional().describe("Optional new name. Defaults to 'Default {spanType} template' on first creation."),
+    description: external_exports.string().optional().describe("Optional description. Pass an empty string to clear an existing description.")
+  }
+};
+var saveExperimentGroup = {
+  name: "save_experiment_group",
+  title: "Save Experiment Group",
+  description: "Create or edit an experiment group. An experiment group is one series of experiments testing one thing, such as a baseline and two prompt variants, named after what is being tested. Every replay must name its group with --experiment-group-id, so decide it before launching: reuse a group's id (from list_experiment_groups) only when the run tests the same thing as that group's runs; when you start testing something else, generate a new UUID and pass it with --experiment-group-name, named after what the series tests. Group by what is tested, not by session, branch, or worktree: a branch testing one thing can keep one group, and a session testing several things starts one group per thing. Do not call this tool first for runs you have not launched yet: the first replay that persists creates the group and the rest join it. This tool groups experiments that already exist, for example older runs launched without a group id. To create, omit experimentGroupId and provide experimentIds plus an optional name and notes; the supplied experiments are grouped together. To edit, provide experimentGroupId and at least one of name or notes, but omit experimentIds; editing metadata does not change membership. Editing works only once a replay or a create has made the group. Creation is idempotent when all supplied experiments already share one group. All resources must belong to the active organization.",
+  inputSchema: {
+    experimentGroupId: external_exports.uuid().optional().describe("Existing experiment group id to rename. Omit when creating."),
+    experimentIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(100)).optional().describe("Experiment IDs to group (1-100). Required when creating; omit when editing."),
+    name: external_exports.string().trim().min(1).max(120).optional().describe("What this series of runs tests, in a few words, such as 'shorter system prompt'. Always name a group you create, and name any group you find without one."),
+    notes: external_exports.string().max(1e4).optional().describe("Optional group notes. Omit to keep existing notes when editing; pass an empty string to clear them.")
+  }
+};
+var listExperimentGroups = {
+  name: "list_experiment_groups",
+  title: "List Experiment Groups",
+  description: "List recent experiment groups in the active organization, newest first. Each group includes its id, name, notes, creation time, and the experiment ids currently in the group. A group or experiment with no name should be named with save_experiment_group or save_experiment.",
+  inputSchema: {
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(50)).optional().describe("Max experiment groups to return (default 20, max 50)")
+  }
+};
+var getExperimentGroup = {
+  name: "get_experiment_group",
+  title: "Get Experiment Group",
+  description: "Get one experiment group by id, including its name, notes, creation and update times, and its member experiments with each experiment's id, name, status, and creation time. Use list_experiment_groups to discover recent group ids.",
+  inputSchema: {
+    experimentGroupId: external_exports.uuid().describe("The experiment group id to get")
+  }
+};
+var saveExperiment = {
+  name: "save_experiment",
+  title: "Save Experiment",
+  description: "Update an existing experiment. Every experiment should have a name saying what the run changes: pass --name when launching the replay, and use this tool to name any run that has none. Provide the experiment ID and at least one of name, notes, experimentGroupId, baselineExperimentId, or status. Omitted fields keep their current values; pass an empty notes string to clear notes, or a group id to move the experiment to that existing group. Set baselineExperimentId to the earlier experiment this one is compared against, such as the run before the change it tests, or null to clear it. Set status when a replay stopped without finishing. completed grades the traces that landed, and interrupted marks a pending experiment as stopped so it can be resumed later.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID to update"),
+    name: external_exports.string().trim().min(1).max(120).optional().describe("What this run changes, in a few words, such as 'baseline' or 'shorter system prompt'. Bitfab already records the commit, branch, tree state, datasets, and who ran it with every experiment, so do not repeat them here."),
+    notes: external_exports.string().max(1e4).optional().describe("Run conditions Bitfab cannot see on its own, such as an environment override or a forced feature flag. Omit to keep existing notes; pass an empty string to clear them."),
+    experimentGroupId: external_exports.uuid().optional().describe("Existing experiment group id to move this experiment into, when it belongs with that group's series of runs testing one thing. Omit to keep its current group. An experiment cannot be taken out of a group here."),
+    baselineExperimentId: external_exports.uuid().nullable().optional().describe("The earlier experiment this one is compared against, such as the run of the code before the change this experiment tests. The experiment page and the written summary measure the change against it. Must be another experiment in the same organization. Omit to keep the current baseline; pass null to clear it."),
+    status: external_exports.enum(["completed", "interrupted"]).optional().describe("completed finishes the replay and grades the traces that landed. interrupted marks a pending experiment as stopped. Omit to keep the current status.")
+  }
+};
+var getExperiment = {
+  name: "get_experiment",
+  title: "Get Experiment",
+  description: "Get a single experiment by experiment ID, with its name, notes, status, pass/fail totals, delta, experiment group, and grader results: the aggregate passing/failing checks and pass rate, plus a per-grader breakdown (each assigned grader's own passing/failing and pass rate on the run). Once every verdict is in it also carries the written summary: pass rate, cost, and latency before and after against the baseline (the experiment set as its baseline, else the first finished experiment in its group, else the original traces), the assertions and categories that flipped with example replay trace ids, and the traces worth opening first. Use this when you already have an experiment ID and want just that run's results, instead of paging the whole function's history with list_experiments.",
+  inputSchema: {
+    experimentId: external_exports.uuid().describe("The experiment ID, from list_experiments")
+  }
+};
+var getGraderVerdicts = {
+  name: "get_grader_verdicts",
+  title: "Get Grader Verdicts",
+  description: `Read the INDIVIDUAL verdicts each grader recorded, one row per grader per trace, with the grader's reason, its failure diagnostic, the confidence, and whether the verdict came from a person, a grader Bitfab ran, or an external grader whose verdict was posted from outside Bitfab with save_grader_verdicts. A person's verdict for a grader is given in the dashboard, only on a trace that grader has not judged, so it never replaces a grader's own verdict. This is the per-grader breakdown that get_trace_verdicts does not show: that tool returns one grader-agnostic verdict per trace, so use it for a dataset's overall pass/fail and use this one to see WHICH check failed and why. Pass traceIds to see every grader's verdict on those traces, graderId to see that grader's most recent verdicts across traces (newest first, use it to diagnose a grader that is misfiring), or both to narrow to one grader on specific traces. Call list_graders first if you need grader ids.`,
+  inputSchema: {
+    traceIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).min(1).max(GET_GRADER_VERDICTS_MAX_IDS)).optional().describe(`Trace IDs to read grader verdicts for (1-${GET_GRADER_VERDICTS_MAX_IDS}). Omit to read by grader instead.`),
+    graderId: external_exports.uuid().optional().describe("Restrict to one grader (from list_graders). On its own, returns that grader's most recent verdicts across all traces."),
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(MAX_GRADER_VERDICT_LIMIT)).optional().describe(`Max verdicts to return when reading by grader alone (default ${DEFAULT_GRADER_VERDICT_LIMIT}, max ${MAX_GRADER_VERDICT_LIMIT}). Ignored when traceIds is given.`)
+  }
+};
+var graderVerdictEntryShape = external_exports.object({
+  graderId: external_exports.uuid().describe("The external grader that produced this verdict (from list_graders)."),
+  traceId: external_exports.uuid().describe("The trace the verdict is about."),
+  verdict: external_exports.enum(["pass", "fail"]).optional().describe('"pass" or "fail". Required unless the deprecated label is sent.'),
+  label: external_exports.boolean().optional().meta({ deprecated: true }).describe('Deprecated: the old spelling of verdict. true is "pass", false is "fail". Refused when verdict is also sent.'),
+  reason: external_exports.string().min(1).optional().describe("Why the grader reached this verdict. Optional."),
+  failureDiagnostic: external_exports.string().min(1).optional().describe("For a FAIL: what went wrong in the trace, in a form someone fixing it can act on. Optional."),
+  confidence: confidenceShape.optional().describe("How confident the grader is: VeryLow / Low / Medium / High / VeryHigh. Optional.")
+});
+var saveGraderVerdicts = {
+  name: "save_grader_verdicts",
+  title: "Save Grader Verdicts",
+  description: `Record verdicts for EXTERNAL graders: existing graders Bitfab never runs because the user evaluates traces somewhere else (their own eval harness, CI, a review queue). Each entry is one grader's pass/fail on one trace, written as that grader's own verdict, so it shows up everywhere Bitfab-run grader verdicts do: get_grader_verdicts, dataset and experiment pass rates, and the trace's grader panel. Saving again for the same grader and trace replaces the earlier verdict. Rejects every grader that is not external: Bitfab runs its own graders, and a person's verdict on a trace belongs in save_human_verdicts. Up to ${SAVE_GRADER_VERDICTS_MAX_ENTRIES} entries per call; the whole call is rejected if any entry is invalid. The old \`labels\` array, with \`label\` (true or false) on each entry, is still accepted.`,
+  inputSchema: {
+    verdicts: external_exports.preprocess(parseJsonString, external_exports.array(graderVerdictEntryShape).min(1).max(SAVE_GRADER_VERDICTS_MAX_ENTRIES)).optional().describe(`One entry per grader per trace (1-${SAVE_GRADER_VERDICTS_MAX_ENTRIES}). Required unless the deprecated labels is sent.`),
+    labels: external_exports.preprocess(parseJsonString, external_exports.array(graderVerdictEntryShape).min(1).max(SAVE_GRADER_VERDICTS_MAX_ENTRIES)).optional().meta({ deprecated: true }).describe("Deprecated: the old name for verdicts. Refused when verdicts is also sent.")
+  }
+};
+var getGraderLabels = deprecatedAlias(getGraderVerdicts, "get_grader_labels", "Get Grader Labels");
+var saveGraderLabels = deprecatedAlias(saveGraderVerdicts, "save_grader_labels", "Save Grader Labels");
+var getSimPlan = {
+  name: "get_sim_plan",
+  title: "Get Sim Plan",
+  description: "Read one trace function's sim plan: its span nodes overlaid from recent traces, each with its span type, call count, how many traces it appears in, and whether its content (inputs and outputs) is captured. Call it to learn the exact node names before save_sim_plan, or to answer what a workflow records today.",
+  inputSchema: {
+    traceFunctionKey: external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it."),
+    limit: external_exports.preprocess(parseJsonString, external_exports.number().int().min(1).max(100)).optional().describe("Recent traces to overlay, taken from the function's own traces and again from its replays (1-100 of each). Defaults to 40.")
+  }
+};
+var saveSimPlan = {
+  name: "save_sim_plan",
+  title: "Save Sim Plan",
+  description: "Turn content capture (inputs and outputs) off or on for span nodes of one trace function. A span with capture off is no longer sent. The trace's root, a span recorded by a framework integration, a span that recorded an error, and a span that recorded LLM usage (token counts or a cost in its contexts) are still sent without inputs and outputs, and a node declared in code always keeps its content. Call it when the user wants a span to stop recording its payloads, or to record them again. A node is its span name inside the trace function key, exactly as get_sim_plan lists it. A node recorded by a framework integration (OpenAI Agents, LangGraph, Claude Agent SDK, Vercel AI SDK), a node that is the root of its traces, a node imported from another platform, or a node named by Bitfab rather than the SDK keeps its content; asking to turn it off is refused with the reason. Turning a node off also turns content off for every node beneath it in the sim plan; a node beneath it that keeps its content stays on, and a node you name in the same call keeps the value you give it. Turning a node back on leaves the nodes beneath it as they are, so turn those on by name. Returns the updated sim plan.",
+  inputSchema: {
+    traceFunctionKey: external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it."),
+    nodes: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.object({
+      name: external_exports.string().min(1),
+      captureContent: external_exports.preprocess(parseJsonString, external_exports.boolean())
+    })).min(1).max(500)).describe("Nodes to change (1-500). `name` is the span name; `captureContent` false stops recording that span's inputs and outputs and does the same for every node beneath it, true records them again for that node only.")
+  }
+};
+var scenarioTemplateFunctionKey = external_exports.string().min(1).describe("Trace function key, as list_trace_functions prints it.");
+var getScenarioTemplate = {
+  name: "get_scenario_template",
+  title: "Get Scenario Template",
+  description: "Read the scenario template of one trace function: the React component the scenario page uses to show that function's scenarios to a reviewer. Bitfab's template agent writes it by itself when the function first gets scenarios. Returns which version is shown, whether a generation is running or failed, the last note given to the agent, the template's source, and the rules a template must follow (its props, the components it may import, and how it should read and look). Call it before editing a template with save_scenario_template.",
+  inputSchema: {
+    traceFunctionKey: scenarioTemplateFunctionKey
+  }
+};
+var saveScenarioTemplate = {
+  name: "save_scenario_template",
+  title: "Save Scenario Template",
+  description: "Save an edited scenario template for one trace function as its new version, shown on the scenario page right away. The source is the whole template, a React component as get_scenario_template returns it. It is compiled and rendered on a sample of the function's scenarios first; if it does not compile or a scenario does not render, nothing is saved and the errors come back to fix. Saving replaces any generation that is running. Call it when the user wants to change how their scenarios are shown and you have made the change yourself; call generate_scenario_template instead to have Bitfab's agent make it.",
+  inputSchema: {
+    traceFunctionKey: scenarioTemplateFunctionKey,
+    source: external_exports.string().min(1).max(2e5).describe("The whole template source: one React component, the default export.")
+  }
+};
+var generateScenarioTemplate = {
+  name: "generate_scenario_template",
+  title: "Generate Scenario Template",
+  description: "Have Bitfab's template agent write a new version of one trace function's scenario template. It starts from the current version, follows the note when one is given, checks its work on a sample of the function's scenarios, and saves a new version in one to three minutes. Returns right away; call get_scenario_template to see the result. A newer request replaces one still running.",
+  inputSchema: {
+    traceFunctionKey: scenarioTemplateFunctionKey,
+    note: external_exports.string().trim().max(2e3).optional().describe("What to change, in plain words (for example, show the messages the agent sent before its actions). Omit to rewrite the template from the function's scenarios.")
+  }
+};
+var scenarioTargetSchema = {
+  traceId: external_exports.uuid().optional().describe("ID of a trace whose scenario to use. Send this or scenarioId, not both."),
+  scenarioId: external_exports.uuid().optional().describe("ID of the scenario, as get_scenario prints it. Send this or traceId, not both.")
+};
+var listScenarios = {
+  name: "list_scenarios",
+  title: "List Scenarios",
+  description: `List scenarios, newest first, with each one's id, name, trace function, and review status: needs updating (a person flagged the scenario itself as wrong or incomplete, for example missing history or records), updated (the flag was resolved and waits for the person to check the fix), needs label, drafting (assertions are being drafted from the label), drafting failed, no assertions (the draft found nothing checkable), needs review (draft assertions wait for review), done, or waiting on data (the organization has a scenario callback and it has not filled the scenario's data yet, so the scenario stays out of the inbox until the data arrives or a person labels it anyway). A scenario that needs updating is printed with its note. Pass queue "needs_updating" to find the scenarios people flagged for fixing, then read each with get_scenario and fix it with save_scenario, sending needsUpdatingResolution to say what you changed. That puts it back in the person's inbox, under needs review, to check. Returns a cursor when more remain.`,
+  inputSchema: {
+    traceFunctionKey: external_exports.string().min(1).optional().describe("Key of the trace function whose scenarios to list. Leave it out to list every trace function's."),
+    queue: external_exports.enum(["inbox", "needs_label", "needs_review", "needs_updating", "done"]).optional().describe("inbox: waiting on a person, everything in needs_label and needs_review. needs_label: needs a label, or its draft failed and the label needs sending again. needs_review: drafting, draft assertions waiting for review, a draft that found nothing to check, or a resolved update waiting to be checked. needs_updating: a person flagged the scenario itself with a note. done: every assertion reviewed, or accepted with none. Scenarios waiting on data are in no queue. Leave it out to list all."),
+    cursor: external_exports.string().min(1).optional().describe("The cursor a previous call returned, to read the next page."),
+    limit: external_exports.number().int().min(1).max(100).optional().describe("How many scenarios to return, up to 100. Defaults to 25.")
+  }
+};
+var getScenario = {
+  name: "get_scenario",
+  title: "Get Scenario",
+  description: "Read one scenario, found by its id or by a trace it was built from: the situation the trace function's run was in, as the trigger that started the run and the data available when it arrived, with a name and a description. The trigger and data describe the situation, and the description also says what is supposed to happen; what the run did is in the trace. Returns the creation status (empty until something starts building it, generating while Bitfab builds it or waits for the scenario callback to save it, created once built, or error with the reason), the review status, the note saying what needs updating when a person flagged the scenario (and the resolution once one was sent), then the trigger and data summaries, then the actual outcome when one was saved (what the run actually did: one example, not what it should have done), then the name, description, trigger, data, and actualOutcome as JSON in exactly the shape save_scenario accepts, including the categories it is filed under. When the organization has a scenario callback, it also says how the callback last went for this scenario and when: waiting to run, filled the scenario, answered with nothing to add, accepted the request to fill it later, skipped, or failed, with the reason for a skip or failure. A scenario not generated yet has no trigger or data of its own: it is returned with its review status, its categories, and the assertions on the trace it was made from, whose input and output stand in for its trigger and data. data.sources, when saved, says where the records came from and, for each kind of data, whether it was read in full, as of the run or as of capture, with columns the capture predates, or not captured at all. Call it before save_scenario so an edit starts from what is saved.",
+  inputSchema: scenarioTargetSchema
+};
+var saveScenario = {
+  name: "save_scenario",
+  title: "Save Scenario",
+  description: "Create or update one scenario. Before writing a name, description, trigger, data, records, or actual outcome, read https://docs.bitfab.ai/primitives/building-scenarios.md: it says what belongs in each part and what never does, with examples to copy. To create a scenario, or to replace its records, send traceId with records or recordsPath: the records your own system holds that relate to that trace's run, as of the run. Create the scenario first by sending traceId with records as an empty list: Bitfab builds only the trigger from the trace (so far only for traces of Noah's noah-agent-turn function), and the data starts empty, with no records. For a trace of any other function, create the scenario by sending traceId with trigger, data, or both, in the shape get_scenario returns; the part not sent starts empty and can be sent later. A scenario that holds only categories is filled in the same way. The data holds only what you send afterwards: the trace shows what happened in the run, not all the data your system held when it ran. Check that the returned trigger is not empty before sending records. Records that are not empty are refused for a trace with no scenario yet, and for a scenario whose trigger is empty. Bitfab looks for each record's quote, and failing that its text, in the inputs and outputs of the trace's spans. A record found in a span cites that span and can back an assertion; a record found in no span is kept as context the run never saw. A trace that is a replay is refused, because a scenario belongs on the original. Send sources beside records to say where the records came from and how much of each kind of data was read; recordsPath forwards the file's sources on its own. records and recordsPath replace the saved records and sources whole (records with no sources clear the saved sources), need traceId rather than scenarioId, and cannot be sent with any field other than sources. To edit a scenario that already exists, find it by its id or by a trace it was built from and send name, description, trigger, data, or appendData, for example to add history the run had available, record data it was missing, or correct the trigger. name, description, trigger, and data each replace the saved value whole, and fields left out are kept. To record what the run actually did, send actualOutcome, read from the trace: its final output for the summary and the tool calls that ran for the actions. It is shown below the trigger as one example of how the run handled the situation, never as what it should have done, and it is not evidence for assertions. Bitfab does not fill it. Send null to clear it. To say the scenario itself needs fixing, send needsUpdatingNote with what is wrong. Once a scenario flagged that way is fixed, send needsUpdatingResolution saying what you changed, in the same call as the fix: the note and the resolution are kept, and the scenario goes back to the person's inbox, under needs review, to check the fix. To file the scenario under categories, send categoryIds with every category it belongs to; a scenario can be in any number. To add to the data without resending it, use appendData instead of data: its history entries go after the saved ones and its missing items after the saved missing items, in one step that cannot lose another caller's append made at the same time. Send data or appendData, not both. trigger, data, and appendData entries must keep the shape get_scenario returns. A history entry's source names the span its text came from, on any trace linked to the scenario (a trace that finds it by traceId is one); set it to null or leave it out when the text is not in such a trace, and the entry still counts as data the run had but cannot be cited as evidence when the scenario is turned into assertions. A source naming a span on any other trace is refused. The trigger and data summaries are rebuilt from what is saved. Any other edit to a trace with no scenario, or to a scenario id that does not exist, is refused. Returns the saved scenario.",
+  inputSchema: {
+    ...scenarioTargetSchema,
+    name: external_exports.string().min(1).optional().describe("The scenario's name."),
+    description: external_exports.string().min(1).optional().describe("The scenario's description."),
+    trigger: external_exports.preprocess(parseJsonString, external_exports.record(external_exports.string(), external_exports.unknown())).optional().describe("The whole trigger object, in the shape get_scenario returns: what started the run."),
+    data: external_exports.preprocess(parseJsonString, external_exports.record(external_exports.string(), external_exports.unknown())).optional().describe("The whole data object, in the shape get_scenario returns: topic, history (earlier facts in time order, each with its source span), and missing (what the run did not have). Replaces the saved data, except that the saved records are kept when it has no records field. Leave it out when sending appendData."),
+    appendData: external_exports.preprocess(parseJsonString, external_exports.object({
+      history: external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown())).optional(),
+      missing: external_exports.array(external_exports.string()).optional()
+    })).optional().describe("Data to add to the saved data: history entries (same shape as data.history, source optional, in time order, after the saved ones) and missing items. At least one of the two must be non-empty. Leave data out when sending this."),
+    actualOutcome: external_exports.preprocess(parseJsonString, external_exports.strictObject({
+      summary: external_exports.string().describe("The run's outcome in a few sentences, in your own words."),
+      actions: external_exports.array(external_exports.strictObject({
+        name: external_exports.string().min(1).describe('The action the run took, such as "send_sms_message".'),
+        details: external_exports.record(external_exports.string(), external_exports.unknown()).describe("The action's arguments, as an object."),
+        result: external_exports.string().nullable().describe("What came back from the action, or null."),
+        failed: external_exports.boolean().describe("Whether the action did not go through."),
+        at: external_exports.string().nullable().describe("When the action happened (ISO 8601), or null.")
+      })).describe("What the run did, in order. Leave out lookups that changed nothing. Empty when the run took no action."),
+      source: external_exports.strictObject({
+        spanId: external_exports.uuid().describe("The span the summary came from."),
+        sourceField: external_exports.enum(["input", "output"]).describe("Which side of the span holds the text."),
+        text: external_exports.string().describe("The text, as it appears in the span.")
+      }).nullable().optional().describe("The span the summary came from, on a trace linked to the scenario, or null.")
+    }).nullable()).optional().describe("What the run actually did. Replaces the saved actual outcome whole. Send null to clear it."),
+    categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid())).optional().describe("Every category this scenario is filed under, from list_categories. Replaces the saved categories whole: send an empty list to remove them all, and leave it out to keep them. An id outside the organization fails the call."),
+    records: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.record(external_exports.string(), external_exports.unknown()))).optional().describe(`The records related to this run, each { kind, ref, at, asOf, title, text, quote }. kind is one of "message", "contact", "preference", "memory", "email", "calendar_event", "action_item". ref is your own pointer to the row, such as "Input:234605". at is when the record came to exist, or null. asOf is "run" when the record is as it was at the run, or "now" when no history is kept for it. quote is a short exact string to look for in the run's spans, or null to look for the whole text. Prefer recordsPath, so the records never pass through the conversation. Send records or recordsPath, not both.`),
+    needsUpdatingNote: external_exports.string().trim().min(1).optional().describe("Flag the scenario itself as wrong or incomplete, saying what is wrong or missing. Moves it out of review until the note is resolved, and replaces any earlier note and resolution."),
+    needsUpdatingResolution: external_exports.string().trim().min(1).optional().describe("What you changed to resolve the scenario's needs-updating note. Only for a scenario flagged as needing an update; send it with the fix. The scenario goes back to the person's inbox, under needs review, to check the fix."),
+    recordsPath: external_exports.string().min(1).optional().describe("Path to a local JSON file holding the records, either as an array or as an object with a records array. The Bitfab plugin reads the file and sends its records, so they never pass through the conversation. When the object also has frameAt, capturedAt, windows, and coverage, as Noah's scenario builder writes them, the plugin sends those as sources. Send records or recordsPath, not both."),
+    sources: external_exports.preprocess(parseJsonString, external_exports.record(external_exports.string(), external_exports.unknown())).optional().describe(`Where the records came from, as { frameAt, capturedAt, windows, coverage }: when the run started, when its data was captured (or null), how many days each windowed kind reaches (such as { "messagesDays": 3, "calendarDays": 7 }), and coverage, which gives each kind of data its capture status ("rewound-to-frame" for as of the run, "current-at-capture" for as of capture, "not-recorded" or "unavailable" for not captured) plus filledColumns { absentNullable, defaultedNonNullable }, the "table.column" names the capture predates. Only with records, never with recordsPath, which sends the file's own.`)
+  }
+};
+var saveTraceCategories = {
+  name: "save_trace_categories",
+  title: "Save Trace Categories",
+  description: "File one trace under categories, replacing its whole set. Send categoryIds with every category the trace belongs to; an empty list clears them. Categories are held by the trace's scenario, so every trace linked to that scenario shows the same categories. A trace with no scenario yet gets a dummy one, which has no trigger or data until save_scenario generates it and keeps its categories when it does. Category ids come from save_category or list_categories, and an id not in this organization is refused. Returns the trace's categories after the save and the scenario that holds them.",
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The trace to file."),
+    categoryIds: external_exports.preprocess(parseJsonString, external_exports.array(external_exports.uuid()).max(100)).describe("Every category the trace belongs to, replacing its saved set. An empty list clears it.")
+  }
+};
+var generateScenario = {
+  name: "generate_scenario",
+  title: "Generate Scenario",
+  description: "Start building the scenario for one trace and return at once, without waiting for it. The scenario's creation status becomes generating, and the answer names the scenario and its creation status. Read it later with get_scenario, which shows the creation status until the scenario is created or building it failed. Asking again while it is generating starts nothing more, and asking for one whose build failed starts it over. Bitfab builds the trigger itself for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, fills in the rest for any trace. When Bitfab's scenario agent is turned on for the organization, Bitfab builds the whole scenario itself for any other trace with no callback, reading the trace and checking every quote against it. A trace that already has a scenario is left as it is and answers with that scenario's id, unless regenerate is true. Add force to regenerate when the scenario callback is still working on the scenario, for example after it answered 202 and its data never came. A replay, a trace outside this organization, or a trace Bitfab cannot build a scenario for (not noah-agent-turn, no scenario callback, and the scenario agent not turned on) is refused. Adding traces to a dataset links each one to an empty scenario, and starts this same build for each only when the organization has a scenario callback or the scenario agent turned on. What a good scenario holds, to check the built one against: https://docs.bitfab.ai/primitives/building-scenarios.md",
+  inputSchema: {
+    traceId: external_exports.uuid().describe("The trace to build a scenario for."),
+    regenerate: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true to build a scenario that already exists again: its name, description, trigger, data, and actual outcome are cleared, Bitfab builds the trigger again for a noah-agent-turn trace, and the organization's scenario callback, when one is set up, is asked again. Its categories, review status, labels, and assertions are kept. Asking while it is generating, or while the scenario callback is still working on it, starts nothing more unless force is true. Omit or set false to leave an existing scenario as it is."),
+    force: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("Set true together with regenerate to start over even while the scenario is generating or the scenario callback is still working on it (it is waiting for the callback, or the callback answered 202 less than a day ago). The scenario is cleared and the callback is asked again. Refused without regenerate.")
+  }
+};
+var generateScenarioAssertions = {
+  name: "generate_scenario_assertions",
+  title: "Generate Scenario Assertions",
+  description: "Turn a person's label on one scenario, found by its id or by a trace it was built from, into up to four assertions, saved as draft agent assertions for review on the trace the scenario was built from. For a generated scenario, check its trigger, data, and records with get_scenario before calling this. A scenario not generated yet drafts from its trace's top-level input and output instead, and cites the trace's top-level span. The note says what the run got right or wrong, or what a correct run does; the verdict says whether the run was right overall. Each assertion cites the spans that settle its values, from the scenario's trigger, history, and records the run saw, and is saved on the trace those spans are on; records the run never saw are context only. A note that gives nothing a reviewer could check against a replay yields no assertions. An assertion never concludes that something did not exist from a kind of data the scenario's sources say was not read in full as of the run. A trace with no scenario, a scenario id that does not exist, or a scenario built from a replay is refused. Each drafted assertion then goes through the same check and rewrite as save_trace_assertions, and this call returns without waiting for it, so read the drafts back with get_trace_assertions for what the rewrite changed, any claim to save as its own assertion, and anything still to fix.",
+  inputSchema: {
+    ...scenarioTargetSchema,
+    verdict: external_exports.preprocess(parseJsonString, external_exports.boolean()).optional().describe("true when the person said the run was right, false when wrong. Leave it out when they gave no verdict."),
+    note: external_exports.string().min(1).describe("What the person said was right or wrong about the run, or what a correct run does, in their words.")
+  }
+};
+var ALL_TOOL_CONTRACTS = [
+  getGraderVerdicts,
+  saveGraderVerdicts,
+  saveAssertionVerdicts,
+  getGraderLabels,
+  saveGraderLabels,
+  getExperiment,
+  getExperimentGroup,
+  saveExperiment,
+  saveExperimentGroup,
+  listExperimentGroups,
+  getBitfabApiKey,
+  getApiKeyContext,
+  listOrganizations,
+  getDatabaseConnectionStatus,
+  listTraceFunctions,
+  searchTraces,
+  getTraces,
+  getTraceVerdicts,
+  generateVerdictEvidence,
+  getTraceLabels,
+  generateLabelEvidence,
+  getSpanField,
+  getSpan,
+  saveAgentVerdicts,
+  saveHumanVerdicts,
+  saveAgentLabels,
+  saveHumanLabels,
+  saveCategory,
+  listCategories,
+  getCategory,
+  deleteCategory,
+  saveAssertionCategory,
+  listAssertionCategories,
+  getAssertionCategory,
+  deleteAssertionCategory,
+  generateTraceAssertions,
+  regenerateAssertion,
+  saveTraceAssertions,
+  getTraceAssertions,
+  listTraceAssertions,
+  archiveTraceAssertions,
+  listOrganizationMembers,
+  saveGrader,
+  listGraders,
+  saveDataset,
+  listDatasets,
+  addTracesToDataset,
+  removeTracesFromDataset,
+  addGradersToDataset,
+  removeGradersFromDataset,
+  rerunGradersOnDataset,
+  rerunGradersOnExperiment,
+  addGradersToExperiment,
+  removeGradersFromExperiment,
+  addGradersToExperimentGroup,
+  removeGradersFromExperimentGroup,
+  listExperiments,
+  listExperimentTraces,
+  getReplayStatus,
+  getTemplateReference,
+  getTemplate,
+  saveTemplate,
+  getSimPlan,
+  saveSimPlan,
+  getScenarioTemplate,
+  saveScenarioTemplate,
+  generateScenarioTemplate,
+  listScenarios,
+  getScenario,
+  saveScenario,
+  saveTraceCategories,
+  generateScenario,
+  generateScenarioAssertions
+];
+var TOOL_NAMES = ALL_TOOL_CONTRACTS.map((contract) => contract.name).sort();
+
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
 import { readFile as readFile2 } from "node:fs/promises";
 import { resolve } from "node:path";
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpProxy.js
+function errorResult(message) {
+  return {
+    content: [{ type: "text", text: message }],
+    isError: true
+  };
+}
+function parseSSEData(text) {
+  const dataLine = text.split("\n").find((line) => line.startsWith("data: "));
+  return dataLine ? dataLine.slice(6) : null;
+}
+async function parseResponse(response) {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (contentType.includes("text/event-stream")) {
+    const text = await response.text();
+    const data = parseSSEData(text);
+    if (!data) {
+      throw new Error("Empty SSE response");
+    }
+    return JSON.parse(data);
+  }
+  return response.json();
+}
+var McpProxy = class {
+  sessionId = null;
+  platform;
+  pluginVersion;
+  constructor(platform, pluginVersion) {
+    this.platform = platform;
+    this.pluginVersion = pluginVersion;
+  }
+  async fetch(config2, method, params) {
+    const headers = {
+      ...buildBitfabRequestHeaders(config2.apiKey ?? "", this.pluginVersion, this.platform),
+      Accept: "application/json, text/event-stream"
+    };
+    if (this.sessionId) {
+      headers["mcp-session-id"] = this.sessionId;
+    }
+    const response = await fetch(`${config2.serviceUrl}/mcp`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
+    });
+    const newSessionId = response.headers.get("mcp-session-id");
+    if (newSessionId) {
+      this.sessionId = newSessionId;
+    }
+    return response;
+  }
+  async ensureSession(config2) {
+    if (this.sessionId) {
+      return;
+    }
+    const response = await this.fetch(config2, "initialize", {
+      protocolVersion: "2025-03-26",
+      capabilities: {},
+      clientInfo: {
+        name: `bitfab-${this.platform.cliBinary}-plugin`,
+        version: this.pluginVersion
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Initialize failed (${response.status})`);
+    }
+    await parseResponse(response);
+  }
+  async toolCall(config2, toolName, args) {
+    if (config2.serviceUrl === DSM_NOT_STARTED_URL) {
+      return errorResult("No Bitfab dev server running in this worktree. Start one with /bitfab-dev:server (or `dsm up -p bitfab`).");
+    }
+    if (!config2.apiKey) {
+      return errorResult(`Not authenticated. Run ${this.platform.loginHint} to connect your Bitfab account.`);
+    }
+    try {
+      await this.ensureSession(config2);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return errorResult(`Failed to initialize Bitfab session: ${message}`);
+    }
+    let response;
+    try {
+      response = await this.fetch(config2, "tools/call", {
+        name: toolName,
+        arguments: args
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      return errorResult(`Network error connecting to Bitfab: ${message}`);
+    }
+    if (response.status === 404) {
+      this.sessionId = null;
+      try {
+        await this.ensureSession(config2);
+        response = await this.fetch(config2, "tools/call", {
+          name: toolName,
+          arguments: args
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return errorResult(`Failed to reconnect to Bitfab: ${message}`);
+      }
+    }
+    if (!response.ok) {
+      return errorResult(`Bitfab API error (${response.status}): ${await response.text().catch(() => "unknown")}`);
+    }
+    let data;
+    try {
+      data = await parseResponse(response);
+    } catch {
+      return errorResult("Failed to parse response from Bitfab API");
+    }
+    if (data.error) {
+      return errorResult(`Bitfab error: ${data.error.message}`);
+    }
+    return data.result ?? errorResult("Empty response from Bitfab API");
+  }
+  getSessionId() {
+    return this.sessionId;
+  }
+  clearSession() {
+    this.sessionId = null;
+  }
+};
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
 function withLegacyExperimentKeys(args) {
   return {
     ...args,
@@ -43487,13 +43281,60 @@ function createBitfabToolHandlers(platform, getConfig2, pluginVersion) {
   return { proxy, handlers };
 }
 
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpInstructions.js
+function buildMcpInstructions(platform) {
+  return renderMcpInstructions(platform);
+}
+function renderMcpInstructions(platform) {
+  return `Bitfab records traces of AI agent runs and helps the user improve the code that produced them.
+There is no special command for this work: use these tools and the SDK's commands.
+
+Replaying traces against the current code:
+- A replay runs a trace's recorded inputs through the current code via the SDK's \`bitfab-replay\` command, not these tools.
+- It needs a replay registry (\`scripts/replayRegistry.*\`, \`scripts/replay_registry.*\`, or \`cmd/registry/main.go\`); \`${platform.setupHint}\` creates one if missing.
+- Run it from the project directory. TypeScript: \`pnpm exec bitfab-replay --registry <registry-path> <trace-function-key> --dataset-id <dataset-id>\`. Python: \`uv run\` or \`poetry run bitfab-replay ...\`. Ruby: \`bundle exec bitfab-replay ...\`. Go: \`go run ./cmd/registry <trace-function-key> ...\`.
+- Every replay needs \`--code-change\`: \`working-tree\`, \`last-branch\`, \`default-branch\`, \`ref\` with \`--code-change-base <branch|sha>\`, \`skip\`, or \`manual\` with \`--code-change-file <path>\`. Ask if unclear.
+- \`--trace-ids <id>,<id>\` replays specific traces; with \`--dataset-id\`, as a subset of that dataset. \`--attempts <n>\` repeats each trace. \`--cloud\` runs it on GitHub Actions. \`--help\` lists every option.
+- Each replay creates an experiment. ${getReplayStatus.name} reports its progress. If it stopped early, resume it with the same command plus \`--resume <experiment-id>\`, minus the flags that pick traces.
+
+Recording a fresh run of a trace:
+- \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` reruns the function on a trace's inputs under the same trace ID. It runs side effects for real, so warn the user first.
+
+Waiting for replays:
+- A replay run in the foreground ends with its results. Start a long one, or one with \`--cloud\` (add \`--cloud-detach\`), in the background instead, and read its results with ${getExperiment.name} and ${listExperimentTraces.name} once it finishes. In Claude Code the Bitfab plugin starts a new turn when this session's experiments finish.
+
+Fixing a dataset's failing traces:
+- After a dataset replay, ${listExperimentTraces.name} ends with the flags that rerun only the failing traces as a subset.
+- \`--only-drafts\` with \`--dataset-id\` replays only the dataset traces with a draft assertion.
+- Fix and rerun that subset until it passes. Then replay the whole dataset once to check nothing else broke.
+
+Experiment groups:
+- Every replay needs \`--experiment-group-id\`: one series of runs testing one thing. Reuse one from ${listExperimentGroups.name} for the same thing, else a new UUID; group by what is tested, not session or branch.
+- Name each run with \`--name\` (what changed) and each new group with \`--experiment-group-name\` (what it tests); name unnamed ones with ${saveExperiment.name} or ${saveExperimentGroup.name}.
+- Compare against an earlier run with \`--baseline-experiment-id <experiment-id>\` or ${saveExperiment.name}.
+- Read results with ${listExperiments.name}, ${listExperimentGroups.name}, ${getExperiment.name}, and ${listExperimentTraces.name}. Report what improved and regressed against the baseline.
+
+Finding out what happened:
+- Find the traced function with ${listTraceFunctions.name} and its traces with ${searchTraces.name}. Read them with ${getTraces.name}, and read a long value with ${getSpanField.name}.
+
+Writing down what should happen:
+- An assertion says what should happen when a trace is replayed: draft with ${generateTraceAssertions.name}, write with ${saveTraceAssertions.name} (drafts until confirmed), retire with ${archiveTraceAssertions.name}.
+- A verdict says whether a run passed an assertion: read assertions with ${getTraceAssertions.name}, record yours with ${saveAgentVerdicts.name}; ${saveHumanVerdicts.name} is only for the user's own.
+- A scenario describes one run's situation: read with ${getScenario.name}, build with ${saveScenario.name}.
+
+Building datasets:
+- Datasets (traces replayed together): ${listDatasets.name}, ${saveDataset.name}, ${addTracesToDataset.name}.
+
+Use \`${platform.setupHint}\` to instrument code, set up replay or cloud replay, log in, or switch organization. Use \`${platform.updateHint}\` to update the plugin or SDK.`;
+}
+
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpServer.js
-function createMcpServer(platform, getConfig2, pluginVersion, waitCommand) {
+function createMcpServer(platform, getConfig2, pluginVersion) {
   const { proxy, handlers } = createBitfabToolHandlers(platform, getConfig2, pluginVersion);
   const server = new McpServer({
     name: "Bitfab",
     version: pluginVersion
-  }, { instructions: buildMcpInstructions(platform, waitCommand) });
+  }, { instructions: buildMcpInstructions(platform) });
   for (const { contract, handle } of handlers) {
     server.registerTool(contract.name, toolConfig(contract), async (args) => handle(args));
   }
@@ -43502,7 +43343,7 @@ function createMcpServer(platform, getConfig2, pluginVersion, waitCommand) {
   return { server, proxy };
 }
 async function startMcpServer(platform, getConfig2, pluginVersion) {
-  const { server } = createMcpServer(platform, getConfig2, pluginVersion, findWaitCommand(process.argv[1]));
+  const { server } = createMcpServer(platform, getConfig2, pluginVersion);
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
@@ -43796,19 +43637,19 @@ function createFlowSchema(options) {
   ]);
   const allowedKeys = /* @__PURE__ */ new Set(["default", ...targetNames]);
   return FlowBase.superRefine((flow, ctx) => {
-    const issue2 = (path12, message) => ctx.addIssue({ code: "custom", path: path12, message });
-    for (const { path: path12, value } of targetableFields(flow)) {
+    const issue2 = (path10, message) => ctx.addIssue({ code: "custom", path: path10, message });
+    for (const { path: path10, value } of targetableFields(flow)) {
       if (typeof value !== "object" || value === null) {
         continue;
       }
       const map2 = value;
       for (const key of Object.keys(map2)) {
         if (!allowedKeys.has(key)) {
-          issue2(path12, `Unknown target "${key}" in per-target object. Known targets: ${targetNames.join(", ")}.`);
+          issue2(path10, `Unknown target "${key}" in per-target object. Known targets: ${targetNames.join(", ")}.`);
         }
       }
       if (map2.default === void 0 && !targetNames.every((target) => map2[target] !== void 0)) {
-        issue2(path12, `Per-target object must have \`default\` or define all of ${targetNames.join("/")}.`);
+        issue2(path10, `Per-target object must have \`default\` or define all of ${targetNames.join("/")}.`);
       }
     }
     const allStepIds = /* @__PURE__ */ new Set();
@@ -43854,15 +43695,15 @@ function createFlowSchema(options) {
             issue2(["phases", phase.id, "steps", step.id], `edge \u2192 unknown step "${ref}"`);
           }
         }
-        const validateByMode = (byMode, path12, label) => {
+        const validateByMode = (byMode, path10, label) => {
           for (const mode of Object.keys(byMode)) {
             if (!declaredModeSet.has(mode)) {
-              issue2(path12, `${label} lists mode "${mode}" not declared in flow.entries`);
+              issue2(path10, `${label} lists mode "${mode}" not declared in flow.entries`);
             }
           }
           const missingModes = declaredModes.filter((m) => !(m in byMode));
           if (missingModes.length > 0) {
-            issue2(path12, `${label} byMode is missing entries for mode(s): ${missingModes.join(", ")}`);
+            issue2(path10, `${label} byMode is missing entries for mode(s): ${missingModes.join(", ")}`);
           }
         };
         if ((step.kind === "action" || step.kind === "reference" || step.kind === "parallel") && typeof step.next === "object" && step.next !== null) {
@@ -44176,9 +44017,9 @@ function branchLabel(branch) {
 }
 function targetableFields(flow) {
   const out = [];
-  const push = (path12, value) => {
+  const push = (path10, value) => {
     if (value !== void 0) {
-      out.push({ path: path12, value });
+      out.push({ path: path10, value });
     }
   };
   push(["title"], flow.title);
@@ -45599,12 +45440,12 @@ ${external_exports.prettifyError(result.error)}`);
     describeFlow
   };
 }
-function dirname(path12) {
-  const i = path12.lastIndexOf("/");
-  return i === -1 ? "." : path12.slice(0, i);
+function dirname(path10) {
+  const i = path10.lastIndexOf("/");
+  return i === -1 ? "." : path10.slice(0, i);
 }
-function basename(path12) {
-  return path12.slice(path12.lastIndexOf("/") + 1);
+function basename(path10) {
+  return path10.slice(path10.lastIndexOf("/") + 1);
 }
 function resolveOutputPath(output2, file2) {
   const main = typeof output2 === "string" ? output2 : output2.main;
@@ -46057,11 +45898,11 @@ runUpdate(getVersion(), platform, mode).catch((err) => {
     }
   },
   {
-    name: "waitForExperiment",
-    sharedImports: ["runWaitForExperiment"],
+    name: "watchRunningExperiments",
+    sharedImports: ["runWatchRunningExperiments"],
     localImports: ["platform", "version"],
-    body: `runWaitForExperiment(platform, getVersion()).catch((err) => {
-  console.error("Failed to wait for the experiment:", err.message)
+    body: `runWatchRunningExperiments(platform, getVersion()).catch((err) => {
+  console.error("Failed to watch running experiments:", err.message)
   process.exit(1)
 })`
   }
@@ -46395,10 +46236,6 @@ var setupFlow = bitfabKit.defineFlow({
       description: "Print a link to experiments.",
       args: "<experimentIds>"
     },
-    waitForExperiment: {
-      description: "Wait in the foreground until experiments finish, printing their progress; exits after about nine minutes and says to run it again.",
-      args: "<experimentIds> or --metadata <key=value> [--count N]"
-    },
     startDataset: {
       description: "Print a dataset link.",
       args: "<key> <datasetId>"
@@ -46607,11 +46444,7 @@ Each replay pushes a temporary bitfab-replay/<UUID> branch. For each push-trigge
 
 Verify with the replay command the user already runs. First add --cloud --cloud-preview, which pushes nothing and lists the changed and new files the snapshot would carry; review them for anything that should not leave the machine, since filename screening is not a secret scanner, and have the user gitignore it. Once the workflow is merged and secrets are set, and remote runs are authorized, run the same command with --cloud --dry-run: a real run that replays nothing but receives the secrets, stops on any empty secret, runs the --check command, and resolves the traces. Then, only when a replay is authorized, run with --cloud alone.
 
-From an agent session always add --cloud-detach and --metadata bitfab-wait=<new UUID>, since a replay can run for hours and a single tool call stops after about ten minutes. Then wait in the foreground, never as a background command, so you show as working until it finishes:
-
-{{command:waitForExperiment}} --metadata bitfab-wait=<UUID>
-
-When several replays run at once, start every one with the same tag and add --count <number of replays>, so one command waits for them all. It prints progress and exits when every experiment finishes or after about nine minutes. Run it again each time it prints STILL RUNNING, and do not end your turn while the replay runs; once it prints FINISHED, read the results with {{tool:getExperiment}} and {{tool:listExperimentTraces}} in the same turn. --cloud-status <execution UUID> shows whether a GitHub run failed before its experiment appeared; --cloud-cancel and --cloud-cleanup stop and clean up a run. --cloud-timeout <minutes> stops one replay early and keeps finished traces. --cloud-env NAME=VALUE (repeatable) sets a non-secret environment variable for one replay; secrets go in the workflow's env and --cloud-secrets. When the snapshot refuses a credential-like file the user confirms is safe to upload, such as a test certificate, --cloud-allow-file <path> (repeatable, private repositories only) lets it in. Report separately whether the workflow is written, secrets are set, the workflow is merged, the preview was reviewed, the dry run passed, and a real replay completed.`,
+From an agent session always add --cloud-detach, since a replay can run for hours and a single tool call stops after about ten minutes: it prints the experiment's link and returns while the replay runs on GitHub. Once it finishes, read the results with {{tool:getExperiment}} and {{tool:listExperimentTraces}}.{{#claude}} The Bitfab plugin starts a new turn when this session's experiments finish, so end your turn rather than waiting.{{/claude}} --cloud-status <execution UUID> shows whether a GitHub run failed before its experiment appeared; --cloud-cancel and --cloud-cleanup stop and clean up a run. --cloud-timeout <minutes> stops one replay early and keeps finished traces. --cloud-env NAME=VALUE (repeatable) sets a non-secret environment variable for one replay; secrets go in the workflow's env and --cloud-secrets. When the snapshot refuses a credential-like file the user confirms is safe to upload, such as a test certificate, --cloud-allow-file <path> (repeatable, private repositories only) lets it in. Report separately whether the workflow is written, secrets are set, the workflow is merged, the preview was reviewed, the dry run passed, and a real replay completed.`,
           next: "cleanup/finish"
         }
       ]
@@ -48622,8 +48455,7 @@ var SUPPORTED_COMMANDS = /* @__PURE__ */ new Set([
   "sessionLogConsent",
   "status",
   "switchOrg",
-  "update",
-  "waitForExperiment"
+  "update"
 ]);
 var setupV2Flow = bitfabKit.defineFlow({
   ...setupFlow,
@@ -48684,9 +48516,9 @@ var setupV2Flow = bitfabKit.defineFlow({
 });
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installScope.js
-import fs13 from "node:fs";
+import fs11 from "node:fs";
 import os8 from "node:os";
-import path11 from "node:path";
+import path9 from "node:path";
 function pluginUpdateScopes(scopes) {
   return scopes.length > 0 ? [...scopes] : ["user"];
 }
@@ -48696,19 +48528,19 @@ function installScopeAppliesToProject(projectPath, projectDir) {
   }
   const project = canonicalPath(projectPath);
   const current = canonicalPath(projectDir);
-  return current === project || current.startsWith(`${project}${path11.sep}`);
+  return current === project || current.startsWith(`${project}${path9.sep}`);
 }
 function canonicalPath(target) {
   try {
-    return fs13.realpathSync(path11.resolve(target));
+    return fs11.realpathSync(path9.resolve(target));
   } catch {
-    return path11.resolve(target);
+    return path9.resolve(target);
   }
 }
 function detectClaudeInstallScopes(pluginKey, homeDir = os8.homedir(), projectDir = process.cwd()) {
   try {
-    const installedPath = path11.join(homeDir, ".claude", "plugins", "installed_plugins.json");
-    const content = fs13.readFileSync(installedPath, "utf-8");
+    const installedPath = path9.join(homeDir, ".claude", "plugins", "installed_plugins.json");
+    const content = fs11.readFileSync(installedPath, "utf-8");
     const data = JSON.parse(content);
     const entries = data.plugins?.[pluginKey] ?? [];
     const scopes = /* @__PURE__ */ new Set();
@@ -48739,7 +48571,7 @@ export {
   runSwitchOrg,
   parseUpdateMode,
   runUpdate,
-  runWaitForExperiment,
+  runWatchRunningExperiments,
   readHookStdin,
   runCaptureHook,
   runUserPromptSubmit,
