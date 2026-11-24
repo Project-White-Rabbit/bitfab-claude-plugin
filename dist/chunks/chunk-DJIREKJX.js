@@ -5475,8 +5475,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path10) {
-      let input2 = path10;
+    function removeDotSegments(path11) {
+      let input2 = path11;
       const output2 = [];
       let nextSlash = -1;
       let len = 0;
@@ -5550,11 +5550,11 @@ var require_utils = __commonJS({
       }
       return output2.join("");
     }
-    function removeDotSegmentsRelative(path10) {
-      if (path10 === "" || path10[0] === "/") {
-        return removeDotSegments(path10);
+    function removeDotSegmentsRelative(path11) {
+      if (path11 === "" || path11[0] === "/") {
+        return removeDotSegments(path11);
       }
-      const segments = path10.split("/");
+      const segments = path11.split("/");
       const last = segments.length - 1;
       const output2 = [];
       let trailingDirectory = false;
@@ -5917,8 +5917,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path10 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path10 && path10 !== "/" ? path10 : void 0;
+        const path11 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path11 && path11 !== "/" ? path11 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -9886,8 +9886,8 @@ async function closeLoginWindow(signInUrl) {
   if (!["http:", "https:"].includes(url2.protocol) || url2.username !== "" || url2.password !== "" || !/^\/plugin\/auth\/[a-z0-9-]+$/.test(url2.pathname) || marker === null || !/^[a-f0-9]{32}$/.test(marker)) {
     return;
   }
-  const appNames = getChromiumBrowsers().flatMap((browser) => browser.binaryPaths.flatMap((path10) => {
-    const appName = path10.match(/\/([^/]+)\.app\//)?.[1];
+  const appNames = getChromiumBrowsers().flatMap((browser) => browser.binaryPaths.flatMap((path11) => {
+    const appName = path11.match(/\/([^/]+)\.app\//)?.[1];
     return appName === void 0 ? [] : [appName];
   }));
   await Promise.all(appNames.map((appName) => new Promise((resolve2) => {
@@ -10027,8 +10027,8 @@ function validateFormat(value, format) {
   }
   if (format === "number") {
     const n = Number(value);
-    if (!Number.isFinite(n) || n <= 0) {
-      return `"${value}" is not a valid positive number`;
+    if (value.trim() === "" || !Number.isFinite(n) || n < 0) {
+      return `"${value}" is not a valid number of zero or more`;
     }
   }
   return null;
@@ -10185,10 +10185,10 @@ function emitJson(event) {
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/pageLink.js
-function emitPageLink(path10) {
+function emitPageLink(path11) {
   emitJson({
     event: "link",
-    url: `${getConfig().serviceUrl.replace(/\/$/, "")}${path10}`
+    url: `${getConfig().serviceUrl.replace(/\/$/, "")}${path11}`
   });
 }
 
@@ -10286,15 +10286,15 @@ async function runOpenDatasetExperiments(_platform) {
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/pageLink.js
 function runPageLink() {
-  const [path10] = positionalArgs([
+  const [path11] = positionalArgs([
     { name: "path", description: "Relative Bitfab page path." }
   ]);
-  const url2 = new URL(path10, "https://bitfab.invalid");
+  const url2 = new URL(path11, "https://bitfab.invalid");
   const pluginPage = /^\/plugin\/(?:auth\/|sign-in(?:\/|$)|trace-functions\/[^/]+\/template-preview(?:\/|$))/;
-  if (!path10.startsWith("/") || path10.startsWith("//") || path10.includes("\\") || url2.origin !== "https://bitfab.invalid" || /^\/(?:studio|trace-plan|trace-plans)(?:\/|$)/.test(url2.pathname) || url2.pathname.startsWith("/plugin/") && !pluginPage.test(url2.pathname)) {
+  if (!path11.startsWith("/") || path11.startsWith("//") || path11.includes("\\") || url2.origin !== "https://bitfab.invalid" || /^\/(?:studio|trace-plan|trace-plans)(?:\/|$)/.test(url2.pathname) || url2.pathname.startsWith("/plugin/") && !pluginPage.test(url2.pathname)) {
     throw new Error("Provide an app page path or a plugin login or template-preview path.");
   }
-  emitPageLink(path10);
+  emitPageLink(path11);
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/sessionLogConsent.js
@@ -11165,10 +11165,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path10) {
-  if (!path10)
+function getElementAtPath(obj, path11) {
+  if (!path11)
     return obj;
-  return path10.reduce((acc, key) => acc?.[key], obj);
+  return path11.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -11508,11 +11508,11 @@ function explicitlyAborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path10, issues) {
+function prefixIssues(path11, issues) {
   return issues.map((iss) => {
     var _a3;
     (_a3 = iss).path ?? (_a3.path = []);
-    iss.path.unshift(path10);
+    iss.path.unshift(path11);
     return iss;
   });
 }
@@ -11974,16 +11974,16 @@ function flattenError(error62, mapper = (issue2) => issue2.message) {
 }
 function formatError(error62, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error63, path10 = []) => {
+  const processError = (error63, path11 = []) => {
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path11, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else {
-        const fullpath = [...path10, ...issue2.path];
+        const fullpath = [...path11, ...issue2.path];
         if (fullpath.length === 0) {
           fieldErrors._errors.push(mapper(issue2));
         } else {
@@ -12022,17 +12022,17 @@ function formatError(error62, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error62, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error63, path10 = []) => {
+  const processError = (error63, path11 = []) => {
     var _a3;
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path11, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path11, ...issue2.path]);
       } else {
-        const fullpath = [...path10, ...issue2.path];
+        const fullpath = [...path11, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -12071,8 +12071,8 @@ function treeifyError(error62, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path10 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path10) {
+  const path11 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path11) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -29210,13 +29210,13 @@ function resolveRef(ref, ctx) {
   if (!ref.startsWith("#")) {
     throw new Error("External $ref is not supported, only local refs (#/...) are allowed");
   }
-  const path10 = ref.slice(1).split("/").filter(Boolean);
-  if (path10.length === 0) {
+  const path11 = ref.slice(1).split("/").filter(Boolean);
+  if (path11.length === 0) {
     return ctx.rootSchema;
   }
   const defsKey = ctx.version === "draft-2020-12" ? "$defs" : "definitions";
-  if (path10[0] === defsKey) {
-    const key = path10[1] === void 0 ? void 0 : decodeJSONPointerSegment(path10[1]);
+  if (path11[0] === defsKey) {
+    const key = path11[1] === void 0 ? void 0 : decodeJSONPointerSegment(path11[1]);
     if (!key || !ctx.defs[key]) {
       throw new Error(`Reference not found: ${ref}`);
     }
@@ -30093,8 +30093,8 @@ async function runStartTemplatePreview(platform, pluginVersion) {
   emitPageLink(buildTemplatePreviewPath(args[0], ticket.id));
 }
 function buildTemplatePreviewPath(functionKey, ticketId) {
-  const path10 = `/plugin/trace-functions/${encodeURIComponent(functionKey)}/template-preview`;
-  return ticketId ? `${path10}?ticket=${encodeURIComponent(ticketId)}` : path10;
+  const path11 = `/plugin/trace-functions/${encodeURIComponent(functionKey)}/template-preview`;
+  return ticketId ? `${path11}?ticket=${encodeURIComponent(ticketId)}` : path11;
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/updates.js
@@ -30452,10 +30452,10 @@ var semver2 = __toESM(require_semver2(), 1);
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bakedSdkVersions.js
 var BAKED_SDK_VERSIONS = {
-  typescript: "0.81.0",
-  python: "0.81.0",
-  ruby: "0.78.1",
-  go: "0.78.1"
+  typescript: "0.81.1",
+  python: "0.81.1",
+  ruby: "0.78.2",
+  go: "0.78.2"
 };
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
@@ -31217,22 +31217,28 @@ async function runUpdate(currentVersion, platform, mode = "all") {
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/watchRunningExperiments.js
-var MIN_REFRESH_GAP_MS = 5e3;
+import { mkdirSync, watch } from "node:fs";
+import { readdir, readFile as readFile2, rm, stat } from "node:fs/promises";
+import os6 from "node:os";
+import path7 from "node:path";
+var MIN_REFRESH_GAP_MS = 2e3;
 var STREAM_FALLBACK_REFRESH_MS = 6e4;
 var POLL_FALLBACK_REFRESH_MS = 2e4;
 var STREAM_RETRY_MS = 5e3;
-var SETTLE_AFTER_FINISH_MS = 2e4;
 var STALL_AFTER_MS = 10 * 6e4;
+var IDLE_RECHECK_MS = 15e3;
 var REQUEST_TIMEOUT_MS = 3e4;
-var MAX_RUNNING_LISTED = 20;
-var MAX_CONSECUTIVE_REFRESH_FAILURES = 3;
-var DISCOVER_CLOCK_SKEW_MS = 6e4;
+var LOGIN_RECHECK_MS = 3e4;
+var LAUNCH_LOOKUP_MAX_MS = 60 * 6e4;
 var NEVER2 = new Promise(() => {
 });
 var EXPERIMENT_EVENT_TYPES = /* @__PURE__ */ new Set([
   "experiment:updated",
   "experiment-stats:updated"
 ]);
+var SAFE_SESSION_ID = /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/;
+var LAUNCH_ID_METADATA_KEY = "bitfab-launch-id";
+var SESSION_FOLDER_MAX_AGE_MS = 7 * 24 * 60 * 6e4;
 var Waker = class {
   resolveWake;
   pending;
@@ -31254,17 +31260,22 @@ var Waker = class {
     this.pending = this.fresh();
   }
 };
-function snapshotKey(snapshot) {
-  return JSON.stringify(snapshot);
-}
 function progressTotal(status) {
   return status.remainingCount === null ? null : status.finishedCount + status.remainingCount;
 }
-async function watchRunningExperiments(discoverMs, deps) {
-  const discoverUntil = deps.now() + discoverMs;
-  const createdAfter = discoverMs > 0 ? new Date(deps.now() - DISCOVER_CLOCK_SKEW_MS).toISOString() : null;
+async function watchSessionExperiments(deps) {
   const names = /* @__PURE__ */ new Map();
+  const pendingLaunches = /* @__PURE__ */ new Map();
+  const settledLaunches = /* @__PURE__ */ new Set();
+  const ignored = /* @__PURE__ */ new Set();
+  const finished = /* @__PURE__ */ new Map();
   const lastProgress = /* @__PURE__ */ new Map();
+  const waker = new Waker();
+  let stream = null;
+  let streamUnavailable = false;
+  let firstPass = true;
+  let lastEmitted = "";
+  let running = [];
   const isStalled = (id, status) => {
     const now = deps.now();
     const seen = lastProgress.get(id);
@@ -31275,47 +31286,74 @@ async function watchRunningExperiments(discoverMs, deps) {
     const tracesLeft = status.remainingCount === null || status.remainingCount > 0;
     return tracesLeft && now - seen.at >= STALL_AFTER_MS;
   };
-  const finished = /* @__PURE__ */ new Map();
-  const waker = new Waker();
-  const streamAbort = new AbortController();
-  let streamState = "closed";
-  let lastEmitted = "";
-  let lastSnapshot = { running: [], finished: [] };
-  let failures = 0;
-  let lastRunningAt = null;
   const onEvent = (event) => {
-    const tracked = names.has(event.experimentId);
-    const ours = event.agentSessionId === deps.agentSessionId;
-    if ((tracked || ours) && !finished.has(event.experimentId)) {
+    if (names.has(event.experimentId) && !finished.has(event.experimentId)) {
       waker.wake();
     }
   };
-  const keepStreamOpen = async () => {
-    while (!streamAbort.signal.aborted) {
-      const outcome = await deps.openStream(onEvent, streamAbort.signal).catch(() => "ended");
-      if (outcome === "unavailable") {
-        streamState = "unavailable";
-        waker.wake();
-        return;
+  const openStream = () => {
+    if (stream !== null || streamUnavailable) {
+      return;
+    }
+    const controller = new AbortController();
+    stream = controller;
+    void (async () => {
+      while (!controller.signal.aborted) {
+        const outcome = await deps.openStream(onEvent, controller.signal).catch(() => "ended");
+        if (outcome === "unavailable") {
+          streamUnavailable = true;
+          return;
+        }
+        if (!controller.signal.aborted) {
+          await deps.wait(STREAM_RETRY_MS, NEVER2);
+        }
       }
-      if (!streamAbort.signal.aborted) {
-        await deps.wait(STREAM_RETRY_MS, NEVER2);
+    })();
+  };
+  const closeStream = () => {
+    stream?.abort();
+    stream = null;
+  };
+  const track = (id, name) => {
+    if (!names.has(id) || name !== null) {
+      names.set(id, name);
+    }
+  };
+  const resolveLaunches = async () => {
+    for (const [launchId, line] of pendingLaunches) {
+      const expired = line.startedAt !== null && deps.now() - line.startedAt > LAUNCH_LOOKUP_MAX_MS;
+      if (expired) {
+        pendingLaunches.delete(launchId);
+        settledLaunches.add(launchId);
+        continue;
+      }
+      const found = await deps.findLaunch(launchId);
+      if (found !== null) {
+        track(found.id, line.name ?? found.name);
+        pendingLaunches.delete(launchId);
+        settledLaunches.add(launchId);
       }
     }
   };
   const refresh = async () => {
-    const listed = await deps.listExperiments(createdAfter);
-    for (const experiment of listed) {
-      names.set(experiment.id, experiment.name);
+    for (const line of await deps.readSessionExperiments()) {
+      if (line.experimentId !== null) {
+        track(line.experimentId, line.name);
+      } else if (line.launchId !== null && !settledLaunches.has(line.launchId)) {
+        pendingLaunches.set(line.launchId, line);
+      }
     }
-    const running = [];
+    await resolveLaunches();
+    const nowRunning = [];
     for (const [id, name] of names) {
-      if (finished.has(id)) {
+      if (finished.has(id) || ignored.has(id)) {
         continue;
       }
       const status = await deps.readStatus(id);
-      if (status.status === "pending") {
-        running.push({
+      if (status === null) {
+        ignored.add(id);
+      } else if (status.status === "pending") {
+        nowRunning.push({
           id,
           name,
           finished: status.finishedCount,
@@ -31323,6 +31361,8 @@ async function watchRunningExperiments(discoverMs, deps) {
           url: deps.experimentUrl(id),
           stalled: isStalled(id, status)
         });
+      } else if (firstPass) {
+        ignored.add(id);
       } else {
         finished.set(id, {
           id,
@@ -31332,59 +31372,45 @@ async function watchRunningExperiments(discoverMs, deps) {
         });
       }
     }
-    return { running, finished: [...finished.values()] };
+    return nowRunning;
   };
+  const stopWatchingFile = deps.watchSessionFile(() => waker.wake());
   try {
-    while (true) {
+    while (!deps.shouldStop()) {
       waker.reset();
       const refreshedAt = deps.now();
-      const refreshed = await refresh().catch((error62) => {
-        failures += 1;
-        if (failures >= MAX_CONSECUTIVE_REFRESH_FAILURES) {
-          throw error62;
-        }
-        return null;
-      });
+      const refreshed = await refresh().catch(() => null);
       if (refreshed !== null) {
-        failures = 0;
-        lastSnapshot = refreshed;
+        firstPass = false;
+        running = refreshed;
       }
-      const snapshot = lastSnapshot;
-      const key = snapshotKey(snapshot);
+      const snapshot = {
+        running,
+        finished: [...finished.values()]
+      };
+      const key = JSON.stringify(snapshot);
       if (refreshed !== null && key !== lastEmitted) {
         deps.emit(snapshot);
         lastEmitted = key;
       }
-      if (refreshed !== null && snapshot.running.length > 0) {
-        lastRunningAt = deps.now();
+      let waitMs;
+      if (running.length > 0) {
+        openStream();
+        waitMs = stream !== null && !streamUnavailable && refreshed !== null ? STREAM_FALLBACK_REFRESH_MS : POLL_FALLBACK_REFRESH_MS;
+      } else {
+        closeStream();
+        waitMs = refreshed === null ? POLL_FALLBACK_REFRESH_MS : IDLE_RECHECK_MS;
       }
-      const lookUntil = names.size > 0 && lastRunningAt !== null ? lastRunningAt + SETTLE_AFTER_FINISH_MS : discoverUntil;
-      const looking = deps.now() < lookUntil;
-      if (refreshed !== null && snapshot.running.length === 0 && !looking) {
-        return snapshot;
-      }
-      if (streamState === "closed") {
-        streamState = "open";
-        void keepStreamOpen();
-      }
-      const fallbackMs = streamState === "open" && refreshed !== null ? STREAM_FALLBACK_REFRESH_MS : POLL_FALLBACK_REFRESH_MS;
-      const untilDiscoveryEnds = snapshot.running.length === 0 ? Math.max(0, lookUntil - deps.now()) : fallbackMs;
-      await deps.wait(Math.min(fallbackMs, untilDiscoveryEnds), waker.next);
+      await deps.wait(waitMs, waker.next);
       const sinceRefresh = deps.now() - refreshedAt;
       if (sinceRefresh < MIN_REFRESH_GAP_MS) {
         await deps.wait(MIN_REFRESH_GAP_MS - sinceRefresh, NEVER2);
       }
     }
   } finally {
-    streamAbort.abort();
+    stopWatchingFile();
+    closeStream();
   }
-}
-function isListedExperiment(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const record2 = value;
-  return typeof record2.id === "string" && (record2.name === null || typeof record2.name === "string");
 }
 function parseExperimentEvent(message) {
   if (message.event === null || !EXPERIMENT_EVENT_TYPES.has(message.event)) {
@@ -31401,14 +31427,7 @@ function parseExperimentEvent(message) {
   }
   const data = parsed;
   const experimentId = data.experimentId ?? data.testRunId;
-  if (typeof experimentId !== "string") {
-    return null;
-  }
-  const agentSessionId = data.experiment?.agentSessionId;
-  return {
-    experimentId,
-    agentSessionId: typeof agentSessionId === "string" ? agentSessionId : null
-  };
+  return typeof experimentId === "string" ? { experimentId } : null;
 }
 function fieldValue(line, field) {
   return line.startsWith(`${field}:`) ? line.slice(field.length + 1).trimStart() : null;
@@ -31454,32 +31473,117 @@ async function readEventStream(url2, headers, onEvent, signal) {
     }
   }
 }
-async function listExperimentsPage(serviceUrl, headers, filters) {
+function sessionExperimentsPath(home, agentSessionId) {
+  return SAFE_SESSION_ID.test(agentSessionId) ? path7.join(home, ".bitfab", "agent-sessions", agentSessionId) : null;
+}
+function sameServer(left, right) {
+  try {
+    return new URL(left).origin === new URL(right).origin;
+  } catch {
+    return false;
+  }
+}
+function textOrNull(value) {
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+function parseSessionExperiments(content, serviceUrl) {
+  return content.split("\n").flatMap((text) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      return [];
+    }
+    if (typeof parsed !== "object" || parsed === null) {
+      return [];
+    }
+    const record2 = parsed;
+    const experimentId = textOrNull(record2.experimentId);
+    const launchId = textOrNull(record2.launchId);
+    if (experimentId === null && launchId === null || typeof record2.serviceUrl !== "string" || !sameServer(record2.serviceUrl, serviceUrl)) {
+      return [];
+    }
+    const startedAt = typeof record2.startedAt === "string" ? Date.parse(record2.startedAt) : NaN;
+    return [
+      {
+        experimentId,
+        launchId,
+        name: textOrNull(record2.name),
+        startedAt: Number.isNaN(startedAt) ? null : startedAt
+      }
+    ];
+  });
+}
+async function lastWrittenAt(folder) {
+  const file2 = await stat(path7.join(folder, "experiments.jsonl")).catch(() => null);
+  return (file2 ?? await stat(folder)).mtimeMs;
+}
+async function pruneStaleSessionFolders(root, keepSessionId, now) {
+  const entries = await readdir(root, { withFileTypes: true }).catch(() => []);
+  const removed = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory() || entry.name === keepSessionId || !SAFE_SESSION_ID.test(entry.name)) {
+      continue;
+    }
+    const folder = path7.join(root, entry.name);
+    try {
+      if (now - await lastWrittenAt(folder) >= SESSION_FOLDER_MAX_AGE_MS) {
+        await rm(folder, { recursive: true, force: true });
+        removed.push(entry.name);
+      }
+    } catch {
+    }
+  }
+  return removed;
+}
+async function readSessionFile(directory, serviceUrl) {
+  if (directory === null) {
+    return [];
+  }
+  try {
+    const content = await readFile2(path7.join(directory, "experiments.jsonl"), "utf8");
+    return parseSessionExperiments(content, serviceUrl);
+  } catch {
+    return [];
+  }
+}
+function watchDirectory(directory, onChange) {
+  if (directory === null) {
+    return () => {
+    };
+  }
+  try {
+    mkdirSync(directory, { recursive: true });
+    const watcher = watch(directory, () => onChange());
+    watcher.on("error", () => watcher.close());
+    return () => watcher.close();
+  } catch {
+    return () => {
+    };
+  }
+}
+function isListedExperiment(value) {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const record2 = value;
+  return typeof record2.id === "string" && (record2.name === null || typeof record2.name === "string");
+}
+async function findLaunchFromApi(serviceUrl, headers, launchId) {
   const params = new URLSearchParams({
-    ...filters,
-    limit: String(MAX_RUNNING_LISTED)
+    metadata: JSON.stringify({ [LAUNCH_ID_METADATA_KEY]: launchId }),
+    limit: "1"
   });
   const response = await fetch(`${serviceUrl}/api/sdk/experiments?${params.toString()}`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+  if ([400, 403, 404].includes(response.status)) {
+    return null;
+  }
   if (!response.ok) {
-    throw new Error(`Bitfab returned ${response.status} listing experiments`);
+    throw new Error(`Bitfab returned ${response.status} finding launch ${launchId}`);
   }
   const body = await response.json();
-  return (body.experiments ?? []).filter(isListedExperiment).map((experiment) => ({ id: experiment.id, name: experiment.name }));
-}
-async function listSessionExperimentsFromApi(serviceUrl, headers, agentSessionId, createdAfter) {
-  const pending = await listExperimentsPage(serviceUrl, headers, {
-    agentSessionId,
-    status: "pending"
-  });
-  if (createdAfter === null) {
-    return pending;
-  }
-  const recent = await listExperimentsPage(serviceUrl, headers, {
-    agentSessionId,
-    createdAfter
-  });
-  const byId = new Map([...pending, ...recent].map((experiment) => [experiment.id, experiment]));
-  return [...byId.values()];
+  const found = (body.experiments ?? []).find(isListedExperiment);
+  return found === void 0 ? null : { id: found.id, name: found.name };
 }
 async function readStatusFromApi(serviceUrl, headers, experimentId) {
   const response = await fetch(`${serviceUrl}/api/sdk/replay/status`, {
@@ -31488,6 +31592,9 @@ async function readStatusFromApi(serviceUrl, headers, experimentId) {
     body: JSON.stringify({ experimentId }),
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
   });
+  if ([400, 403, 404].includes(response.status)) {
+    return null;
+  }
   if (!response.ok) {
     throw new Error(`Bitfab returned ${response.status} reading experiment ${experimentId}`);
   }
@@ -31496,36 +31603,37 @@ async function readStatusFromApi(serviceUrl, headers, experimentId) {
 var FLAGS3 = [
   {
     name: "agent-session-id",
-    description: "The coding agent session whose experiments to follow: only experiments launched from it are listed."
-  },
-  {
-    name: "discover-seconds",
-    format: "number",
-    default: 0,
-    description: "Keep looking this long for an experiment to start before exiting with none running. Use it right after starting a replay."
+    description: "The coding agent session whose experiments to follow: the ones its replays wrote to ~/.bitfab/agent-sessions/<id>/experiments.jsonl."
   }
 ];
 async function runWatchRunningExperiments(platform, pluginVersion) {
   const { flags } = parseArgs({
     positional: [],
     flags: FLAGS3,
-    description: "Print the experiments running from one coding agent session as JSON, one line each time they change, and exit once none is running. Follows Bitfab's pushed experiment events while any runs, with a slow refresh as a fallback."
+    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); experiments on another Bitfab server, or ones this API key cannot read, are left out. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
   });
   const agentSessionId = flags["agent-session-id"];
   if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
     throw new Error("Pass --agent-session-id <session id>.");
   }
-  const config2 = getConfig();
-  if (!config2.apiKey) {
-    console.log(JSON.stringify({ running: [], finished: [] }));
-    return;
+  const parentPid = process.ppid;
+  process.stdout.on("error", () => process.exit(0));
+  let config2 = getConfig();
+  while (!config2.apiKey) {
+    if (process.ppid !== parentPid) {
+      process.exit(0);
+    }
+    await new Promise((resolve2) => setTimeout(resolve2, LOGIN_RECHECK_MS));
+    config2 = getConfig();
   }
   const headers = buildBitfabRequestHeaders(config2.apiKey, pluginVersion, platform);
   const serviceUrl = config2.serviceUrl.replace(/\/$/, "");
-  const discoverSeconds = Number(flags["discover-seconds"] ?? 0);
-  await watchRunningExperiments(discoverSeconds * 1e3, {
-    agentSessionId,
-    listExperiments: (createdAfter) => listSessionExperimentsFromApi(serviceUrl, headers, agentSessionId, createdAfter),
+  const directory = sessionExperimentsPath(os6.homedir(), agentSessionId);
+  void pruneStaleSessionFolders(path7.join(os6.homedir(), ".bitfab", "agent-sessions"), agentSessionId, Date.now());
+  await watchSessionExperiments({
+    readSessionExperiments: () => readSessionFile(directory, serviceUrl),
+    findLaunch: (launchId) => findLaunchFromApi(serviceUrl, headers, launchId),
+    watchSessionFile: (onChange) => watchDirectory(directory, onChange),
     readStatus: (id) => readStatusFromApi(serviceUrl, headers, id),
     experimentUrl: (id) => `${serviceUrl}${buildExperimentsPath([id])}`,
     openStream: (onEvent, signal) => readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal),
@@ -31534,7 +31642,8 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
     wait: (ms, wake) => Promise.race([
       wake,
       new Promise((resolve2) => setTimeout(resolve2, ms))
-    ])
+    ]),
+    shouldStop: () => process.ppid !== parentPid
   });
   process.exit(0);
 }
@@ -31545,8 +31654,8 @@ import fs9 from "node:fs";
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/index.js
 import { execFileSync } from "node:child_process";
 import fs8 from "node:fs";
-import os7 from "node:os";
-import path8 from "node:path";
+import os8 from "node:os";
+import path9 from "node:path";
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/skills.js
 var BITFAB_SKILLS = ["setup", "assistant", "update"];
@@ -31561,8 +31670,8 @@ function extractSkillFromPrompt(prompt) {
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/arming.js
 import fs6 from "node:fs";
-import os6 from "node:os";
-import path7 from "node:path";
+import os7 from "node:os";
+import path8 from "node:path";
 
 // _target/node_modules/.pnpm/bitfab-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-lib/node_modules/bitfab-lib/dist/agentHosts.js
 var AGENT_TYPES = ["claude-code", "cursor", "codex", "amp"];
@@ -31572,22 +31681,22 @@ function isAgentType(value) {
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/arming.js
 function sessionsDir() {
-  return path7.join(os6.homedir(), ".config", "bitfab", "sessions");
+  return path8.join(os7.homedir(), ".config", "bitfab", "sessions");
 }
 function ensureSessionsDir() {
   fs6.mkdirSync(sessionsDir(), { recursive: true });
 }
 function armedMarkerPath(sessionId) {
-  return path7.join(sessionsDir(), `${sessionId}.armed`);
+  return path8.join(sessionsDir(), `${sessionId}.armed`);
 }
 function agentRunIdPath(sessionId) {
-  return path7.join(sessionsDir(), `${sessionId}.agent-run-id`);
+  return path8.join(sessionsDir(), `${sessionId}.agent-run-id`);
 }
 function localOffsetPath(sessionId) {
-  return path7.join(sessionsDir(), `${sessionId}.offset`);
+  return path8.join(sessionsDir(), `${sessionId}.offset`);
 }
 function ampTranscriptPath(sessionId) {
-  return path7.join(sessionsDir(), `${sessionId}.transcript.jsonl`);
+  return path8.join(sessionsDir(), `${sessionId}.transcript.jsonl`);
 }
 var BITFAB_MCP_PREFIXES = [
   "mcp__plugin_bitfab_Bitfab__",
@@ -31739,8 +31848,8 @@ async function getChatSessionState(externalId) {
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/chatSessions/transcriptReader.js
 import fs7 from "node:fs";
 function readTranscriptDelta(transcriptPath, fromOffset, sequenceBaseOverride) {
-  const stat = fs7.statSync(transcriptPath);
-  const fileSize = stat.size;
+  const stat2 = fs7.statSync(transcriptPath);
+  const fileSize = stat2.size;
   if (fromOffset > fileSize) {
     return {
       turns: [],
@@ -31888,7 +31997,7 @@ function agentRunIdFromEnv() {
   return value && value.trim() !== "" ? value : void 0;
 }
 function configFilePath() {
-  return path8.join(os7.homedir(), ".config", "bitfab", "config.json");
+  return path9.join(os8.homedir(), ".config", "bitfab", "config.json");
 }
 function isLocalCaptureDisabled() {
   const envValue = process.env.BITFAB_CAPTURE_SESSIONS;
@@ -31975,8 +32084,8 @@ async function flushDelta(args) {
       state = { offset: remote.lastTranscriptOffset };
     }
   }
-  const stat = fs8.statSync(args.transcriptPath);
-  if (state.offset > stat.size) {
+  const stat2 = fs8.statSync(args.transcriptPath);
+  if (state.offset > stat2.size) {
     const remote = await getChatSessionState(args.sessionId);
     const sequenceOffset = remote?.exists ? remote.nextSequence ?? remote.turnCount : 0;
     return flushFromStart(args, offsetFile, sequenceOffset);
@@ -31998,7 +32107,7 @@ async function flushDelta(args) {
     turns: delta.turns,
     ended: args.ended || void 0
   });
-  if (!result.ok && result.reason === "offset_conflict" && result.lastTranscriptOffset > stat.size) {
+  if (!result.ok && result.reason === "offset_conflict" && result.lastTranscriptOffset > stat2.size) {
     return flushFromStart(args, offsetFile, result.nextSequence ?? result.turnCount);
   }
   return handleAppendResponse(args.sessionId, result, offsetFile, delta.nextSequenceBase);
@@ -32085,8 +32194,8 @@ function writeOffsetState(offsetFile, state) {
 }
 function inferSessionStart(transcriptPath) {
   try {
-    const stat = fs8.statSync(transcriptPath);
-    return stat.birthtime.toISOString();
+    const stat2 = fs8.statSync(transcriptPath);
+    return stat2.birthtime.toISOString();
   } catch {
     return (/* @__PURE__ */ new Date()).toISOString();
   }
@@ -32692,8 +32801,8 @@ function getErrorMap2() {
 
 // _target/node_modules/.pnpm/zod@4.6.7/node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
-  const { data, path: path10, errorMaps, issueData } = params;
-  const fullPath = [...path10, ...issueData.path || []];
+  const { data, path: path11, errorMaps, issueData } = params;
+  const fullPath = [...path11, ...issueData.path || []];
   const fullIssue = {
     ...issueData,
     path: fullPath
@@ -32808,11 +32917,11 @@ var errorUtil;
 
 // _target/node_modules/.pnpm/zod@4.6.7/node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-  constructor(parent, value, path10, key) {
+  constructor(parent, value, path11, key) {
     this._cachedPath = [];
     this.parent = parent;
     this.data = value;
-    this._path = path10;
+    this._path = path11;
     this._key = key;
   }
   get path() {
@@ -36363,11 +36472,11 @@ function normalizeObjectSchema(schema) {
   }
   return void 0;
 }
-function getDotPath(path10) {
-  if (path10.length === 0) {
+function getDotPath(path11) {
+  if (path11.length === 0) {
     return "object root";
   }
-  return path10.reduce((acc, seg, index) => {
+  return path11.reduce((acc, seg, index) => {
     if (index === 0) {
       return String(seg);
     }
@@ -43035,7 +43144,7 @@ var ALL_TOOL_CONTRACTS = [
 var TOOL_NAMES = ALL_TOOL_CONTRACTS.map((contract) => contract.name).sort();
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/bitfabToolHandlers.js
-import { readFile as readFile2 } from "node:fs/promises";
+import { readFile as readFile3 } from "node:fs/promises";
 import { resolve } from "node:path";
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/mcpProxy.js
@@ -43198,7 +43307,7 @@ async function readRecordsFile(recordsPath) {
   const fullPath = resolve(recordsPath);
   let contents;
   try {
-    contents = await readFile2(fullPath, "utf8");
+    contents = await readFile3(fullPath, "utf8");
   } catch (error62) {
     return {
       error: `could not read recordsPath ${fullPath}: ${error62 instanceof Error ? error62.message : String(error62)}`
@@ -43301,7 +43410,7 @@ Recording a fresh run of a trace:
 - \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` reruns the function on a trace's inputs under the same trace ID. It runs side effects for real, so warn the user first.
 
 Waiting for replays:
-- A replay run in the foreground ends with its results. Start a long one, or one with \`--cloud\` (add \`--cloud-detach\`), in the background instead, and read its results with ${getExperiment.name} and ${listExperimentTraces.name} once it finishes. In Claude Code the Bitfab plugin starts a new turn when this session's experiments finish.
+- A replay run in the foreground ends with its results. Start a long one, or one with \`--cloud\` (add \`--cloud-detach\`), in the background instead, and read its results with ${getExperiment.name} and ${listExperimentTraces.name} once it finishes.
 
 Fixing a dataset's failing traces:
 - After a dataset replay, ${listExperimentTraces.name} ends with the flags that rerun only the failing traces as a subset.
@@ -43637,19 +43746,19 @@ function createFlowSchema(options) {
   ]);
   const allowedKeys = /* @__PURE__ */ new Set(["default", ...targetNames]);
   return FlowBase.superRefine((flow, ctx) => {
-    const issue2 = (path10, message) => ctx.addIssue({ code: "custom", path: path10, message });
-    for (const { path: path10, value } of targetableFields(flow)) {
+    const issue2 = (path11, message) => ctx.addIssue({ code: "custom", path: path11, message });
+    for (const { path: path11, value } of targetableFields(flow)) {
       if (typeof value !== "object" || value === null) {
         continue;
       }
       const map2 = value;
       for (const key of Object.keys(map2)) {
         if (!allowedKeys.has(key)) {
-          issue2(path10, `Unknown target "${key}" in per-target object. Known targets: ${targetNames.join(", ")}.`);
+          issue2(path11, `Unknown target "${key}" in per-target object. Known targets: ${targetNames.join(", ")}.`);
         }
       }
       if (map2.default === void 0 && !targetNames.every((target) => map2[target] !== void 0)) {
-        issue2(path10, `Per-target object must have \`default\` or define all of ${targetNames.join("/")}.`);
+        issue2(path11, `Per-target object must have \`default\` or define all of ${targetNames.join("/")}.`);
       }
     }
     const allStepIds = /* @__PURE__ */ new Set();
@@ -43695,15 +43804,15 @@ function createFlowSchema(options) {
             issue2(["phases", phase.id, "steps", step.id], `edge \u2192 unknown step "${ref}"`);
           }
         }
-        const validateByMode = (byMode, path10, label) => {
+        const validateByMode = (byMode, path11, label) => {
           for (const mode of Object.keys(byMode)) {
             if (!declaredModeSet.has(mode)) {
-              issue2(path10, `${label} lists mode "${mode}" not declared in flow.entries`);
+              issue2(path11, `${label} lists mode "${mode}" not declared in flow.entries`);
             }
           }
           const missingModes = declaredModes.filter((m) => !(m in byMode));
           if (missingModes.length > 0) {
-            issue2(path10, `${label} byMode is missing entries for mode(s): ${missingModes.join(", ")}`);
+            issue2(path11, `${label} byMode is missing entries for mode(s): ${missingModes.join(", ")}`);
           }
         };
         if ((step.kind === "action" || step.kind === "reference" || step.kind === "parallel") && typeof step.next === "object" && step.next !== null) {
@@ -44017,9 +44126,9 @@ function branchLabel(branch) {
 }
 function targetableFields(flow) {
   const out = [];
-  const push = (path10, value) => {
+  const push = (path11, value) => {
     if (value !== void 0) {
-      out.push({ path: path10, value });
+      out.push({ path: path11, value });
     }
   };
   push(["title"], flow.title);
@@ -45440,12 +45549,12 @@ ${external_exports.prettifyError(result.error)}`);
     describeFlow
   };
 }
-function dirname(path10) {
-  const i = path10.lastIndexOf("/");
-  return i === -1 ? "." : path10.slice(0, i);
+function dirname(path11) {
+  const i = path11.lastIndexOf("/");
+  return i === -1 ? "." : path11.slice(0, i);
 }
-function basename(path10) {
-  return path10.slice(path10.lastIndexOf("/") + 1);
+function basename(path11) {
+  return path11.slice(path11.lastIndexOf("/") + 1);
 }
 function resolveOutputPath(output2, file2) {
   const main = typeof output2 === "string" ? output2 : output2.main;
@@ -46444,7 +46553,7 @@ Each replay pushes a temporary bitfab-replay/<UUID> branch. For each push-trigge
 
 Verify with the replay command the user already runs. First add --cloud --cloud-preview, which pushes nothing and lists the changed and new files the snapshot would carry; review them for anything that should not leave the machine, since filename screening is not a secret scanner, and have the user gitignore it. Once the workflow is merged and secrets are set, and remote runs are authorized, run the same command with --cloud --dry-run: a real run that replays nothing but receives the secrets, stops on any empty secret, runs the --check command, and resolves the traces. Then, only when a replay is authorized, run with --cloud alone.
 
-From an agent session always add --cloud-detach, since a replay can run for hours and a single tool call stops after about ten minutes: it prints the experiment's link and returns while the replay runs on GitHub. Once it finishes, read the results with {{tool:getExperiment}} and {{tool:listExperimentTraces}}.{{#claude}} The Bitfab plugin starts a new turn when this session's experiments finish, so end your turn rather than waiting.{{/claude}} --cloud-status <execution UUID> shows whether a GitHub run failed before its experiment appeared; --cloud-cancel and --cloud-cleanup stop and clean up a run. --cloud-timeout <minutes> stops one replay early and keeps finished traces. --cloud-env NAME=VALUE (repeatable) sets a non-secret environment variable for one replay; secrets go in the workflow's env and --cloud-secrets. When the snapshot refuses a credential-like file the user confirms is safe to upload, such as a test certificate, --cloud-allow-file <path> (repeatable, private repositories only) lets it in. Report separately whether the workflow is written, secrets are set, the workflow is merged, the preview was reviewed, the dry run passed, and a real replay completed.`,
+From an agent session always add --cloud-detach, since a replay can run for hours and a single tool call stops after about ten minutes: it prints the experiment's link and returns while the replay runs on GitHub. Once it finishes, read the results with {{tool:getExperiment}} and {{tool:listExperimentTraces}}. --cloud-status <execution UUID> shows whether a GitHub run failed before its experiment appeared; --cloud-cancel and --cloud-cleanup stop and clean up a run. --cloud-timeout <minutes> stops one replay early and keeps finished traces. --cloud-env NAME=VALUE (repeatable) sets a non-secret environment variable for one replay; secrets go in the workflow's env and --cloud-secrets. When the snapshot refuses a credential-like file the user confirms is safe to upload, such as a test certificate, --cloud-allow-file <path> (repeatable, private repositories only) lets it in. Report separately whether the workflow is written, secrets are set, the workflow is merged, the preview was reviewed, the dry run passed, and a real replay completed.`,
           next: "cleanup/finish"
         }
       ]
@@ -48517,8 +48626,8 @@ var setupV2Flow = bitfabKit.defineFlow({
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installScope.js
 import fs11 from "node:fs";
-import os8 from "node:os";
-import path9 from "node:path";
+import os9 from "node:os";
+import path10 from "node:path";
 function pluginUpdateScopes(scopes) {
   return scopes.length > 0 ? [...scopes] : ["user"];
 }
@@ -48528,18 +48637,18 @@ function installScopeAppliesToProject(projectPath, projectDir) {
   }
   const project = canonicalPath(projectPath);
   const current = canonicalPath(projectDir);
-  return current === project || current.startsWith(`${project}${path9.sep}`);
+  return current === project || current.startsWith(`${project}${path10.sep}`);
 }
 function canonicalPath(target) {
   try {
-    return fs11.realpathSync(path9.resolve(target));
+    return fs11.realpathSync(path10.resolve(target));
   } catch {
-    return path9.resolve(target);
+    return path10.resolve(target);
   }
 }
-function detectClaudeInstallScopes(pluginKey, homeDir = os8.homedir(), projectDir = process.cwd()) {
+function detectClaudeInstallScopes(pluginKey, homeDir = os9.homedir(), projectDir = process.cwd()) {
   try {
-    const installedPath = path9.join(homeDir, ".claude", "plugins", "installed_plugins.json");
+    const installedPath = path10.join(homeDir, ".claude", "plugins", "installed_plugins.json");
     const content = fs11.readFileSync(installedPath, "utf-8");
     const data = JSON.parse(content);
     const entries = data.plugins?.[pluginKey] ?? [];

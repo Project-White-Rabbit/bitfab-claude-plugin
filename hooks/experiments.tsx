@@ -23,8 +23,6 @@ const announcedExperimentIds = atom(
   [] as string[],
 )
 
-const REPLAY_COMMAND = /bitfab[-_ .]?replay|\bcmd\/registry\b/i
-const DISCOVER_SECONDS_AFTER_REPLAY = 120
 const MAX_ROWS = 5
 const MAX_FINISHED_KEPT = 5
 const SELECT_HINT = "ctrl+x tab to select, enter to press"
@@ -109,29 +107,6 @@ function parseSnapshot(line: string): ExperimentSnapshot | null {
 }
 
 let watching = false
-let foregroundReplays = 0
-let finishedUnseenByAgent: FinishedExperiment[] = []
-
-function wakeText(experiments: FinishedExperiment[]) {
-  const lines = experiments.map(
-    (experiment) =>
-      `- ${experimentLabel(experiment)} (${experiment.id}): ${outcomeLabel(experiment)}, ${experiment.url}`,
-  )
-  return [
-    "These Bitfab experiments launched from this session finished:",
-    ...lines,
-    "Read their results with get_experiment and list_experiment_traces, then tell the user what improved and what regressed.",
-  ].join("\n")
-}
-
-async function wakeAgent($: EngineInterface) {
-  const experiments = finishedUnseenByAgent
-  finishedUnseenByAgent = []
-  if (experiments.length === 0) {
-    return
-  }
-  await $.prompt.submit({ text: wakeText(experiments) })
-}
 
 async function announceFinished(
   $: EngineInterface,
@@ -151,9 +126,6 @@ async function announceFinished(
   await update($, finishedExperiments, (kept) =>
     [...[...fresh].reverse(), ...kept].slice(0, MAX_FINISHED_KEPT),
   )
-  if (foregroundReplays === 0) {
-    finishedUnseenByAgent = [...finishedUnseenByAgent, ...fresh]
-  }
   for (const experiment of fresh) {
     const text = finishLabel(experiment)
     $.ui.toast(text, { timeoutMs: 8000 })
@@ -169,7 +141,7 @@ async function applySnapshot($: EngineInterface, snapshot: ExperimentSnapshot) {
   await wakeForStalls($, snapshot.running)
 }
 
-async function watch($: EngineInterface, discoverSeconds: number) {
+async function watch($: EngineInterface) {
   if (watching) {
     return
   }
@@ -183,8 +155,6 @@ async function watch($: EngineInterface, discoverSeconds: number) {
         `${$.plugin.root}/dist/commands/watchRunningExperiments.js`,
         "--agent-session-id",
         sessionId,
-        "--discover-seconds",
-        String(discoverSeconds),
       ],
     })
     let buffer = ""
@@ -202,7 +172,6 @@ async function watch($: EngineInterface, discoverSeconds: number) {
         }
       }
     }
-    await wakeAgent($)
   } catch (error) {
     $.ui.log(`Bitfab experiments watch stopped: ${String(error)}`, {
       to: "debug",
@@ -216,21 +185,8 @@ async function watch($: EngineInterface, discoverSeconds: number) {
 export const register: Register = (on) => {
   on("session.start", async ($, e, next) => {
     const started = await next(e)
-    void watch($, 0)
+    void watch($)
     return started
-  })
-
-  on("tool.call", { tool: "Bash" }, async ($, e, next) => {
-    if (!REPLAY_COMMAND.test(e.command)) {
-      return next(e)
-    }
-    void watch($, DISCOVER_SECONDS_AFTER_REPLAY)
-    foregroundReplays += 1
-    try {
-      return await next(e)
-    } finally {
-      foregroundReplays -= 1
-    }
   })
 
   on("ui.render", { component: "AbovePrompt" }, async ($, e, next) => {
