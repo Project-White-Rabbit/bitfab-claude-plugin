@@ -4,10 +4,10 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-GQE4CRRI.js";
+} from "../chunks/chunk-6A3J462P.js";
 import {
   runStartDataset
-} from "../chunks/chunk-NDUM3FT6.js";
+} from "../chunks/chunk-VVTU7GOX.js";
 
 // _target/dist/commands/startDataset.js
 runStartDataset(platform, getVersion()).catch((err) => {
