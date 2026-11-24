@@ -4,11 +4,11 @@ import {
 } from "./chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "./chunks/chunk-AMZZJ2P6.js";
+} from "./chunks/chunk-I4E57ZMK.js";
 import {
   getConfig,
   startMcpServer
-} from "./chunks/chunk-LGGFX4TL.js";
+} from "./chunks/chunk-NUC2IGY5.js";
 
 // _target/dist/mcpServer.js
 startMcpServer(platform, getConfig, getVersion()).catch((err) => {
