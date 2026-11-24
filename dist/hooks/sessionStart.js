@@ -5,12 +5,12 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-RDGVK2AF.js";
+} from "../chunks/chunk-UTOLX75V.js";
 import {
   readHookStdin,
   runCaptureHook,
   runSessionStart
-} from "../chunks/chunk-V7TS777W.js";
+} from "../chunks/chunk-Q2UYYJ3Y.js";
 
 // _target/dist/hooks/sessionStart.js
 var input = readHookStdin();
