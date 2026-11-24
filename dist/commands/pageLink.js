@@ -1,7 +1,7 @@
 import { createRequire as __bitfabCreateRequire } from 'node:module'; const require = __bitfabCreateRequire(import.meta.url);
 import {
   runPageLink
-} from "../chunks/chunk-VVTU7GOX.js";
+} from "../chunks/chunk-MCCLB4H5.js";
 
 // _target/dist/commands/pageLink.js
 runPageLink();
