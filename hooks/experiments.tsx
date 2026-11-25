@@ -126,7 +126,7 @@ async function announceFinished(
   await update($, finishedExperiments, (kept) =>
     [...[...fresh].reverse(), ...kept].slice(0, MAX_FINISHED_KEPT),
   )
-  for (const experiment of fresh) {
+  for (const experiment of fresh.filter((one) => one.announce !== false)) {
     const text = finishLabel(experiment)
     $.ui.toast(text, { timeoutMs: 8000 })
     void $.ui

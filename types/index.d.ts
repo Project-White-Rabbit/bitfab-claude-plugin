@@ -12,6 +12,7 @@ export type FinishedExperiment = {
   name: string | null
   status: string
   url: string
+  announce?: boolean
 }
 
 export type ExperimentSnapshot = {

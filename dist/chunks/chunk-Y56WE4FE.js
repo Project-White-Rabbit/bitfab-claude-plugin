@@ -31276,6 +31276,7 @@ async function watchSessionExperiments(deps) {
   let firstPass = true;
   let lastEmitted = "";
   let running = [];
+  let connection = deps.connection();
   const isStalled = (id, status) => {
     const now = deps.now();
     const seen = lastProgress.get(id);
@@ -31361,14 +31362,13 @@ async function watchSessionExperiments(deps) {
           url: deps.experimentUrl(id),
           stalled: isStalled(id, status)
         });
-      } else if (firstPass) {
-        ignored.add(id);
       } else {
         finished.set(id, {
           id,
           name,
           status: status.status,
-          url: deps.experimentUrl(id)
+          url: deps.experimentUrl(id),
+          announce: !firstPass
         });
       }
     }
@@ -31378,6 +31378,14 @@ async function watchSessionExperiments(deps) {
   try {
     while (!deps.shouldStop()) {
       waker.reset();
+      const currentConnection = deps.connection();
+      if (currentConnection !== connection) {
+        connection = currentConnection;
+        ignored.clear();
+        firstPass = true;
+        closeStream();
+        streamUnavailable = false;
+      }
       const refreshedAt = deps.now();
       const refreshed = await refresh().catch(() => null);
       if (refreshed !== null) {
@@ -31610,7 +31618,7 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
   const { flags } = parseArgs({
     positional: [],
     flags: FLAGS3,
-    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); experiments on another Bitfab server, or ones this API key cannot read, are left out. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
+    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); experiments on another Bitfab server, or ones this API key cannot read, are left out. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
   });
   const agentSessionId = flags["agent-session-id"];
   if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
@@ -31618,25 +31626,44 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
   }
   const parentPid = process.ppid;
   process.stdout.on("error", () => process.exit(0));
-  let config2 = getConfig();
-  while (!config2.apiKey) {
+  while (!getConfig().apiKey) {
     if (process.ppid !== parentPid) {
       process.exit(0);
     }
     await new Promise((resolve2) => setTimeout(resolve2, LOGIN_RECHECK_MS));
-    config2 = getConfig();
   }
-  const headers = buildBitfabRequestHeaders(config2.apiKey, pluginVersion, platform);
-  const serviceUrl = config2.serviceUrl.replace(/\/$/, "");
+  const current = () => {
+    const config2 = getConfig();
+    if (!config2.apiKey) {
+      throw new Error("Not logged in to Bitfab");
+    }
+    return {
+      serviceUrl: config2.serviceUrl.replace(/\/$/, ""),
+      headers: buildBitfabRequestHeaders(config2.apiKey, pluginVersion, platform)
+    };
+  };
   const directory = sessionExperimentsPath(os6.homedir(), agentSessionId);
   void pruneStaleSessionFolders(path7.join(os6.homedir(), ".bitfab", "agent-sessions"), agentSessionId, Date.now());
   await watchSessionExperiments({
-    readSessionExperiments: () => readSessionFile(directory, serviceUrl),
-    findLaunch: (launchId) => findLaunchFromApi(serviceUrl, headers, launchId),
+    connection: () => {
+      const config2 = getConfig();
+      return JSON.stringify([config2.serviceUrl, config2.apiKey]);
+    },
+    readSessionExperiments: () => readSessionFile(directory, current().serviceUrl),
+    findLaunch: (launchId) => {
+      const { serviceUrl, headers } = current();
+      return findLaunchFromApi(serviceUrl, headers, launchId);
+    },
     watchSessionFile: (onChange) => watchDirectory(directory, onChange),
-    readStatus: (id) => readStatusFromApi(serviceUrl, headers, id),
-    experimentUrl: (id) => `${serviceUrl}${buildExperimentsPath([id])}`,
-    openStream: (onEvent, signal) => readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal),
+    readStatus: (id) => {
+      const { serviceUrl, headers } = current();
+      return readStatusFromApi(serviceUrl, headers, id);
+    },
+    experimentUrl: (id) => `${current().serviceUrl}${buildExperimentsPath([id])}`,
+    openStream: (onEvent, signal) => {
+      const { serviceUrl, headers } = current();
+      return readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal);
+    },
     emit: (snapshot) => console.log(JSON.stringify(snapshot)),
     now: () => Date.now(),
     wait: (ms, wake) => Promise.race([
