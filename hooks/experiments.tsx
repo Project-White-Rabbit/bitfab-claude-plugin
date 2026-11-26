@@ -26,6 +26,8 @@ const announcedExperimentIds = atom(
 const MAX_ROWS = 5
 const MAX_FINISHED_KEPT = 5
 const SELECT_HINT = "ctrl+x tab to select, enter to press"
+const CLEARED_STORE_KEY = "clearedExperiments"
+const CLEARED_KEPT_MS = 7 * 24 * 60 * 60_000
 
 function experimentLabel(experiment: { id: string; name: string | null }) {
   return experiment.name ?? `Experiment ${experiment.id.slice(0, 8)}`
@@ -77,12 +79,32 @@ function statusTag(status: string, width: number) {
   return `[${status}]`.padEnd(width + 2)
 }
 
+function erroredCount(experiment: FinishedExperiment) {
+  return experiment.status === "completed" ? (experiment.errored ?? 0) : 0
+}
+
 function outcomeColor(experiment: FinishedExperiment) {
-  return experiment.status === "completed" ? "green" : "red"
+  if (experiment.status !== "completed") {
+    return "red"
+  }
+  const errored = erroredCount(experiment)
+  if (errored === 0) {
+    return "green"
+  }
+  return errored === experiment.total ? "red" : "yellow"
 }
 
 function outcomeLabel(experiment: FinishedExperiment) {
-  return experiment.status === "completed" ? "finished" : experiment.status
+  if (experiment.status !== "completed") {
+    return experiment.status
+  }
+  const errored = erroredCount(experiment)
+  if (errored === 0) {
+    return "finished"
+  }
+  return typeof experiment.total === "number"
+    ? `${errored}/${experiment.total} errored`
+    : `${errored} errored`
 }
 
 function finishLabel(experiment: FinishedExperiment) {
@@ -108,6 +130,42 @@ function parseSnapshot(line: string): ExperimentSnapshot | null {
 
 let watching = false
 
+function isClearedTimes(value: unknown): value is Record<string, number> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((at) => typeof at === "number")
+  )
+}
+
+async function readCleared($: EngineInterface) {
+  const stored = await $.store.get(CLEARED_STORE_KEY).catch(() => undefined)
+  return isClearedTimes(stored) ? stored : {}
+}
+
+async function rememberCleared($: EngineInterface, ids: string[]) {
+  const now = await $.clock.now()
+  const kept = Object.fromEntries(
+    Object.entries(await readCleared($)).filter(
+      ([, at]) => now - at < CLEARED_KEPT_MS,
+    ),
+  )
+  for (const id of ids) {
+    kept[id] = now
+  }
+  await $.store.set(CLEARED_STORE_KEY, kept).catch(() => undefined)
+}
+
+async function clearFinished($: EngineInterface, ids: string[] | null) {
+  const cleared =
+    ids ?? (await read($, finishedExperiments)).map((one) => one.id)
+  await update($, finishedExperiments, (kept) =>
+    kept.filter((one) => !cleared.includes(one.id)),
+  )
+  await rememberCleared($, cleared).catch(() => undefined)
+}
+
 async function announceFinished(
   $: EngineInterface,
   snapshot: ExperimentSnapshot,
@@ -123,10 +181,12 @@ async function announceFinished(
     ...ids,
     ...fresh.map((experiment) => experiment.id),
   ])
+  const cleared = await readCleared($)
+  const shown = fresh.filter((experiment) => !(experiment.id in cleared))
   await update($, finishedExperiments, (kept) =>
-    [...[...fresh].reverse(), ...kept].slice(0, MAX_FINISHED_KEPT),
+    [...[...shown].reverse(), ...kept].slice(0, MAX_FINISHED_KEPT),
   )
-  for (const experiment of fresh.filter((one) => one.announce !== false)) {
+  for (const experiment of shown.filter((one) => one.announce !== false)) {
     const text = finishLabel(experiment)
     $.ui.toast(text, { timeoutMs: 8000 })
     void $.ui
@@ -239,11 +299,7 @@ export const register: Register = (on) => {
             <Button
               key={`clear-${experiment.id}`}
               label="x"
-              onPress={() =>
-                update($, finishedExperiments, (kept) =>
-                  kept.filter((one) => one.id !== experiment.id),
-                )
-              }
+              onPress={() => clearFinished($, [experiment.id])}
             />
           </Box>
         ))}
@@ -253,7 +309,7 @@ export const register: Register = (on) => {
               <Button
                 key="clear-finished"
                 label="Clear all"
-                onPress={() => update($, finishedExperiments, () => [])}
+                onPress={() => clearFinished($, null)}
               />
             )}
             {e.surface === "terminal" && (

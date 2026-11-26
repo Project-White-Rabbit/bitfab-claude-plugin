@@ -13,6 +13,8 @@ export type FinishedExperiment = {
   status: string
   url: string
   announce?: boolean
+  errored?: number | null
+  total?: number | null
 }
 
 export type ExperimentSnapshot = {

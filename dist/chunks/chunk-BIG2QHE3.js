@@ -31363,12 +31363,15 @@ async function watchSessionExperiments(deps) {
           stalled: isStalled(id, status)
         });
       } else {
+        const errors = await deps.readErrors(id).catch(() => null);
         finished.set(id, {
           id,
           name,
           status: status.status,
           url: deps.experimentUrl(id),
-          announce: !firstPass
+          announce: !firstPass,
+          errored: errors?.errored ?? null,
+          total: errors?.total ?? null
         });
       }
     }
@@ -31508,7 +31511,8 @@ function parseSessionExperiments(content, serviceUrl) {
     const record2 = parsed;
     const experimentId = textOrNull(record2.experimentId);
     const launchId = textOrNull(record2.launchId);
-    if (experimentId === null && launchId === null || typeof record2.serviceUrl !== "string" || !sameServer(record2.serviceUrl, serviceUrl)) {
+    const fromCloudLaunch = "launchId" in record2;
+    if (experimentId === null && launchId === null || !fromCloudLaunch && (typeof record2.serviceUrl !== "string" || !sameServer(record2.serviceUrl, serviceUrl))) {
       return [];
     }
     const startedAt = typeof record2.startedAt === "string" ? Date.parse(record2.startedAt) : NaN;
@@ -31608,6 +31612,21 @@ async function readStatusFromApi(serviceUrl, headers, experimentId) {
   }
   return await response.json();
 }
+function isReplayErrors(value) {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const record2 = value;
+  return typeof record2.errored === "number" && typeof record2.total === "number";
+}
+async function readErrorsFromApi(serviceUrl, headers, experimentId) {
+  const response = await fetch(`${serviceUrl}/api/sdk/experiments/${encodeURIComponent(experimentId)}/rollup`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+  if (!response.ok) {
+    return null;
+  }
+  const body = await response.json();
+  return isReplayErrors(body.totals) ? { errored: body.totals.errored, total: body.totals.total } : null;
+}
 var FLAGS3 = [
   {
     name: "agent-session-id",
@@ -31618,7 +31637,7 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
   const { flags } = parseArgs({
     positional: [],
     flags: FLAGS3,
-    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); experiments on another Bitfab server, or ones this API key cannot read, are left out. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
+    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); a local replay's experiment on another Bitfab server, and experiments this API key cannot read, are left out. A --cloud launch is followed whatever server its line names, since the GitHub runner's server is not known where it was launched. When an experiment finishes it reads, once, how many of its replays errored. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
   });
   const agentSessionId = flags["agent-session-id"];
   if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
@@ -31658,6 +31677,10 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
     readStatus: (id) => {
       const { serviceUrl, headers } = current();
       return readStatusFromApi(serviceUrl, headers, id);
+    },
+    readErrors: (id) => {
+      const { serviceUrl, headers } = current();
+      return readErrorsFromApi(serviceUrl, headers, id);
     },
     experimentUrl: (id) => `${current().serviceUrl}${buildExperimentsPath([id])}`,
     openStream: (onEvent, signal) => {
