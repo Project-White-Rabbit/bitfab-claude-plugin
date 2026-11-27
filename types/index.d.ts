@@ -5,6 +5,7 @@ export type RunningExperiment = {
   total: number | null
   url: string
   stalled: boolean
+  errored?: number | null
 }
 
 export type FinishedExperiment = {
@@ -13,6 +14,7 @@ export type FinishedExperiment = {
   status: string
   url: string
   announce?: boolean
+  finished?: number
   errored?: number | null
   total?: number | null
 }

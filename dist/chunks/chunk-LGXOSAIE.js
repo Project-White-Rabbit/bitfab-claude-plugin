@@ -10216,6 +10216,9 @@ function buildExperimentsPath(experimentIds, opts) {
   params.set("experimentIds", experimentIds.join(","));
   return withTokens(params, opts);
 }
+function buildExperimentPath(experimentId) {
+  return `/experiments/${encodeURIComponent(experimentId)}`;
+}
 function buildExperimentsPathForDataset(datasetId, opts) {
   const params = new URLSearchParams();
   params.set("datasetId", datasetId);
@@ -31270,6 +31273,7 @@ async function watchSessionExperiments(deps) {
   const ignored = /* @__PURE__ */ new Set();
   const finished = /* @__PURE__ */ new Map();
   const lastProgress = /* @__PURE__ */ new Map();
+  const erroredAt = /* @__PURE__ */ new Map();
   const waker = new Waker();
   let stream = null;
   let streamUnavailable = false;
@@ -31286,6 +31290,19 @@ async function watchSessionExperiments(deps) {
     }
     const tracesLeft = status.remainingCount === null || status.remainingCount > 0;
     return tracesLeft && now - seen.at >= STALL_AFTER_MS;
+  };
+  const readErrored = async (id) => {
+    const errors = await deps.readErrors(id).catch(() => null);
+    return errors?.errored ?? null;
+  };
+  const runningErrored = async (id, status) => {
+    const seen = erroredAt.get(id);
+    if (seen !== void 0 && seen.finished >= status.finishedCount) {
+      return seen.errored;
+    }
+    const errored = status.finishedCount === 0 ? 0 : await readErrored(id);
+    erroredAt.set(id, { finished: status.finishedCount, errored });
+    return errored;
   };
   const onEvent = (event) => {
     if (names.has(event.experimentId) && !finished.has(event.experimentId)) {
@@ -31360,19 +31377,21 @@ async function watchSessionExperiments(deps) {
           finished: status.finishedCount,
           total: progressTotal(status),
           url: deps.experimentUrl(id),
-          stalled: isStalled(id, status)
+          stalled: isStalled(id, status),
+          errored: await runningErrored(id, status)
         });
       } else {
-        const errors = await deps.readErrors(id).catch(() => null);
         finished.set(id, {
           id,
           name,
           status: status.status,
           url: deps.experimentUrl(id),
           announce: !firstPass,
-          errored: errors?.errored ?? null,
-          total: errors?.total ?? null
+          finished: status.finishedCount,
+          errored: await readErrored(id),
+          total: progressTotal(status)
         });
+        erroredAt.delete(id);
       }
     }
     return nowRunning;
@@ -31637,7 +31656,7 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
   const { flags } = parseArgs({
     positional: [],
     flags: FLAGS3,
-    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); a local replay's experiment on another Bitfab server, and experiments this API key cannot read, are left out. A --cloud launch is followed whatever server its line names, since the GitHub runner's server is not known where it was launched. When an experiment finishes it reads, once, how many of its replays errored. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
+    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); a local replay's experiment on another Bitfab server, and experiments this API key cannot read, are left out. A --cloud launch is followed whatever server its line names, since the GitHub runner's server is not known where it was launched. Reads how many of an experiment's replays errored each time its replayed count goes up, and once more when it finishes. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
   });
   const agentSessionId = flags["agent-session-id"];
   if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
@@ -31682,7 +31701,7 @@ async function runWatchRunningExperiments(platform, pluginVersion) {
       const { serviceUrl, headers } = current();
       return readErrorsFromApi(serviceUrl, headers, id);
     },
-    experimentUrl: (id) => `${current().serviceUrl}${buildExperimentsPath([id])}`,
+    experimentUrl: (id) => `${current().serviceUrl}${buildExperimentPath(id)}`,
     openStream: (onEvent, signal) => {
       const { serviceUrl, headers } = current();
       return readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal);

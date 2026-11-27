@@ -26,6 +26,7 @@ const announcedExperimentIds = atom(
 const MAX_ROWS = 5
 const MAX_FINISHED_KEPT = 5
 const SELECT_HINT = "ctrl+x tab to select, enter to press"
+const ERRORED_SEPARATOR = ", "
 const CLEARED_STORE_KEY = "clearedExperiments"
 const CLEARED_KEPT_MS = 7 * 24 * 60 * 60_000
 
@@ -33,19 +34,10 @@ function experimentLabel(experiment: { id: string; name: string | null }) {
   return experiment.name ?? `Experiment ${experiment.id.slice(0, 8)}`
 }
 
-function progressLabel(experiment: RunningExperiment) {
-  return experiment.total === null
-    ? `${experiment.finished} replayed`
-    : `${experiment.finished}/${experiment.total} replayed`
-}
-
-function runningLabel(experiment: RunningExperiment) {
-  if (!experiment.stalled) {
-    return progressLabel(experiment)
-  }
-  return experiment.total === null
-    ? `stalled ${experiment.finished}`
-    : `stalled ${experiment.finished}/${experiment.total}`
+function progressLabel(counts: { finished: number; total: number | null }) {
+  return counts.total === null
+    ? `${counts.finished} replayed`
+    : `${counts.finished}/${counts.total} replayed`
 }
 
 function stallText(experiment: RunningExperiment) {
@@ -75,40 +67,100 @@ async function wakeForStalls($: EngineInterface, running: RunningExperiment[]) {
   }
 }
 
-function statusTag(status: string, width: number) {
-  return `[${status}]`.padEnd(width + 2)
+type LineColor = "yellow" | "green" | "red" | null
+
+interface ExperimentLine {
+  key: string
+  id: string
+  status: string
+  statusColor: LineColor
+  count: string
+  errored: string
+  label: string
+  url: string
+  clearable: boolean
 }
 
-function erroredCount(experiment: FinishedExperiment) {
-  return experiment.status === "completed" ? (experiment.errored ?? 0) : 0
+function erroredText(errored: number | null | undefined) {
+  return typeof errored === "number" && errored > 0
+    ? `${ERRORED_SEPARATOR}${errored} errored`
+    : ""
 }
 
-function outcomeColor(experiment: FinishedExperiment) {
-  if (experiment.status !== "completed") {
-    return "red"
-  }
-  const errored = erroredCount(experiment)
-  if (errored === 0) {
-    return "green"
-  }
-  return errored === experiment.total ? "red" : "yellow"
+function everyReplayErrored(experiment: FinishedExperiment) {
+  return (
+    typeof experiment.errored === "number" &&
+    experiment.errored > 0 &&
+    experiment.errored === experiment.finished
+  )
 }
 
-function outcomeLabel(experiment: FinishedExperiment) {
+function finishedStatus(experiment: FinishedExperiment) {
   if (experiment.status !== "completed") {
     return experiment.status
   }
-  const errored = erroredCount(experiment)
-  if (errored === 0) {
-    return "finished"
+  return everyReplayErrored(experiment) ? "errored" : "complete"
+}
+
+function hasCounts(experiment: FinishedExperiment) {
+  return experiment.status !== "failed"
+}
+
+function finishedErrored(experiment: FinishedExperiment) {
+  return hasCounts(experiment) ? erroredText(experiment.errored) : ""
+}
+
+function finishedCount(experiment: FinishedExperiment) {
+  return hasCounts(experiment) && typeof experiment.finished === "number"
+    ? progressLabel({
+        finished: experiment.finished,
+        total: experiment.total ?? null,
+      })
+    : ""
+}
+
+function runningLine(experiment: RunningExperiment): ExperimentLine {
+  return {
+    key: experiment.id,
+    id: experiment.id,
+    status: experiment.stalled ? "stalled" : "running",
+    statusColor: experiment.stalled ? "yellow" : null,
+    count: progressLabel(experiment),
+    errored: erroredText(experiment.errored),
+    label: experimentLabel(experiment),
+    url: experiment.url,
+    clearable: false,
   }
-  return typeof experiment.total === "number"
-    ? `${errored}/${experiment.total} errored`
-    : `${errored} errored`
+}
+
+function finishedLine(experiment: FinishedExperiment): ExperimentLine {
+  return {
+    key: `finished-${experiment.id}`,
+    id: experiment.id,
+    status: finishedStatus(experiment),
+    statusColor: finishedStatus(experiment) === "complete" ? "green" : "red",
+    count: finishedCount(experiment),
+    errored: finishedErrored(experiment),
+    label: experimentLabel(experiment),
+    url: experiment.url,
+    clearable: true,
+  }
+}
+
+function columnWidths(lines: ExperimentLine[]) {
+  return {
+    status: Math.max(...lines.map((one) => one.status.length + 2)),
+    count: Math.max(
+      ...lines.map((one) => one.count.length + one.errored.length),
+    ),
+    label: Math.max(...lines.map((one) => one.label.length)),
+  }
 }
 
 function finishLabel(experiment: FinishedExperiment) {
-  return `${experimentLabel(experiment)} ${outcomeLabel(experiment)}`
+  const counts = `${finishedCount(experiment)}${finishedErrored(experiment)}`
+  const outcome = `${experimentLabel(experiment)} ${finishedStatus(experiment)}`
+  return counts.length > 0 ? `${outcome}, ${counts}` : outcome
 }
 
 function isSnapshot(value: unknown): value is ExperimentSnapshot {
@@ -258,51 +310,49 @@ export const register: Register = (on) => {
     const { Box, Button, Link, Text } = $.ui.resolve(e)
     const shown = running.slice(0, MAX_ROWS)
     const hidden = running.length - shown.length
-    const statusWidth = Math.max(
-      ...shown.map((experiment) => runningLabel(experiment).length),
-      ...finished.map((experiment) => outcomeLabel(experiment).length),
+    const lines = [...shown.map(runningLine), ...finished.map(finishedLine)]
+    const widths = columnWidths(lines)
+    const drawLine = (one: ExperimentLine) => (
+      <Box key={one.key}>
+        <Text>
+          <Text color="cyan">Bitfab</Text>{" "}
+          {one.statusColor === null ? (
+            <Text dimColor>{`[${one.status}]`.padEnd(widths.status + 2)}</Text>
+          ) : (
+            <Text color={one.statusColor}>
+              {`[${one.status}]`.padEnd(widths.status + 2)}
+            </Text>
+          )}
+          <Text dimColor>{one.count}</Text>
+          {one.errored.length > 0 && <Text dimColor>{ERRORED_SEPARATOR}</Text>}
+          {one.errored.length > 0 && (
+            <Text color="red">
+              {one.errored.slice(ERRORED_SEPARATOR.length)}
+            </Text>
+          )}
+          {widths.count === 0
+            ? ""
+            : " ".repeat(
+                widths.count - one.count.length - one.errored.length + 2,
+              )}
+          {one.label.padEnd(widths.label + 2)}
+        </Text>
+        <Link href={one.url} label="open" />
+        {one.clearable && <Text> </Text>}
+        {one.clearable && (
+          <Button
+            key={`clear-${one.id}`}
+            label="x"
+            onPress={() => clearFinished($, [one.id])}
+          />
+        )}
+      </Box>
     )
     return (
       <Box flexDirection="column">
-        {shown.map((experiment) => (
-          <Box key={experiment.id}>
-            <Text>
-              {experiment.stalled ? (
-                <Text color="yellow">
-                  {statusTag(runningLabel(experiment), statusWidth)}
-                </Text>
-              ) : (
-                <Text dimColor>
-                  {statusTag(runningLabel(experiment), statusWidth)}
-                </Text>
-              )}{" "}
-              <Text color="cyan">Bitfab</Text> {experimentLabel(
-                experiment,
-              )}{" "}
-            </Text>
-            <Link href={experiment.url} label="open" />
-          </Box>
-        ))}
+        {lines.slice(0, shown.length).map(drawLine)}
         {hidden > 0 && <Text dimColor>{hidden} more running</Text>}
-        {finished.map((experiment) => (
-          <Box key={`finished-${experiment.id}`}>
-            <Text>
-              <Text color={outcomeColor(experiment)}>
-                {statusTag(outcomeLabel(experiment), statusWidth)}
-              </Text>{" "}
-              <Text color="cyan">Bitfab</Text> {experimentLabel(
-                experiment,
-              )}{" "}
-            </Text>
-            <Link href={experiment.url} label="open" />
-            <Text> </Text>
-            <Button
-              key={`clear-${experiment.id}`}
-              label="x"
-              onPress={() => clearFinished($, [experiment.id])}
-            />
-          </Box>
-        ))}
+        {lines.slice(shown.length).map(drawLine)}
         {finished.length > 0 && (
           <Box>
             {finished.length > 1 && (
