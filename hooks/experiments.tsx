@@ -210,8 +210,7 @@ async function rememberCleared($: EngineInterface, ids: string[]) {
 }
 
 async function clearFinished($: EngineInterface, ids: string[] | null) {
-  const cleared =
-    ids ?? (await read($, finishedExperiments)).map((one) => one.id)
+  const cleared = ids ?? (await read($, announcedExperimentIds))
   await update($, finishedExperiments, (kept) =>
     kept.filter((one) => !cleared.includes(one.id)),
   )
