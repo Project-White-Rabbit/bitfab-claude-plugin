@@ -648,8 +648,8 @@ var require_major = __commonJS({
   "_target/node_modules/.pnpm/semver@7.8.6/node_modules/semver/functions/major.js"(exports, module) {
     "use strict";
     var SemVer = require_semver();
-    var major = (a, loose) => new SemVer(a, loose).major;
-    module.exports = major;
+    var major2 = (a, loose) => new SemVer(a, loose).major;
+    module.exports = major2;
   }
 });
 
@@ -895,12 +895,12 @@ var require_coerce = __commonJS({
       if (match === null) {
         return null;
       }
-      const major = match[2];
+      const major2 = match[2];
       const minor = match[3] || "0";
       const patch = match[4] || "0";
       const prerelease = options.includePrerelease && match[5] ? `-${match[5]}` : "";
       const build = options.includePrerelease && match[6] ? `+${match[6]}` : "";
-      return parse3(`${major}.${minor}.${patch}${prerelease}${build}`, options);
+      return parse3(`${major2}.${minor}.${patch}${prerelease}${build}`, options);
     };
     module.exports = coerce3;
   }
@@ -2162,7 +2162,7 @@ var require_semver2 = __commonJS({
     var clean = require_clean();
     var inc = require_inc();
     var diff = require_diff();
-    var major = require_major();
+    var major2 = require_major();
     var minor = require_minor();
     var patch = require_patch();
     var prerelease = require_prerelease();
@@ -2201,7 +2201,7 @@ var require_semver2 = __commonJS({
       clean,
       inc,
       diff,
-      major,
+      major: major2,
       minor,
       patch,
       prerelease,
@@ -30642,6 +30642,14 @@ function readFileSafe(filePath) {
 function stripRange(raw) {
   return semver.coerce(raw, { includePrerelease: true })?.version ?? "";
 }
+function isLegacySdkVersion(raw) {
+  const version2 = stripRange(raw);
+  return version2 === "" || semver.major(version2) === 0;
+}
+function legacySdkSpec(deps) {
+  const raw = deps?.[TS_PACKAGE_LEGACY];
+  return raw !== void 0 && isLegacySdkVersion(raw) ? raw : void 0;
+}
 function readTsDeclared(cwd) {
   const manifestPath = path6.join(cwd, "package.json");
   const content = readFileSafe(manifestPath);
@@ -30651,7 +30659,7 @@ function readTsDeclared(cwd) {
   try {
     const pkg = JSON.parse(content);
     const raw = pkg.dependencies?.[TS_PACKAGE] ?? pkg.devDependencies?.[TS_PACKAGE] ?? pkg.peerDependencies?.[TS_PACKAGE];
-    const legacyRaw = pkg.dependencies?.[TS_PACKAGE_LEGACY] ?? pkg.devDependencies?.[TS_PACKAGE_LEGACY] ?? pkg.peerDependencies?.[TS_PACKAGE_LEGACY];
+    const legacyRaw = legacySdkSpec(pkg.dependencies) ?? legacySdkSpec(pkg.devDependencies) ?? legacySdkSpec(pkg.peerDependencies);
     if (raw) {
       return {
         version: stripRange(raw) || null,
@@ -30679,7 +30687,7 @@ function readTsFromPnpm(cwd) {
   if (!content) {
     return null;
   }
-  const match = content.match(/['"/\s](?:@bitfab\/sdk|bitfab)@(\d+\.\d+\.\d+(?:[-+][\w.]+)?)/);
+  const match = content.match(/['"/\s](?:@bitfab\/sdk|bitfab(?=@0\.))@(\d+\.\d+\.\d+(?:[-+][\w.]+)?)/);
   return match ? { version: match[1], path: p } : null;
 }
 function readTsFromNpm(cwd) {
@@ -30692,7 +30700,7 @@ function readTsFromNpm(cwd) {
     const pkg = JSON.parse(content);
     for (const name of [TS_PACKAGE, TS_PACKAGE_LEGACY]) {
       const v = pkg.packages?.[`node_modules/${name}`]?.version ?? pkg.dependencies?.[name]?.version;
-      if (v) {
+      if (v && (name === TS_PACKAGE || isLegacySdkVersion(v))) {
         return { version: v, path: p };
       }
     }
@@ -30711,7 +30719,7 @@ function readTsFromYarn(cwd) {
   if (classic) {
     return { version: classic[1], path: p };
   }
-  const berry = content.match(/^\s*resolution:\s*"(?:@bitfab\/sdk|bitfab)@npm:([0-9][\w.\-+]*)"/m);
+  const berry = content.match(/^\s*resolution:\s*"(?:@bitfab\/sdk|bitfab(?=@npm:0\.))@npm:([0-9][\w.\-+]*)"/m);
   return berry ? { version: berry[1], path: p } : null;
 }
 function readTsFromBun(cwd) {
@@ -30720,7 +30728,7 @@ function readTsFromBun(cwd) {
   if (!content) {
     return null;
   }
-  const match = content.match(/"(?:@bitfab\/sdk|bitfab)@(\d+\.\d+\.\d+(?:[-+][\w.]+)?)"/);
+  const match = content.match(/"(?:@bitfab\/sdk|bitfab(?=@0\.))@(\d+\.\d+\.\d+(?:[-+][\w.]+)?)"/);
   return match ? { version: match[1], path: p } : null;
 }
 function readTsFromNodeModules(cwd) {
@@ -30732,7 +30740,7 @@ function readTsFromNodeModules(cwd) {
     }
     try {
       const pkg = JSON.parse(content);
-      if (pkg.version) {
+      if (pkg.version && (name === TS_PACKAGE || isLegacySdkVersion(pkg.version))) {
         return { version: pkg.version, path: p };
       }
     } catch {
