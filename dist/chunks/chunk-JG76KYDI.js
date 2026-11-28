@@ -9703,304 +9703,18 @@ function getOrCreateInstallId() {
   return installId;
 }
 
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/login.js
-import { createHash, randomBytes } from "node:crypto";
-import { setTimeout as delay } from "node:timers/promises";
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/clientHeaders.js
-import os2 from "node:os";
-function buildBitfabClientHeaders(pluginVersion, platform) {
-  const resolvedOptions = Intl.DateTimeFormat().resolvedOptions();
-  return {
-    "x-bitfab-client-name": platform.cliBinary,
-    "x-bitfab-client-display-name": platform.displayName,
-    "x-bitfab-client-version": pluginVersion,
-    "x-bitfab-client-timezone": resolvedOptions.timeZone,
-    "x-bitfab-client-locale": resolvedOptions.locale,
-    "x-bitfab-client-os": os2.platform(),
-    "x-bitfab-client-arch": os2.arch(),
-    "x-bitfab-client-node-version": process.version,
-    "x-bitfab-install-id": getOrCreateInstallId()
-  };
-}
-function buildBitfabRequestHeaders(apiKey, pluginVersion, platform) {
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${apiKey}`,
-    ...buildBitfabClientHeaders(pluginVersion, platform)
-  };
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/output.js
+function emitJson(event) {
+  process.stdout.write(`${JSON.stringify(event)}
+`);
 }
 
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/analytics.js
-async function reportHandoff(apiKey, pluginVersion, platform, body) {
-  const config2 = getConfig();
-  const headers = buildBitfabRequestHeaders(apiKey, pluginVersion, platform);
-  try {
-    const response = await fetch(`${config2.serviceUrl}/api/plugin/analytics/handoff`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body)
-    });
-    if (config2.debug && !response.ok) {
-      console.error(`reportHandoff: server returned ${response.status} for ${body.flow}`);
-    }
-  } catch (err) {
-    if (config2.debug) {
-      const message = err instanceof Error ? err.message : String(err);
-      console.error(`reportHandoff: request failed for ${body.flow}: ${message}`);
-    }
-  }
-}
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/browser.js
-import { execFile, spawn } from "node:child_process";
-import os3 from "node:os";
-function getChromiumBrowsers() {
-  const platform = os3.platform();
-  if (platform === "darwin") {
-    return [
-      {
-        name: "Google Chrome",
-        defaultIds: ["com.google.chrome"],
-        binaryPaths: [
-          "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-        ]
-      },
-      {
-        name: "Chromium",
-        defaultIds: ["org.chromium.chromium"],
-        binaryPaths: ["/Applications/Chromium.app/Contents/MacOS/Chromium"]
-      },
-      {
-        name: "Brave",
-        defaultIds: ["com.brave.browser"],
-        binaryPaths: [
-          "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
-        ]
-      },
-      {
-        name: "Microsoft Edge",
-        defaultIds: ["com.microsoft.edgemac"],
-        binaryPaths: [
-          "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
-        ]
-      }
-    ];
-  }
-  if (platform === "linux") {
-    return [
-      {
-        name: "Google Chrome",
-        defaultIds: ["google-chrome.desktop", "google-chrome-stable.desktop"],
-        binaryPaths: ["google-chrome", "google-chrome-stable"]
-      },
-      {
-        name: "Chromium",
-        defaultIds: ["chromium-browser.desktop", "chromium.desktop"],
-        binaryPaths: ["chromium-browser", "chromium"]
-      },
-      {
-        name: "Brave",
-        defaultIds: ["brave-browser.desktop"],
-        binaryPaths: ["brave-browser", "brave"]
-      },
-      {
-        name: "Microsoft Edge",
-        defaultIds: ["microsoft-edge.desktop", "microsoft-edge-stable.desktop"],
-        binaryPaths: ["microsoft-edge", "microsoft-edge-stable"]
-      }
-    ];
-  }
-  if (platform === "win32") {
-    return [
-      {
-        name: "Google Chrome",
-        defaultIds: ["chromehtml"],
-        binaryPaths: [
-          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-          "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
-        ]
-      },
-      {
-        name: "Brave",
-        defaultIds: ["bravehtml"],
-        binaryPaths: [
-          "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
-          "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
-        ]
-      },
-      {
-        name: "Microsoft Edge",
-        defaultIds: ["msedgehtm"],
-        binaryPaths: [
-          "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
-          "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
-        ]
-      }
-    ];
-  }
-  return [];
-}
-function spawnDetached(command, args) {
-  if (process.env.VITEST || process.env.NODE_ENV === "test") {
-    throw new Error("spawnDetached called in a test environment without being mocked");
-  }
-  try {
-    const child = spawn(command, [...args], { detached: true, stdio: "ignore" });
-    child.on("error", () => {
-    });
-    child.unref();
-    return child.pid ?? null;
-  } catch {
-    return null;
-  }
-}
-function openOsDefault(url2) {
-  const platform = os3.platform();
-  if (platform === "darwin") {
-    return spawnDetached("open", [url2]);
-  }
-  if (platform === "win32") {
-    return spawnDetached("cmd", ["/c", "start", "", url2]);
-  }
-  return spawnDetached("xdg-open", [url2]);
-}
-function openBrowser(url2) {
-  if (process.env.VITEST || process.env.NODE_ENV === "test") {
-    throw new Error("openBrowser called in a test environment without being mocked");
-  }
-  const pid = openOsDefault(url2);
-  return pid === null ? { pid: null, launched: false, method: "none", reason: "launch-failed" } : { pid, launched: true, method: "os-default" };
-}
-async function closeLoginWindow(signInUrl) {
-  if (os3.platform() !== "darwin") {
-    return;
-  }
-  let url2;
-  try {
-    url2 = new URL(signInUrl);
-  } catch {
-    return;
-  }
-  const marker = url2.searchParams.get("loginWindow");
-  if (!["http:", "https:"].includes(url2.protocol) || url2.username !== "" || url2.password !== "" || !/^\/plugin\/auth\/[a-z0-9-]+$/.test(url2.pathname) || marker === null || !/^[a-f0-9]{32}$/.test(marker)) {
-    return;
-  }
-  const appNames = getChromiumBrowsers().flatMap((browser) => browser.binaryPaths.flatMap((path11) => {
-    const appName = path11.match(/\/([^/]+)\.app\//)?.[1];
-    return appName === void 0 ? [] : [appName];
-  }));
-  await Promise.all(appNames.map((appName) => new Promise((resolve2) => {
-    const script = [
-      "on run argv",
-      "  set loginPrefix to item 1 of argv",
-      '  set loginMarker to "loginWindow=" & (item 2 of argv) & "&"',
-      `  if application "${appName}" is running then`,
-      `    tell application "${appName}"`,
-      "      repeat with w in (every window)",
-      "        try",
-      "          repeat with t in (every tab of w)",
-      '            set tabUrl to (URL of t) & "&"',
-      '            if tabUrl starts with loginPrefix and (tabUrl contains ("?" & loginMarker) or tabUrl contains ("&" & loginMarker)) then',
-      "              close t",
-      "              exit repeat",
-      "            end if",
-      "          end repeat",
-      "        end try",
-      "      end repeat",
-      "    end tell",
-      "  end if",
-      "end run"
-    ].join("\n");
-    try {
-      execFile("osascript", ["-e", script, `${url2.origin}${url2.pathname}?`, marker], { timeout: 4e3 }, () => resolve2());
-    } catch {
-      resolve2();
-    }
-  })));
-}
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/login.js
-async function verifyToken(serviceUrl, token) {
-  try {
-    const res = await fetch(`${serviceUrl}/api/plugin/whoami`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    if (!res.ok) {
-      return null;
-    }
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
-async function runLogin(platform, pluginVersion, options) {
-  const config2 = getConfig();
-  const force = options?.force ?? process.argv.includes("--force");
-  if (!force && hasCredentials() && config2.apiKey) {
-    const who = await verifyToken(config2.serviceUrl, config2.apiKey);
-    if (who) {
-      console.log(`Already logged in as ${who.user.email ?? "your account"}${formatNonProductionEndpointSuffix(config2.serviceUrl)}.`);
-      return;
-    }
-  }
-  const verifier = randomBytes(32).toString("base64url");
-  const pkceChallenge = createHash("sha256").update(verifier).digest("base64url");
-  const response = await fetch(`${config2.serviceUrl}/api/plugin/handoff-tickets`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      kind: "auth.login",
-      pkceChallenge,
-      pkceMethod: "S256"
-    }),
-    signal: AbortSignal.timeout(3e4)
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/pageLink.js
+function emitPageLink(path11) {
+  emitJson({
+    event: "link",
+    url: `${getConfig().serviceUrl.replace(/\/$/, "")}${path11}`
   });
-  if (!response.ok) {
-    throw new Error(`Could not start login (HTTP ${response.status}).`);
-  }
-  const ticket = await response.json();
-  const loginWindow = randomBytes(16).toString("hex");
-  const signInUrl = `${config2.serviceUrl}/plugin/auth/${encodeURIComponent(platform.authPath)}?ticket=${encodeURIComponent(ticket.id)}&loginWindow=${loginWindow}`;
-  console.log(`Sign in to Bitfab: ${signInUrl}`);
-  const opened = openBrowser(signInUrl);
-  if (!opened.launched) {
-    console.log("Could not open a browser. Open the sign-in link above to continue.");
-  }
-  const deadline = Date.now() + 10 * 60 * 1e3;
-  const pollIntervalMs = Math.max(500, ticket.pollIntervalMs ?? 1500);
-  while (Date.now() < deadline) {
-    const poll = await fetch(`${config2.serviceUrl}/api/plugin/handoff-tickets/${encodeURIComponent(ticket.id)}?verifier=${encodeURIComponent(verifier)}`, {
-      signal: AbortSignal.timeout(Math.max(1, Math.min(3e4, deadline - Date.now())))
-    }).catch(() => null);
-    if (poll !== null && !poll.ok && poll.status !== 429 && poll.status < 500) {
-      throw new Error(`Could not complete login (HTTP ${poll.status}).`);
-    }
-    const result = poll?.ok ? await poll.json().catch(() => null) : null;
-    if (result?.status === "completed" && result.data?.token) {
-      saveCredentials(result.data.token);
-      await closeLoginWindow(signInUrl);
-      await reportHandoff(result.data.token, pluginVersion, platform, {
-        flow: "auth.login",
-        wonBy: "ticket",
-        loopbackAvailable: false,
-        ticketAvailable: true
-      });
-      const who = await verifyToken(config2.serviceUrl, result.data.token);
-      const message = `Logged in as ${who?.user.email ?? "your account"}${formatNonProductionEndpointSuffix(config2.serviceUrl)}.`;
-      if (options?.onSuccess) {
-        options.onSuccess(message);
-      } else {
-        console.log(message);
-      }
-      return;
-    }
-    if (result?.status === "expired") {
-      throw new Error("Login expired. Run the login command again.");
-    }
-    await delay(Math.max(0, Math.min(pollIntervalMs, deadline - Date.now())));
-  }
-  throw new Error("Login timed out. Run the login command again.");
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/parseArgs.js
@@ -10164,34 +9878,6 @@ function positionalArgs(specs, argv = process.argv, opts) {
   }).positional;
 }
 
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/logout.js
-function runLogout() {
-  printHelpIfRequested({
-    description: "Log out of Bitfab by removing the stored credentials from this machine. Takes no arguments."
-  });
-  if (!hasCredentials()) {
-    console.log("Not logged in: no credentials to remove.");
-    return;
-  }
-  deleteCredentials();
-  console.log(`Credentials removed from ${GLOBAL_CREDENTIALS_FILE}`);
-  console.log("Logged out of Bitfab.");
-}
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/output.js
-function emitJson(event) {
-  process.stdout.write(`${JSON.stringify(event)}
-`);
-}
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/pageLink.js
-function emitPageLink(path11) {
-  emitJson({
-    event: "link",
-    url: `${getConfig().serviceUrl.replace(/\/$/, "")}${path11}`
-  });
-}
-
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/openExperiments.js
 function parseExperimentIds(args) {
   const joined = args.join(",");
@@ -10261,6 +9947,826 @@ async function runOpenExperiments(_platform) {
   }));
 }
 
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/watchRunningExperiments.js
+import { mkdirSync, watch } from "node:fs";
+import { readdir, readFile, rm, stat } from "node:fs/promises";
+import os3 from "node:os";
+import path2 from "node:path";
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/clientHeaders.js
+import os2 from "node:os";
+function buildBitfabClientHeaders(pluginVersion, platform) {
+  const resolvedOptions = Intl.DateTimeFormat().resolvedOptions();
+  return {
+    "x-bitfab-client-name": platform.cliBinary,
+    "x-bitfab-client-display-name": platform.displayName,
+    "x-bitfab-client-version": pluginVersion,
+    "x-bitfab-client-timezone": resolvedOptions.timeZone,
+    "x-bitfab-client-locale": resolvedOptions.locale,
+    "x-bitfab-client-os": os2.platform(),
+    "x-bitfab-client-arch": os2.arch(),
+    "x-bitfab-client-node-version": process.version,
+    "x-bitfab-install-id": getOrCreateInstallId()
+  };
+}
+function buildBitfabRequestHeaders(apiKey, pluginVersion, platform) {
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${apiKey}`,
+    ...buildBitfabClientHeaders(pluginVersion, platform)
+  };
+}
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/watchRunningExperiments.js
+var MIN_REFRESH_GAP_MS = 2e3;
+var STREAM_FALLBACK_REFRESH_MS = 6e4;
+var POLL_FALLBACK_REFRESH_MS = 2e4;
+var STREAM_RETRY_MS = 5e3;
+var STALL_AFTER_MS = 10 * 6e4;
+var IDLE_RECHECK_MS = 15e3;
+var REQUEST_TIMEOUT_MS = 3e4;
+var LOGIN_RECHECK_MS = 3e4;
+var LAUNCH_LOOKUP_MAX_MS = 60 * 6e4;
+var NEVER = new Promise(() => {
+});
+var EXPERIMENT_EVENT_TYPES = /* @__PURE__ */ new Set([
+  "experiment:updated",
+  "experiment-stats:updated"
+]);
+var SAFE_SESSION_ID = /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/;
+var LAUNCH_ID_METADATA_KEY = "bitfab-launch-id";
+var SESSION_FOLDER_MAX_AGE_MS = 7 * 24 * 60 * 6e4;
+var Waker = class {
+  resolveWake;
+  pending;
+  constructor() {
+    this.pending = this.fresh();
+  }
+  fresh() {
+    return new Promise((resolve2) => {
+      this.resolveWake = resolve2;
+    });
+  }
+  get next() {
+    return this.pending;
+  }
+  wake() {
+    this.resolveWake?.();
+  }
+  reset() {
+    this.pending = this.fresh();
+  }
+};
+function progressTotal(status) {
+  return status.remainingCount === null ? null : status.finishedCount + status.remainingCount;
+}
+async function watchSessionExperiments(deps) {
+  const names = /* @__PURE__ */ new Map();
+  const pendingLaunches = /* @__PURE__ */ new Map();
+  const settledLaunches = /* @__PURE__ */ new Set();
+  const ignored = /* @__PURE__ */ new Set();
+  const finished = /* @__PURE__ */ new Map();
+  const lastProgress = /* @__PURE__ */ new Map();
+  const erroredAt = /* @__PURE__ */ new Map();
+  const waker = new Waker();
+  let stream = null;
+  let streamUnavailable = false;
+  let firstPass = true;
+  let lastEmitted = "";
+  let running = [];
+  let connection = deps.connection();
+  const isStalled = (id, status) => {
+    const now = deps.now();
+    const seen = lastProgress.get(id);
+    if (seen === void 0 || seen.finished !== status.finishedCount) {
+      lastProgress.set(id, { finished: status.finishedCount, at: now });
+      return false;
+    }
+    const tracesLeft = status.remainingCount === null || status.remainingCount > 0;
+    return tracesLeft && now - seen.at >= STALL_AFTER_MS;
+  };
+  const readErrored = async (id) => {
+    const errors = await deps.readErrors(id).catch(() => null);
+    return errors?.errored ?? null;
+  };
+  const runningErrored = async (id, status) => {
+    const seen = erroredAt.get(id);
+    if (seen !== void 0 && seen.finished >= status.finishedCount) {
+      return seen.errored;
+    }
+    const errored = status.finishedCount === 0 ? 0 : await readErrored(id);
+    erroredAt.set(id, { finished: status.finishedCount, errored });
+    return errored;
+  };
+  const onEvent = (event) => {
+    if (names.has(event.experimentId) && !finished.has(event.experimentId)) {
+      waker.wake();
+    }
+  };
+  const openStream = () => {
+    if (stream !== null || streamUnavailable) {
+      return;
+    }
+    const controller = new AbortController();
+    stream = controller;
+    void (async () => {
+      while (!controller.signal.aborted) {
+        const outcome = await deps.openStream(onEvent, controller.signal).catch(() => "ended");
+        if (outcome === "unavailable") {
+          streamUnavailable = true;
+          return;
+        }
+        if (!controller.signal.aborted) {
+          await deps.wait(STREAM_RETRY_MS, NEVER);
+        }
+      }
+    })();
+  };
+  const closeStream = () => {
+    stream?.abort();
+    stream = null;
+  };
+  const track = (id, name) => {
+    if (!names.has(id) || name !== null) {
+      names.set(id, name);
+    }
+  };
+  const resolveLaunches = async () => {
+    for (const [launchId, line] of pendingLaunches) {
+      const expired = line.startedAt !== null && deps.now() - line.startedAt > LAUNCH_LOOKUP_MAX_MS;
+      if (expired) {
+        pendingLaunches.delete(launchId);
+        settledLaunches.add(launchId);
+        continue;
+      }
+      const found = await deps.findLaunch(launchId);
+      if (found !== null) {
+        track(found.id, line.name ?? found.name);
+        pendingLaunches.delete(launchId);
+        settledLaunches.add(launchId);
+      }
+    }
+  };
+  const refresh = async () => {
+    for (const line of await deps.readSessionExperiments()) {
+      if (line.experimentId !== null) {
+        track(line.experimentId, line.name);
+      } else if (line.launchId !== null && !settledLaunches.has(line.launchId)) {
+        pendingLaunches.set(line.launchId, line);
+      }
+    }
+    await resolveLaunches();
+    const nowRunning = [];
+    for (const [id, name] of names) {
+      if (finished.has(id) || ignored.has(id)) {
+        continue;
+      }
+      const status = await deps.readStatus(id);
+      if (status === null) {
+        ignored.add(id);
+      } else if (status.status === "pending") {
+        nowRunning.push({
+          id,
+          name,
+          finished: status.finishedCount,
+          total: progressTotal(status),
+          url: deps.experimentUrl(id),
+          stalled: isStalled(id, status),
+          errored: await runningErrored(id, status)
+        });
+      } else {
+        finished.set(id, {
+          id,
+          name,
+          status: status.status,
+          url: deps.experimentUrl(id),
+          announce: !firstPass,
+          finished: status.finishedCount,
+          errored: await readErrored(id),
+          total: progressTotal(status)
+        });
+        erroredAt.delete(id);
+      }
+    }
+    return nowRunning;
+  };
+  const stopWatchingFile = deps.watchSessionFile(() => waker.wake());
+  try {
+    while (!deps.shouldStop()) {
+      waker.reset();
+      const currentConnection = deps.connection();
+      if (currentConnection !== connection) {
+        connection = currentConnection;
+        ignored.clear();
+        firstPass = true;
+        closeStream();
+        streamUnavailable = false;
+      }
+      const refreshedAt = deps.now();
+      const refreshed = await refresh().catch(() => null);
+      if (refreshed !== null) {
+        firstPass = false;
+        running = refreshed;
+      }
+      const snapshot = {
+        running,
+        finished: [...finished.values()]
+      };
+      const key = JSON.stringify(snapshot);
+      if (refreshed !== null && key !== lastEmitted) {
+        deps.emit(snapshot);
+        lastEmitted = key;
+      }
+      let waitMs;
+      if (running.length > 0) {
+        openStream();
+        waitMs = stream !== null && !streamUnavailable && refreshed !== null ? STREAM_FALLBACK_REFRESH_MS : POLL_FALLBACK_REFRESH_MS;
+      } else {
+        closeStream();
+        waitMs = refreshed === null ? POLL_FALLBACK_REFRESH_MS : IDLE_RECHECK_MS;
+      }
+      await deps.wait(waitMs, waker.next);
+      const sinceRefresh = deps.now() - refreshedAt;
+      if (sinceRefresh < MIN_REFRESH_GAP_MS) {
+        await deps.wait(MIN_REFRESH_GAP_MS - sinceRefresh, NEVER);
+      }
+    }
+  } finally {
+    stopWatchingFile();
+    closeStream();
+  }
+}
+function parseExperimentEvent(message) {
+  if (message.event === null || !EXPERIMENT_EVENT_TYPES.has(message.event)) {
+    return null;
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(message.data);
+  } catch {
+    return null;
+  }
+  if (typeof parsed !== "object" || parsed === null) {
+    return null;
+  }
+  const data = parsed;
+  const experimentId = data.experimentId ?? data.testRunId;
+  return typeof experimentId === "string" ? { experimentId } : null;
+}
+function fieldValue(line, field) {
+  return line.startsWith(`${field}:`) ? line.slice(field.length + 1).trimStart() : null;
+}
+function splitSseData(buffer) {
+  const blocks = buffer.split(/\r?\n\r?\n/);
+  const rest = blocks.pop() ?? "";
+  const messages = blocks.flatMap((block) => {
+    const lines = block.split(/\r?\n/);
+    const data = lines.map((line) => fieldValue(line, "data")).filter((value) => value !== null).join("\n");
+    const event = lines.map((line) => fieldValue(line, "event")).find((value) => value !== null) ?? null;
+    return data.length > 0 ? [{ event, data }] : [];
+  });
+  return { messages, rest };
+}
+async function readEventStream(url2, headers, onEvent, signal) {
+  const response = await fetch(url2, {
+    headers: { ...headers, Accept: "text/event-stream" },
+    signal
+  });
+  if (response.status === 404) {
+    return "unavailable";
+  }
+  if (!response.ok || response.body === null) {
+    return "ended";
+  }
+  const decoder = new TextDecoder();
+  const reader = response.body.getReader();
+  let buffer = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      return "ended";
+    }
+    buffer += decoder.decode(value, { stream: true });
+    const { messages, rest } = splitSseData(buffer);
+    buffer = rest;
+    for (const message of messages) {
+      const event = parseExperimentEvent(message);
+      if (event !== null) {
+        onEvent(event);
+      }
+    }
+  }
+}
+function sessionExperimentsPath(home, agentSessionId) {
+  return SAFE_SESSION_ID.test(agentSessionId) ? path2.join(home, ".bitfab", "agent-sessions", agentSessionId) : null;
+}
+function sameServer(left, right) {
+  try {
+    return new URL(left).origin === new URL(right).origin;
+  } catch {
+    return false;
+  }
+}
+function textOrNull(value) {
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+function parseSessionExperiments(content, serviceUrl) {
+  return content.split("\n").flatMap((text) => {
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      return [];
+    }
+    if (typeof parsed !== "object" || parsed === null) {
+      return [];
+    }
+    const record2 = parsed;
+    const experimentId = textOrNull(record2.experimentId);
+    const launchId = textOrNull(record2.launchId);
+    const fromCloudLaunch = "launchId" in record2;
+    if (experimentId === null && launchId === null || !fromCloudLaunch && (typeof record2.serviceUrl !== "string" || !sameServer(record2.serviceUrl, serviceUrl))) {
+      return [];
+    }
+    const startedAt = typeof record2.startedAt === "string" ? Date.parse(record2.startedAt) : NaN;
+    return [
+      {
+        experimentId,
+        launchId,
+        name: textOrNull(record2.name),
+        startedAt: Number.isNaN(startedAt) ? null : startedAt
+      }
+    ];
+  });
+}
+async function lastWrittenAt(folder) {
+  const file2 = await stat(path2.join(folder, "experiments.jsonl")).catch(() => null);
+  return (file2 ?? await stat(folder)).mtimeMs;
+}
+async function pruneStaleSessionFolders(root, keepSessionId, now) {
+  const entries = await readdir(root, { withFileTypes: true }).catch(() => []);
+  const removed = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory() || entry.name === keepSessionId || !SAFE_SESSION_ID.test(entry.name)) {
+      continue;
+    }
+    const folder = path2.join(root, entry.name);
+    try {
+      if (now - await lastWrittenAt(folder) >= SESSION_FOLDER_MAX_AGE_MS) {
+        await rm(folder, { recursive: true, force: true });
+        removed.push(entry.name);
+      }
+    } catch {
+    }
+  }
+  return removed;
+}
+async function readSessionFile(directory, serviceUrl) {
+  if (directory === null) {
+    return [];
+  }
+  try {
+    const content = await readFile(path2.join(directory, "experiments.jsonl"), "utf8");
+    return parseSessionExperiments(content, serviceUrl);
+  } catch {
+    return [];
+  }
+}
+function watchDirectory(directory, onChange) {
+  if (directory === null) {
+    return () => {
+    };
+  }
+  try {
+    mkdirSync(directory, { recursive: true });
+    const watcher = watch(directory, () => onChange());
+    watcher.on("error", () => watcher.close());
+    return () => watcher.close();
+  } catch {
+    return () => {
+    };
+  }
+}
+function isListedExperiment(value) {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const record2 = value;
+  return typeof record2.id === "string" && (record2.name === null || typeof record2.name === "string");
+}
+async function findLaunchFromApi(serviceUrl, headers, launchId) {
+  const params = new URLSearchParams({
+    metadata: JSON.stringify({ [LAUNCH_ID_METADATA_KEY]: launchId }),
+    limit: "1"
+  });
+  const response = await fetch(`${serviceUrl}/api/sdk/experiments?${params.toString()}`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+  if ([400, 403, 404].includes(response.status)) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(`Bitfab returned ${response.status} finding launch ${launchId}`);
+  }
+  const body = await response.json();
+  const found = (body.experiments ?? []).find(isListedExperiment);
+  return found === void 0 ? null : { id: found.id, name: found.name };
+}
+async function readStatusFromApi(serviceUrl, headers, experimentId) {
+  const response = await fetch(`${serviceUrl}/api/sdk/replay/status`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ experimentId }),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  });
+  if ([400, 403, 404].includes(response.status)) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(`Bitfab returned ${response.status} reading experiment ${experimentId}`);
+  }
+  return await response.json();
+}
+function isReplayErrors(value) {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const record2 = value;
+  return typeof record2.errored === "number" && typeof record2.total === "number";
+}
+async function readErrorsFromApi(serviceUrl, headers, experimentId) {
+  const response = await fetch(`${serviceUrl}/api/sdk/experiments/${encodeURIComponent(experimentId)}/rollup`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
+  if (!response.ok) {
+    return null;
+  }
+  const body = await response.json();
+  return isReplayErrors(body.totals) ? { errored: body.totals.errored, total: body.totals.total } : null;
+}
+var FLAGS2 = [
+  {
+    name: "agent-session-id",
+    description: "The coding agent session whose experiments to follow: the ones its replays wrote to ~/.bitfab/agent-sessions/<id>/experiments.jsonl."
+  }
+];
+async function watchAgentSessionExperiments(platform, pluginVersion, agentSessionId, watch2) {
+  while (!getConfig().apiKey) {
+    if (watch2.shouldStop()) {
+      return;
+    }
+    await new Promise((resolve2) => setTimeout(resolve2, LOGIN_RECHECK_MS));
+  }
+  const current = () => {
+    const config2 = getConfig();
+    if (!config2.apiKey) {
+      throw new Error("Not logged in to Bitfab");
+    }
+    return {
+      serviceUrl: config2.serviceUrl.replace(/\/$/, ""),
+      headers: buildBitfabRequestHeaders(config2.apiKey, pluginVersion, platform)
+    };
+  };
+  const directory = sessionExperimentsPath(os3.homedir(), agentSessionId);
+  void pruneStaleSessionFolders(path2.join(os3.homedir(), ".bitfab", "agent-sessions"), agentSessionId, Date.now());
+  await watchSessionExperiments({
+    connection: () => {
+      const config2 = getConfig();
+      return JSON.stringify([config2.serviceUrl, config2.apiKey]);
+    },
+    readSessionExperiments: () => readSessionFile(directory, current().serviceUrl),
+    findLaunch: (launchId) => {
+      const { serviceUrl, headers } = current();
+      return findLaunchFromApi(serviceUrl, headers, launchId);
+    },
+    watchSessionFile: (onChange) => watchDirectory(directory, onChange),
+    readStatus: (id) => {
+      const { serviceUrl, headers } = current();
+      return readStatusFromApi(serviceUrl, headers, id);
+    },
+    readErrors: (id) => {
+      const { serviceUrl, headers } = current();
+      return readErrorsFromApi(serviceUrl, headers, id);
+    },
+    experimentUrl: (id) => `${current().serviceUrl}${buildExperimentPath(id)}`,
+    openStream: (onEvent, signal) => {
+      const { serviceUrl, headers } = current();
+      return readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal);
+    },
+    emit: watch2.emit,
+    now: () => Date.now(),
+    wait: (ms, wake) => Promise.race([
+      wake,
+      new Promise((resolve2) => setTimeout(resolve2, ms))
+    ]),
+    shouldStop: watch2.shouldStop
+  });
+}
+async function runWatchRunningExperiments(platform, pluginVersion) {
+  const { flags } = parseArgs({
+    positional: [],
+    flags: FLAGS2,
+    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); a local replay's experiment on another Bitfab server, and experiments this API key cannot read, are left out. A --cloud launch is followed whatever server its line names, since the GitHub runner's server is not known where it was launched. Reads how many of an experiment's replays errored each time its replayed count goes up, and once more when it finishes. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
+  });
+  const agentSessionId = flags["agent-session-id"];
+  if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
+    throw new Error("Pass --agent-session-id <session id>.");
+  }
+  const parentPid = process.ppid;
+  process.stdout.on("error", () => process.exit(0));
+  await watchAgentSessionExperiments(platform, pluginVersion, agentSessionId, {
+    emit: (snapshot) => console.log(JSON.stringify(snapshot)),
+    shouldStop: () => process.ppid !== parentPid
+  });
+  process.exit(0);
+}
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/login.js
+import { createHash, randomBytes } from "node:crypto";
+import { setTimeout as delay } from "node:timers/promises";
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/analytics.js
+async function reportHandoff(apiKey, pluginVersion, platform, body) {
+  const config2 = getConfig();
+  const headers = buildBitfabRequestHeaders(apiKey, pluginVersion, platform);
+  try {
+    const response = await fetch(`${config2.serviceUrl}/api/plugin/analytics/handoff`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(body)
+    });
+    if (config2.debug && !response.ok) {
+      console.error(`reportHandoff: server returned ${response.status} for ${body.flow}`);
+    }
+  } catch (err) {
+    if (config2.debug) {
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(`reportHandoff: request failed for ${body.flow}: ${message}`);
+    }
+  }
+}
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/browser.js
+import { execFile, spawn } from "node:child_process";
+import os4 from "node:os";
+function getChromiumBrowsers() {
+  const platform = os4.platform();
+  if (platform === "darwin") {
+    return [
+      {
+        name: "Google Chrome",
+        defaultIds: ["com.google.chrome"],
+        binaryPaths: [
+          "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+        ]
+      },
+      {
+        name: "Chromium",
+        defaultIds: ["org.chromium.chromium"],
+        binaryPaths: ["/Applications/Chromium.app/Contents/MacOS/Chromium"]
+      },
+      {
+        name: "Brave",
+        defaultIds: ["com.brave.browser"],
+        binaryPaths: [
+          "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser"
+        ]
+      },
+      {
+        name: "Microsoft Edge",
+        defaultIds: ["com.microsoft.edgemac"],
+        binaryPaths: [
+          "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"
+        ]
+      }
+    ];
+  }
+  if (platform === "linux") {
+    return [
+      {
+        name: "Google Chrome",
+        defaultIds: ["google-chrome.desktop", "google-chrome-stable.desktop"],
+        binaryPaths: ["google-chrome", "google-chrome-stable"]
+      },
+      {
+        name: "Chromium",
+        defaultIds: ["chromium-browser.desktop", "chromium.desktop"],
+        binaryPaths: ["chromium-browser", "chromium"]
+      },
+      {
+        name: "Brave",
+        defaultIds: ["brave-browser.desktop"],
+        binaryPaths: ["brave-browser", "brave"]
+      },
+      {
+        name: "Microsoft Edge",
+        defaultIds: ["microsoft-edge.desktop", "microsoft-edge-stable.desktop"],
+        binaryPaths: ["microsoft-edge", "microsoft-edge-stable"]
+      }
+    ];
+  }
+  if (platform === "win32") {
+    return [
+      {
+        name: "Google Chrome",
+        defaultIds: ["chromehtml"],
+        binaryPaths: [
+          "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+          "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+        ]
+      },
+      {
+        name: "Brave",
+        defaultIds: ["bravehtml"],
+        binaryPaths: [
+          "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
+          "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+        ]
+      },
+      {
+        name: "Microsoft Edge",
+        defaultIds: ["msedgehtm"],
+        binaryPaths: [
+          "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+          "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+        ]
+      }
+    ];
+  }
+  return [];
+}
+function spawnDetached(command, args) {
+  if (process.env.VITEST || process.env.NODE_ENV === "test") {
+    throw new Error("spawnDetached called in a test environment without being mocked");
+  }
+  try {
+    const child = spawn(command, [...args], { detached: true, stdio: "ignore" });
+    child.on("error", () => {
+    });
+    child.unref();
+    return child.pid ?? null;
+  } catch {
+    return null;
+  }
+}
+function openOsDefault(url2) {
+  const platform = os4.platform();
+  if (platform === "darwin") {
+    return spawnDetached("open", [url2]);
+  }
+  if (platform === "win32") {
+    return spawnDetached("cmd", ["/c", "start", "", url2]);
+  }
+  return spawnDetached("xdg-open", [url2]);
+}
+function openBrowser(url2) {
+  if (process.env.VITEST || process.env.NODE_ENV === "test") {
+    throw new Error("openBrowser called in a test environment without being mocked");
+  }
+  const pid = openOsDefault(url2);
+  return pid === null ? { pid: null, launched: false, method: "none", reason: "launch-failed" } : { pid, launched: true, method: "os-default" };
+}
+async function closeLoginWindow(signInUrl) {
+  if (os4.platform() !== "darwin") {
+    return;
+  }
+  let url2;
+  try {
+    url2 = new URL(signInUrl);
+  } catch {
+    return;
+  }
+  const marker = url2.searchParams.get("loginWindow");
+  if (!["http:", "https:"].includes(url2.protocol) || url2.username !== "" || url2.password !== "" || !/^\/plugin\/auth\/[a-z0-9-]+$/.test(url2.pathname) || marker === null || !/^[a-f0-9]{32}$/.test(marker)) {
+    return;
+  }
+  const appNames = getChromiumBrowsers().flatMap((browser) => browser.binaryPaths.flatMap((path11) => {
+    const appName = path11.match(/\/([^/]+)\.app\//)?.[1];
+    return appName === void 0 ? [] : [appName];
+  }));
+  await Promise.all(appNames.map((appName) => new Promise((resolve2) => {
+    const script = [
+      "on run argv",
+      "  set loginPrefix to item 1 of argv",
+      '  set loginMarker to "loginWindow=" & (item 2 of argv) & "&"',
+      `  if application "${appName}" is running then`,
+      `    tell application "${appName}"`,
+      "      repeat with w in (every window)",
+      "        try",
+      "          repeat with t in (every tab of w)",
+      '            set tabUrl to (URL of t) & "&"',
+      '            if tabUrl starts with loginPrefix and (tabUrl contains ("?" & loginMarker) or tabUrl contains ("&" & loginMarker)) then',
+      "              close t",
+      "              exit repeat",
+      "            end if",
+      "          end repeat",
+      "        end try",
+      "      end repeat",
+      "    end tell",
+      "  end if",
+      "end run"
+    ].join("\n");
+    try {
+      execFile("osascript", ["-e", script, `${url2.origin}${url2.pathname}?`, marker], { timeout: 4e3 }, () => resolve2());
+    } catch {
+      resolve2();
+    }
+  })));
+}
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/login.js
+async function verifyToken(serviceUrl, token) {
+  try {
+    const res = await fetch(`${serviceUrl}/api/plugin/whoami`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      return null;
+    }
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+async function runLogin(platform, pluginVersion, options) {
+  const config2 = getConfig();
+  const force = options?.force ?? process.argv.includes("--force");
+  if (!force && hasCredentials() && config2.apiKey) {
+    const who = await verifyToken(config2.serviceUrl, config2.apiKey);
+    if (who) {
+      console.log(`Already logged in as ${who.user.email ?? "your account"}${formatNonProductionEndpointSuffix(config2.serviceUrl)}.`);
+      return;
+    }
+  }
+  const verifier = randomBytes(32).toString("base64url");
+  const pkceChallenge = createHash("sha256").update(verifier).digest("base64url");
+  const response = await fetch(`${config2.serviceUrl}/api/plugin/handoff-tickets`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      kind: "auth.login",
+      pkceChallenge,
+      pkceMethod: "S256"
+    }),
+    signal: AbortSignal.timeout(3e4)
+  });
+  if (!response.ok) {
+    throw new Error(`Could not start login (HTTP ${response.status}).`);
+  }
+  const ticket = await response.json();
+  const loginWindow = randomBytes(16).toString("hex");
+  const signInUrl = `${config2.serviceUrl}/plugin/auth/${encodeURIComponent(platform.authPath)}?ticket=${encodeURIComponent(ticket.id)}&loginWindow=${loginWindow}`;
+  console.log(`Sign in to Bitfab: ${signInUrl}`);
+  const opened = openBrowser(signInUrl);
+  if (!opened.launched) {
+    console.log("Could not open a browser. Open the sign-in link above to continue.");
+  }
+  const deadline = Date.now() + 10 * 60 * 1e3;
+  const pollIntervalMs = Math.max(500, ticket.pollIntervalMs ?? 1500);
+  while (Date.now() < deadline) {
+    const poll = await fetch(`${config2.serviceUrl}/api/plugin/handoff-tickets/${encodeURIComponent(ticket.id)}?verifier=${encodeURIComponent(verifier)}`, {
+      signal: AbortSignal.timeout(Math.max(1, Math.min(3e4, deadline - Date.now())))
+    }).catch(() => null);
+    if (poll !== null && !poll.ok && poll.status !== 429 && poll.status < 500) {
+      throw new Error(`Could not complete login (HTTP ${poll.status}).`);
+    }
+    const result = poll?.ok ? await poll.json().catch(() => null) : null;
+    if (result?.status === "completed" && result.data?.token) {
+      saveCredentials(result.data.token);
+      await closeLoginWindow(signInUrl);
+      await reportHandoff(result.data.token, pluginVersion, platform, {
+        flow: "auth.login",
+        wonBy: "ticket",
+        loopbackAvailable: false,
+        ticketAvailable: true
+      });
+      const who = await verifyToken(config2.serviceUrl, result.data.token);
+      const message = `Logged in as ${who?.user.email ?? "your account"}${formatNonProductionEndpointSuffix(config2.serviceUrl)}.`;
+      if (options?.onSuccess) {
+        options.onSuccess(message);
+      } else {
+        console.log(message);
+      }
+      return;
+    }
+    if (result?.status === "expired") {
+      throw new Error("Login expired. Run the login command again.");
+    }
+    await delay(Math.max(0, Math.min(pollIntervalMs, deadline - Date.now())));
+  }
+  throw new Error("Login timed out. Run the login command again.");
+}
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/logout.js
+function runLogout() {
+  printHelpIfRequested({
+    description: "Log out of Bitfab by removing the stored credentials from this machine. Takes no arguments."
+  });
+  if (!hasCredentials()) {
+    console.log("Not logged in: no credentials to remove.");
+    return;
+  }
+  deleteCredentials();
+  console.log(`Credentials removed from ${GLOBAL_CREDENTIALS_FILE}`);
+  console.log("Logged out of Bitfab.");
+}
+
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/openDatasetExperiments.js
 var ARGS2 = [
   {
@@ -10269,7 +10775,7 @@ var ARGS2 = [
     description: "Dataset whose experiments to display."
   }
 ];
-var FLAGS2 = [
+var FLAGS3 = [
   {
     name: "show-tokens",
     boolean: true,
@@ -10279,7 +10785,7 @@ var FLAGS2 = [
 async function runOpenDatasetExperiments(_platform) {
   const { positional, flags } = parseArgs({
     positional: ARGS2,
-    flags: FLAGS2,
+    flags: FLAGS3,
     description: "Print a link to a dataset's experiments and exit."
   });
   emitPageLink(buildExperimentsPathForDataset(positional[0], {
@@ -10358,7 +10864,7 @@ __export(external_exports, {
   $input: () => $input,
   $output: () => $output,
   INVALID: () => INVALID,
-  NEVER: () => NEVER,
+  NEVER: () => NEVER2,
   TimePrecision: () => TimePrecision,
   ZodAny: () => ZodAny,
   ZodArray: () => ZodArray,
@@ -10730,7 +11236,7 @@ __export(core_exports2, {
   INVALID: () => INVALID,
   JSONSchema: () => json_schema_exports,
   JSONSchemaGenerator: () => JSONSchemaGenerator,
-  NEVER: () => NEVER,
+  NEVER: () => NEVER2,
   TimePrecision: () => TimePrecision,
   URL_BAD_FORMAT: () => URL_BAD_FORMAT,
   URL_UNPARSEABLE: () => URL_UNPARSEABLE,
@@ -11789,7 +12295,7 @@ function constantCatch(value) {
 
 // _target/node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/core/core.js
 var _a;
-var NEVER = /* @__PURE__ */ Object.freeze({
+var NEVER2 = /* @__PURE__ */ Object.freeze({
   status: "aborted"
 });
 var _zodDesc = { value: void 0, enumerable: false };
@@ -29854,7 +30360,7 @@ function visit(schema, fnOrHandlers) {
     return h ? h(node2, rewritten) : node2;
   };
   const cache = /* @__PURE__ */ new Map();
-  function run(s2) {
+  function run2(s2) {
     const cached2 = cache.get(s2);
     if (cached2 === RESOLVING) {
       return new $ZodLazy({
@@ -29880,21 +30386,21 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newShape = {};
         for (const k of keys) {
-          const mapped = run(oldShape[k]);
+          const mapped = run2(oldShape[k]);
           if (mapped !== oldShape[k])
             changed = true;
           newShape[k] = mapped;
         }
         let newCatchall = def.catchall;
         if (def.catchall) {
-          newCatchall = run(def.catchall);
+          newCatchall = run2(def.catchall);
           if (newCatchall !== def.catchall)
             changed = true;
         }
         return changed ? clone(s2, { ...def, shape: newShape, catchall: newCatchall }) : s2;
       }
       case "array": {
-        const mapped = run(def.element);
+        const mapped = run2(def.element);
         return mapped === def.element ? s2 : clone(s2, { ...def, element: mapped });
       }
       case "tuple": {
@@ -29902,14 +30408,14 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newItems = [];
         for (const item of oldItems) {
-          const mapped = run(item);
+          const mapped = run2(item);
           if (mapped !== item)
             changed = true;
           newItems.push(mapped);
         }
         let newRest = def.rest;
         if (def.rest) {
-          newRest = run(def.rest);
+          newRest = run2(def.rest);
           if (newRest !== def.rest)
             changed = true;
         }
@@ -29917,12 +30423,12 @@ function visit(schema, fnOrHandlers) {
       }
       case "record":
       case "map": {
-        const newKey = run(def.keyType);
-        const newVal = run(def.valueType);
+        const newKey = run2(def.keyType);
+        const newVal = run2(def.valueType);
         return newKey === def.keyType && newVal === def.valueType ? s2 : clone(s2, { ...def, keyType: newKey, valueType: newVal });
       }
       case "set": {
-        const newVal = run(def.valueType);
+        const newVal = run2(def.valueType);
         return newVal === def.valueType ? s2 : clone(s2, { ...def, valueType: newVal });
       }
       case "union": {
@@ -29930,7 +30436,7 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newOptions = [];
         for (const opt of oldOptions) {
-          const mapped = run(opt);
+          const mapped = run2(opt);
           if (mapped !== opt)
             changed = true;
           newOptions.push(mapped);
@@ -29938,8 +30444,8 @@ function visit(schema, fnOrHandlers) {
         return changed ? clone(s2, { ...def, options: newOptions }) : s2;
       }
       case "intersection": {
-        const newLeft = run(def.left);
-        const newRight = run(def.right);
+        const newLeft = run2(def.left);
+        const newRight = run2(def.right);
         return newLeft === def.left && newRight === def.right ? s2 : clone(s2, { ...def, left: newLeft, right: newRight });
       }
       case "optional":
@@ -29951,23 +30457,23 @@ function visit(schema, fnOrHandlers) {
       case "nonoptional":
       case "promise":
       case "success": {
-        const newInner = run(def.innerType);
+        const newInner = run2(def.innerType);
         return newInner === def.innerType ? s2 : clone(s2, { ...def, innerType: newInner });
       }
       case "pipe": {
-        const newIn = run(def.in);
-        const newOut = run(def.out);
+        const newIn = run2(def.in);
+        const newOut = run2(def.out);
         return newIn === def.in && newOut === def.out ? s2 : clone(s2, { ...def, in: newIn, out: newOut });
       }
       case "function": {
-        const newInput = run(def.input);
-        const newOutput = run(def.output);
+        const newInput = run2(def.input);
+        const newOutput = run2(def.output);
         return newInput === def.input && newOutput === def.output ? s2 : clone(s2, { ...def, input: newInput, output: newOutput });
       }
       case "lazy": {
         const original = def.getter;
         const { _cachedInner, ...rest } = def;
-        return clone(s2, { ...rest, getter: () => run(original()) });
+        return clone(s2, { ...rest, getter: () => run2(original()) });
       }
       // A leaf by choice: `parts` are regex fragments, not data positions.
       case "template_literal":
@@ -29998,7 +30504,7 @@ function visit(schema, fnOrHandlers) {
       }
     }
   }
-  return run(schema);
+  return run2(schema);
 }
 
 // _target/node_modules/.pnpm/zod@4.6.7/node_modules/zod/v4/classic/deep-partial.js
@@ -30102,8 +30608,8 @@ function buildTemplatePreviewPath(functionKey, ticketId) {
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/updates.js
 import fs2 from "node:fs";
-import os4 from "node:os";
-import path2 from "node:path";
+import os5 from "node:os";
+import path3 from "node:path";
 async function getLatestVersion(platform) {
   try {
     const response = await fetch(`https://raw.githubusercontent.com/${platform.repo}/main/${platform.remotePackageJsonPath}`, { signal: AbortSignal.timeout(3e3) });
@@ -30142,7 +30648,7 @@ function isNewer(latest, current) {
 }
 function isAutoUpdateEnabled(platform) {
   try {
-    const marketplacesPath = path2.join(os4.homedir(), ".claude", "plugins", "known_marketplaces.json");
+    const marketplacesPath = path3.join(os5.homedir(), ".claude", "plugins", "known_marketplaces.json");
     const content = fs2.readFileSync(marketplacesPath, "utf-8");
     const data = JSON.parse(content);
     const byName = data[platform.marketplaceName];
@@ -30196,17 +30702,17 @@ function legacyMigrationMessage(platform, prefix = "[Bitfab]") {
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/status.js
-import path4 from "node:path";
+import path5 from "node:path";
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/buildInfo.js
 import crypto2 from "node:crypto";
 import fs3 from "node:fs";
-import os5 from "node:os";
-import path3 from "node:path";
+import os6 from "node:os";
+import path4 from "node:path";
 import { fileURLToPath } from "node:url";
 function readBuildInfo(distDir) {
   try {
-    const raw = fs3.readFileSync(path3.join(distDir, "buildInfo.json"), "utf-8");
+    const raw = fs3.readFileSync(path4.join(distDir, "buildInfo.json"), "utf-8");
     const parsed = JSON.parse(raw);
     if (typeof parsed.builtAt === "string" && typeof parsed.srcHash === "string") {
       return {
@@ -30231,11 +30737,11 @@ function hashSrcDir(srcDir) {
     }
     const sorted = entries.slice().sort((a, b) => a.name.localeCompare(b.name));
     for (const entry of sorted) {
-      const full = path3.join(dir, entry.name);
+      const full = path4.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(full);
       } else if (entry.isFile() && entry.name.endsWith(".ts") && !entry.name.endsWith(".test.ts")) {
-        hash2.update(path3.relative(srcDir, full));
+        hash2.update(path4.relative(srcDir, full));
         hash2.update("\0");
         hash2.update(fs3.readFileSync(full));
         hash2.update("\0");
@@ -30248,10 +30754,10 @@ function hashSrcDir(srcDir) {
 function isDevBuildActive(platform, scriptUrl) {
   const devKey = `${platform.pluginName}@${platform.marketplaceName}-dev`;
   for (const settingsPath of [
-    path3.join(os5.homedir(), ".claude", "settings.json"),
-    path3.join(os5.homedir(), ".claude", "settings.local.json"),
-    path3.join(process.cwd(), ".claude", "settings.json"),
-    path3.join(process.cwd(), ".claude", "settings.local.json")
+    path4.join(os6.homedir(), ".claude", "settings.json"),
+    path4.join(os6.homedir(), ".claude", "settings.local.json"),
+    path4.join(process.cwd(), ".claude", "settings.json"),
+    path4.join(process.cwd(), ".claude", "settings.local.json")
   ]) {
     try {
       const data = JSON.parse(fs3.readFileSync(settingsPath, "utf-8"));
@@ -30264,7 +30770,7 @@ function isDevBuildActive(platform, scriptUrl) {
   if (scriptUrl) {
     try {
       const scriptPath = fileURLToPath(scriptUrl);
-      const cursorLocal = `${path3.join(os5.homedir(), ".cursor", "plugins", "local")}${path3.sep}`;
+      const cursorLocal = `${path4.join(os6.homedir(), ".cursor", "plugins", "local")}${path4.sep}`;
       if (scriptPath.startsWith(cursorLocal)) {
         return true;
       }
@@ -30298,12 +30804,12 @@ function formatRelativeTime(isoTimestamp, now = Date.now()) {
   return `${d}d ago`;
 }
 function getDevBuildSummary(pluginRoot) {
-  const distDir = path3.join(pluginRoot, "dist");
+  const distDir = path4.join(pluginRoot, "dist");
   const info = readBuildInfo(distDir);
   if (!info) {
     return null;
   }
-  const srcDir = path3.join(pluginRoot, "src");
+  const srcDir = path4.join(pluginRoot, "src");
   let srcMatches = true;
   try {
     if (fs3.statSync(srcDir).isDirectory()) {
@@ -30342,7 +30848,7 @@ async function runStatus(currentVersion, platform, pluginRoot, scriptUrl) {
   });
   const config2 = getConfig();
   const devBuildActive = isDevBuildActive(platform, scriptUrl);
-  const localBuildInfo = pluginRoot ? readBuildInfo(path4.join(pluginRoot, "dist")) : null;
+  const localBuildInfo = pluginRoot ? readBuildInfo(path5.join(pluginRoot, "dist")) : null;
   const { current, latest, updateAvailable, staleSameVersion } = await checkForUpdate(currentVersion, platform, localBuildInfo?.gitSha);
   console.log(`Plugin: ${devBuildActive ? "Bitfab Dev" : "Bitfab"}`);
   console.log(`Service URL: ${config2.serviceUrl}`);
@@ -30464,11 +30970,11 @@ var BAKED_SDK_VERSIONS = {
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/installedSdk.js
 var semver = __toESM(require_semver2(), 1);
 import fs5 from "node:fs";
-import path6 from "node:path";
+import path7 from "node:path";
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/workspaces.js
 import fs4 from "node:fs";
-import path5 from "node:path";
+import path6 from "node:path";
 function exists(p) {
   try {
     fs4.accessSync(p);
@@ -30477,7 +30983,7 @@ function exists(p) {
     return false;
   }
 }
-function readFile(p) {
+function readFile2(p) {
   try {
     return fs4.readFileSync(p, "utf-8");
   } catch {
@@ -30491,7 +30997,7 @@ function expandGlob(rootDir, pattern) {
     return [];
   }
   if (!trimmed.includes("*")) {
-    const abs = path5.resolve(rootDir, trimmed);
+    const abs = path6.resolve(rootDir, trimmed);
     return exists(abs) && fs4.statSync(abs).isDirectory() ? [abs] : [];
   }
   let currentDirs = [rootDir];
@@ -30507,11 +31013,11 @@ function expandGlob(rootDir, pattern) {
         }
         for (const entry of entries) {
           if (entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules") {
-            nextDirs.push(path5.join(dir, entry.name));
+            nextDirs.push(path6.join(dir, entry.name));
           }
         }
       } else {
-        const abs = path5.join(dir, segment);
+        const abs = path6.join(dir, segment);
         if (exists(abs)) {
           nextDirs.push(abs);
         }
@@ -30528,7 +31034,7 @@ function expandGlob(rootDir, pattern) {
   });
 }
 function readPnpmWorkspacePackages(rootDir) {
-  const content = readFile(path5.join(rootDir, "pnpm-workspace.yaml"));
+  const content = readFile2(path6.join(rootDir, "pnpm-workspace.yaml"));
   if (!content) {
     return [];
   }
@@ -30546,7 +31052,7 @@ function readPnpmWorkspacePackages(rootDir) {
   return patterns.flatMap((p) => expandGlob(rootDir, p));
 }
 function readPackageJsonWorkspaces(rootDir) {
-  const content = readFile(path5.join(rootDir, "package.json"));
+  const content = readFile2(path6.join(rootDir, "package.json"));
   if (!content) {
     return [];
   }
@@ -30564,7 +31070,7 @@ function readPackageJsonWorkspaces(rootDir) {
   }
 }
 function readUvWorkspaceMembers(rootDir) {
-  const content = readFile(path5.join(rootDir, "pyproject.toml"));
+  const content = readFile2(path6.join(rootDir, "pyproject.toml"));
   if (!content) {
     return [];
   }
@@ -30583,7 +31089,7 @@ function readUvWorkspaceMembers(rootDir) {
   return patterns.flatMap((p) => expandGlob(rootDir, p));
 }
 function readGoWorkModules(rootDir) {
-  const content = readFile(path5.join(rootDir, "go.work"));
+  const content = readFile2(path6.join(rootDir, "go.work"));
   if (!content) {
     return [];
   }
@@ -30595,14 +31101,14 @@ function readGoWorkModules(rootDir) {
       if (!trimmed) {
         continue;
       }
-      const abs = path5.resolve(rootDir, trimmed);
+      const abs = path6.resolve(rootDir, trimmed);
       if (exists(abs)) {
         dirs.push(abs);
       }
     }
   }
   for (const m of content.matchAll(/^use\s+([^\s(][^\s]*)/gm)) {
-    const abs = path5.resolve(rootDir, m[1]);
+    const abs = path6.resolve(rootDir, m[1]);
     if (exists(abs)) {
       dirs.push(abs);
     }
@@ -30651,7 +31157,7 @@ function legacySdkSpec(deps) {
   return raw !== void 0 && isLegacySdkVersion(raw) ? raw : void 0;
 }
 function readTsDeclared(cwd) {
-  const manifestPath = path6.join(cwd, "package.json");
+  const manifestPath = path7.join(cwd, "package.json");
   const content = readFileSafe(manifestPath);
   if (!content) {
     return null;
@@ -30682,7 +31188,7 @@ function readTsDeclared(cwd) {
   }
 }
 function readTsFromPnpm(cwd) {
-  const p = path6.join(cwd, "pnpm-lock.yaml");
+  const p = path7.join(cwd, "pnpm-lock.yaml");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30691,7 +31197,7 @@ function readTsFromPnpm(cwd) {
   return match ? { version: match[1], path: p } : null;
 }
 function readTsFromNpm(cwd) {
-  const p = path6.join(cwd, "package-lock.json");
+  const p = path7.join(cwd, "package-lock.json");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30710,7 +31216,7 @@ function readTsFromNpm(cwd) {
   }
 }
 function readTsFromYarn(cwd) {
-  const p = path6.join(cwd, "yarn.lock");
+  const p = path7.join(cwd, "yarn.lock");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30723,7 +31229,7 @@ function readTsFromYarn(cwd) {
   return berry ? { version: berry[1], path: p } : null;
 }
 function readTsFromBun(cwd) {
-  const p = path6.join(cwd, "bun.lock");
+  const p = path7.join(cwd, "bun.lock");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30733,7 +31239,7 @@ function readTsFromBun(cwd) {
 }
 function readTsFromNodeModules(cwd) {
   for (const name of [TS_PACKAGE, TS_PACKAGE_LEGACY]) {
-    const p = path6.join(cwd, "node_modules", name, "package.json");
+    const p = path7.join(cwd, "node_modules", name, "package.json");
     const content = readFileSafe(p);
     if (!content) {
       continue;
@@ -30756,7 +31262,7 @@ function readTsResolved(dir, monorepoRoot) {
   return readTsFromPnpm(monorepoRoot) ?? readTsFromNpm(monorepoRoot) ?? readTsFromYarn(monorepoRoot) ?? readTsFromBun(monorepoRoot) ?? readTsFromNodeModules(monorepoRoot);
 }
 function readPyDeclared(cwd) {
-  const pyproject = path6.join(cwd, "pyproject.toml");
+  const pyproject = path7.join(cwd, "pyproject.toml");
   const pypContent = readFileSafe(pyproject);
   if (pypContent?.includes(PY_PACKAGE)) {
     const m = pypContent.match(new RegExp(`${PY_PACKAGE}\\s*[=~><^]*\\s*["']?([0-9][^"'\\s,\\]]*)?`));
@@ -30765,7 +31271,7 @@ function readPyDeclared(cwd) {
       path: pyproject
     };
   }
-  const reqPath = path6.join(cwd, "requirements.txt");
+  const reqPath = path7.join(cwd, "requirements.txt");
   const reqContent = readFileSafe(reqPath);
   if (reqContent) {
     for (const rawLine of reqContent.split("\n")) {
@@ -30801,7 +31307,7 @@ function readPyTomlLockVersion(lockPath) {
   return null;
 }
 function readPyFromPipfileLock(cwd) {
-  const p = path6.join(cwd, "Pipfile.lock");
+  const p = path7.join(cwd, "Pipfile.lock");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30819,22 +31325,22 @@ var PY_DIST_INFO_RE = /^bitfab[_-]py-(\d[\w.\-+]*)\.dist-info$/;
 function readPyFromVenv(dir) {
   for (const venv of PY_VENV_DIRS) {
     const sitePackages = [];
-    const libDir = path6.join(dir, venv, "lib");
+    const libDir = path7.join(dir, venv, "lib");
     try {
       for (const entry of fs5.readdirSync(libDir)) {
         if (entry.startsWith("python")) {
-          sitePackages.push(path6.join(libDir, entry, "site-packages"));
+          sitePackages.push(path7.join(libDir, entry, "site-packages"));
         }
       }
     } catch {
     }
-    sitePackages.push(path6.join(dir, venv, "Lib", "site-packages"));
+    sitePackages.push(path7.join(dir, venv, "Lib", "site-packages"));
     for (const site of sitePackages) {
       try {
         for (const entry of fs5.readdirSync(site)) {
           const m = entry.match(PY_DIST_INFO_RE);
           if (m) {
-            return { version: m[1], path: path6.join(site, entry) };
+            return { version: m[1], path: path7.join(site, entry) };
           }
         }
       } catch {
@@ -30844,7 +31350,7 @@ function readPyFromVenv(dir) {
   return null;
 }
 function readPyResolvedAt(d) {
-  return readPyTomlLockVersion(path6.join(d, "uv.lock")) ?? readPyTomlLockVersion(path6.join(d, "poetry.lock")) ?? readPyTomlLockVersion(path6.join(d, "pdm.lock")) ?? readPyFromPipfileLock(d) ?? readPyFromVenv(d);
+  return readPyTomlLockVersion(path7.join(d, "uv.lock")) ?? readPyTomlLockVersion(path7.join(d, "poetry.lock")) ?? readPyTomlLockVersion(path7.join(d, "pdm.lock")) ?? readPyFromPipfileLock(d) ?? readPyFromVenv(d);
 }
 function readPyResolved(dir, monorepoRoot) {
   const local = readPyResolvedAt(dir);
@@ -30854,7 +31360,7 @@ function readPyResolved(dir, monorepoRoot) {
   return readPyResolvedAt(monorepoRoot);
 }
 function readRbDeclared(cwd) {
-  const gemfilePath = path6.join(cwd, "Gemfile");
+  const gemfilePath = path7.join(cwd, "Gemfile");
   const content = readFileSafe(gemfilePath);
   if (!content) {
     return null;
@@ -30869,7 +31375,7 @@ function readRbDeclared(cwd) {
   };
 }
 function readRbResolved(cwd) {
-  const p = path6.join(cwd, "Gemfile.lock");
+  const p = path7.join(cwd, "Gemfile.lock");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30878,7 +31384,7 @@ function readRbResolved(cwd) {
   return m ? { version: stripRange(m[1]) || null, path: p } : null;
 }
 function readGoResolved(cwd) {
-  const p = path6.join(cwd, "go.mod");
+  const p = path7.join(cwd, "go.mod");
   const content = readFileSafe(p);
   if (!content) {
     return null;
@@ -30952,7 +31458,7 @@ function getInstalledSdks(rootDir) {
     { dir: rootDir, workspacePath: "." },
     ...workspaces.map((d) => ({
       dir: d,
-      workspacePath: path6.relative(rootDir, d) || "."
+      workspacePath: path7.relative(rootDir, d) || "."
     }))
   ];
   const seen = /* @__PURE__ */ new Set();
@@ -31091,13 +31597,13 @@ function resolveUpdateCommands(platform) {
   const scopes = platform.detectInstallScopes?.() ?? [];
   return platform.buildPluginUpdateCommands(scopes);
 }
-function runUpdateCommands(commands, run) {
+function runUpdateCommands(commands, run2) {
   const failed = [];
   for (const command of commands) {
     console.log(`
 $ ${command}`);
     try {
-      run(command);
+      run2(command);
     } catch {
       failed.push(command);
       console.error(`
@@ -31225,504 +31731,6 @@ async function runUpdate(currentVersion, platform, mode = "all") {
   if (mode === "sdk" || mode === "all") {
     await runSdkUpdate();
   }
-}
-
-// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/commands/watchRunningExperiments.js
-import { mkdirSync, watch } from "node:fs";
-import { readdir, readFile as readFile2, rm, stat } from "node:fs/promises";
-import os6 from "node:os";
-import path7 from "node:path";
-var MIN_REFRESH_GAP_MS = 2e3;
-var STREAM_FALLBACK_REFRESH_MS = 6e4;
-var POLL_FALLBACK_REFRESH_MS = 2e4;
-var STREAM_RETRY_MS = 5e3;
-var STALL_AFTER_MS = 10 * 6e4;
-var IDLE_RECHECK_MS = 15e3;
-var REQUEST_TIMEOUT_MS = 3e4;
-var LOGIN_RECHECK_MS = 3e4;
-var LAUNCH_LOOKUP_MAX_MS = 60 * 6e4;
-var NEVER2 = new Promise(() => {
-});
-var EXPERIMENT_EVENT_TYPES = /* @__PURE__ */ new Set([
-  "experiment:updated",
-  "experiment-stats:updated"
-]);
-var SAFE_SESSION_ID = /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/;
-var LAUNCH_ID_METADATA_KEY = "bitfab-launch-id";
-var SESSION_FOLDER_MAX_AGE_MS = 7 * 24 * 60 * 6e4;
-var Waker = class {
-  resolveWake;
-  pending;
-  constructor() {
-    this.pending = this.fresh();
-  }
-  fresh() {
-    return new Promise((resolve2) => {
-      this.resolveWake = resolve2;
-    });
-  }
-  get next() {
-    return this.pending;
-  }
-  wake() {
-    this.resolveWake?.();
-  }
-  reset() {
-    this.pending = this.fresh();
-  }
-};
-function progressTotal(status) {
-  return status.remainingCount === null ? null : status.finishedCount + status.remainingCount;
-}
-async function watchSessionExperiments(deps) {
-  const names = /* @__PURE__ */ new Map();
-  const pendingLaunches = /* @__PURE__ */ new Map();
-  const settledLaunches = /* @__PURE__ */ new Set();
-  const ignored = /* @__PURE__ */ new Set();
-  const finished = /* @__PURE__ */ new Map();
-  const lastProgress = /* @__PURE__ */ new Map();
-  const erroredAt = /* @__PURE__ */ new Map();
-  const waker = new Waker();
-  let stream = null;
-  let streamUnavailable = false;
-  let firstPass = true;
-  let lastEmitted = "";
-  let running = [];
-  let connection = deps.connection();
-  const isStalled = (id, status) => {
-    const now = deps.now();
-    const seen = lastProgress.get(id);
-    if (seen === void 0 || seen.finished !== status.finishedCount) {
-      lastProgress.set(id, { finished: status.finishedCount, at: now });
-      return false;
-    }
-    const tracesLeft = status.remainingCount === null || status.remainingCount > 0;
-    return tracesLeft && now - seen.at >= STALL_AFTER_MS;
-  };
-  const readErrored = async (id) => {
-    const errors = await deps.readErrors(id).catch(() => null);
-    return errors?.errored ?? null;
-  };
-  const runningErrored = async (id, status) => {
-    const seen = erroredAt.get(id);
-    if (seen !== void 0 && seen.finished >= status.finishedCount) {
-      return seen.errored;
-    }
-    const errored = status.finishedCount === 0 ? 0 : await readErrored(id);
-    erroredAt.set(id, { finished: status.finishedCount, errored });
-    return errored;
-  };
-  const onEvent = (event) => {
-    if (names.has(event.experimentId) && !finished.has(event.experimentId)) {
-      waker.wake();
-    }
-  };
-  const openStream = () => {
-    if (stream !== null || streamUnavailable) {
-      return;
-    }
-    const controller = new AbortController();
-    stream = controller;
-    void (async () => {
-      while (!controller.signal.aborted) {
-        const outcome = await deps.openStream(onEvent, controller.signal).catch(() => "ended");
-        if (outcome === "unavailable") {
-          streamUnavailable = true;
-          return;
-        }
-        if (!controller.signal.aborted) {
-          await deps.wait(STREAM_RETRY_MS, NEVER2);
-        }
-      }
-    })();
-  };
-  const closeStream = () => {
-    stream?.abort();
-    stream = null;
-  };
-  const track = (id, name) => {
-    if (!names.has(id) || name !== null) {
-      names.set(id, name);
-    }
-  };
-  const resolveLaunches = async () => {
-    for (const [launchId, line] of pendingLaunches) {
-      const expired = line.startedAt !== null && deps.now() - line.startedAt > LAUNCH_LOOKUP_MAX_MS;
-      if (expired) {
-        pendingLaunches.delete(launchId);
-        settledLaunches.add(launchId);
-        continue;
-      }
-      const found = await deps.findLaunch(launchId);
-      if (found !== null) {
-        track(found.id, line.name ?? found.name);
-        pendingLaunches.delete(launchId);
-        settledLaunches.add(launchId);
-      }
-    }
-  };
-  const refresh = async () => {
-    for (const line of await deps.readSessionExperiments()) {
-      if (line.experimentId !== null) {
-        track(line.experimentId, line.name);
-      } else if (line.launchId !== null && !settledLaunches.has(line.launchId)) {
-        pendingLaunches.set(line.launchId, line);
-      }
-    }
-    await resolveLaunches();
-    const nowRunning = [];
-    for (const [id, name] of names) {
-      if (finished.has(id) || ignored.has(id)) {
-        continue;
-      }
-      const status = await deps.readStatus(id);
-      if (status === null) {
-        ignored.add(id);
-      } else if (status.status === "pending") {
-        nowRunning.push({
-          id,
-          name,
-          finished: status.finishedCount,
-          total: progressTotal(status),
-          url: deps.experimentUrl(id),
-          stalled: isStalled(id, status),
-          errored: await runningErrored(id, status)
-        });
-      } else {
-        finished.set(id, {
-          id,
-          name,
-          status: status.status,
-          url: deps.experimentUrl(id),
-          announce: !firstPass,
-          finished: status.finishedCount,
-          errored: await readErrored(id),
-          total: progressTotal(status)
-        });
-        erroredAt.delete(id);
-      }
-    }
-    return nowRunning;
-  };
-  const stopWatchingFile = deps.watchSessionFile(() => waker.wake());
-  try {
-    while (!deps.shouldStop()) {
-      waker.reset();
-      const currentConnection = deps.connection();
-      if (currentConnection !== connection) {
-        connection = currentConnection;
-        ignored.clear();
-        firstPass = true;
-        closeStream();
-        streamUnavailable = false;
-      }
-      const refreshedAt = deps.now();
-      const refreshed = await refresh().catch(() => null);
-      if (refreshed !== null) {
-        firstPass = false;
-        running = refreshed;
-      }
-      const snapshot = {
-        running,
-        finished: [...finished.values()]
-      };
-      const key = JSON.stringify(snapshot);
-      if (refreshed !== null && key !== lastEmitted) {
-        deps.emit(snapshot);
-        lastEmitted = key;
-      }
-      let waitMs;
-      if (running.length > 0) {
-        openStream();
-        waitMs = stream !== null && !streamUnavailable && refreshed !== null ? STREAM_FALLBACK_REFRESH_MS : POLL_FALLBACK_REFRESH_MS;
-      } else {
-        closeStream();
-        waitMs = refreshed === null ? POLL_FALLBACK_REFRESH_MS : IDLE_RECHECK_MS;
-      }
-      await deps.wait(waitMs, waker.next);
-      const sinceRefresh = deps.now() - refreshedAt;
-      if (sinceRefresh < MIN_REFRESH_GAP_MS) {
-        await deps.wait(MIN_REFRESH_GAP_MS - sinceRefresh, NEVER2);
-      }
-    }
-  } finally {
-    stopWatchingFile();
-    closeStream();
-  }
-}
-function parseExperimentEvent(message) {
-  if (message.event === null || !EXPERIMENT_EVENT_TYPES.has(message.event)) {
-    return null;
-  }
-  let parsed;
-  try {
-    parsed = JSON.parse(message.data);
-  } catch {
-    return null;
-  }
-  if (typeof parsed !== "object" || parsed === null) {
-    return null;
-  }
-  const data = parsed;
-  const experimentId = data.experimentId ?? data.testRunId;
-  return typeof experimentId === "string" ? { experimentId } : null;
-}
-function fieldValue(line, field) {
-  return line.startsWith(`${field}:`) ? line.slice(field.length + 1).trimStart() : null;
-}
-function splitSseData(buffer) {
-  const blocks = buffer.split(/\r?\n\r?\n/);
-  const rest = blocks.pop() ?? "";
-  const messages = blocks.flatMap((block) => {
-    const lines = block.split(/\r?\n/);
-    const data = lines.map((line) => fieldValue(line, "data")).filter((value) => value !== null).join("\n");
-    const event = lines.map((line) => fieldValue(line, "event")).find((value) => value !== null) ?? null;
-    return data.length > 0 ? [{ event, data }] : [];
-  });
-  return { messages, rest };
-}
-async function readEventStream(url2, headers, onEvent, signal) {
-  const response = await fetch(url2, {
-    headers: { ...headers, Accept: "text/event-stream" },
-    signal
-  });
-  if (response.status === 404) {
-    return "unavailable";
-  }
-  if (!response.ok || response.body === null) {
-    return "ended";
-  }
-  const decoder = new TextDecoder();
-  const reader = response.body.getReader();
-  let buffer = "";
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) {
-      return "ended";
-    }
-    buffer += decoder.decode(value, { stream: true });
-    const { messages, rest } = splitSseData(buffer);
-    buffer = rest;
-    for (const message of messages) {
-      const event = parseExperimentEvent(message);
-      if (event !== null) {
-        onEvent(event);
-      }
-    }
-  }
-}
-function sessionExperimentsPath(home, agentSessionId) {
-  return SAFE_SESSION_ID.test(agentSessionId) ? path7.join(home, ".bitfab", "agent-sessions", agentSessionId) : null;
-}
-function sameServer(left, right) {
-  try {
-    return new URL(left).origin === new URL(right).origin;
-  } catch {
-    return false;
-  }
-}
-function textOrNull(value) {
-  return typeof value === "string" && value.length > 0 ? value : null;
-}
-function parseSessionExperiments(content, serviceUrl) {
-  return content.split("\n").flatMap((text) => {
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      return [];
-    }
-    if (typeof parsed !== "object" || parsed === null) {
-      return [];
-    }
-    const record2 = parsed;
-    const experimentId = textOrNull(record2.experimentId);
-    const launchId = textOrNull(record2.launchId);
-    const fromCloudLaunch = "launchId" in record2;
-    if (experimentId === null && launchId === null || !fromCloudLaunch && (typeof record2.serviceUrl !== "string" || !sameServer(record2.serviceUrl, serviceUrl))) {
-      return [];
-    }
-    const startedAt = typeof record2.startedAt === "string" ? Date.parse(record2.startedAt) : NaN;
-    return [
-      {
-        experimentId,
-        launchId,
-        name: textOrNull(record2.name),
-        startedAt: Number.isNaN(startedAt) ? null : startedAt
-      }
-    ];
-  });
-}
-async function lastWrittenAt(folder) {
-  const file2 = await stat(path7.join(folder, "experiments.jsonl")).catch(() => null);
-  return (file2 ?? await stat(folder)).mtimeMs;
-}
-async function pruneStaleSessionFolders(root, keepSessionId, now) {
-  const entries = await readdir(root, { withFileTypes: true }).catch(() => []);
-  const removed = [];
-  for (const entry of entries) {
-    if (!entry.isDirectory() || entry.name === keepSessionId || !SAFE_SESSION_ID.test(entry.name)) {
-      continue;
-    }
-    const folder = path7.join(root, entry.name);
-    try {
-      if (now - await lastWrittenAt(folder) >= SESSION_FOLDER_MAX_AGE_MS) {
-        await rm(folder, { recursive: true, force: true });
-        removed.push(entry.name);
-      }
-    } catch {
-    }
-  }
-  return removed;
-}
-async function readSessionFile(directory, serviceUrl) {
-  if (directory === null) {
-    return [];
-  }
-  try {
-    const content = await readFile2(path7.join(directory, "experiments.jsonl"), "utf8");
-    return parseSessionExperiments(content, serviceUrl);
-  } catch {
-    return [];
-  }
-}
-function watchDirectory(directory, onChange) {
-  if (directory === null) {
-    return () => {
-    };
-  }
-  try {
-    mkdirSync(directory, { recursive: true });
-    const watcher = watch(directory, () => onChange());
-    watcher.on("error", () => watcher.close());
-    return () => watcher.close();
-  } catch {
-    return () => {
-    };
-  }
-}
-function isListedExperiment(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const record2 = value;
-  return typeof record2.id === "string" && (record2.name === null || typeof record2.name === "string");
-}
-async function findLaunchFromApi(serviceUrl, headers, launchId) {
-  const params = new URLSearchParams({
-    metadata: JSON.stringify({ [LAUNCH_ID_METADATA_KEY]: launchId }),
-    limit: "1"
-  });
-  const response = await fetch(`${serviceUrl}/api/sdk/experiments?${params.toString()}`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
-  if ([400, 403, 404].includes(response.status)) {
-    return null;
-  }
-  if (!response.ok) {
-    throw new Error(`Bitfab returned ${response.status} finding launch ${launchId}`);
-  }
-  const body = await response.json();
-  const found = (body.experiments ?? []).find(isListedExperiment);
-  return found === void 0 ? null : { id: found.id, name: found.name };
-}
-async function readStatusFromApi(serviceUrl, headers, experimentId) {
-  const response = await fetch(`${serviceUrl}/api/sdk/replay/status`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ experimentId }),
-    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
-  });
-  if ([400, 403, 404].includes(response.status)) {
-    return null;
-  }
-  if (!response.ok) {
-    throw new Error(`Bitfab returned ${response.status} reading experiment ${experimentId}`);
-  }
-  return await response.json();
-}
-function isReplayErrors(value) {
-  if (typeof value !== "object" || value === null) {
-    return false;
-  }
-  const record2 = value;
-  return typeof record2.errored === "number" && typeof record2.total === "number";
-}
-async function readErrorsFromApi(serviceUrl, headers, experimentId) {
-  const response = await fetch(`${serviceUrl}/api/sdk/experiments/${encodeURIComponent(experimentId)}/rollup`, { headers, signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) });
-  if (!response.ok) {
-    return null;
-  }
-  const body = await response.json();
-  return isReplayErrors(body.totals) ? { errored: body.totals.errored, total: body.totals.total } : null;
-}
-var FLAGS3 = [
-  {
-    name: "agent-session-id",
-    description: "The coding agent session whose experiments to follow: the ones its replays wrote to ~/.bitfab/agent-sessions/<id>/experiments.jsonl."
-  }
-];
-async function runWatchRunningExperiments(platform, pluginVersion) {
-  const { flags } = parseArgs({
-    positional: [],
-    flags: FLAGS3,
-    description: "Follow the experiments a coding agent session's replays started, printing them as JSON, one line each time they change. Runs until the session ends, waiting for a login when there is none and retrying through failed requests. Reads the Bitfab server and login again on every refresh, so a new login, organization, or server address is picked up without a restart. Replays record each experiment they start in ~/.bitfab/agent-sessions/<session id>/experiments.jsonl (a --cloud replay records its launch id instead, and the experiment tagged bitfab-launch-id=<launch id> is looked up for up to an hour); a local replay's experiment on another Bitfab server, and experiments this API key cannot read, are left out. A --cloud launch is followed whatever server its line names, since the GitHub runner's server is not known where it was launched. Reads how many of an experiment's replays errored each time its replayed count goes up, and once more when it finishes. Opens Bitfab's pushed experiment events only while one runs. On start it deletes other sessions' folders there that nothing has written to for 7 days."
-  });
-  const agentSessionId = flags["agent-session-id"];
-  if (typeof agentSessionId !== "string" || agentSessionId.length === 0) {
-    throw new Error("Pass --agent-session-id <session id>.");
-  }
-  const parentPid = process.ppid;
-  process.stdout.on("error", () => process.exit(0));
-  while (!getConfig().apiKey) {
-    if (process.ppid !== parentPid) {
-      process.exit(0);
-    }
-    await new Promise((resolve2) => setTimeout(resolve2, LOGIN_RECHECK_MS));
-  }
-  const current = () => {
-    const config2 = getConfig();
-    if (!config2.apiKey) {
-      throw new Error("Not logged in to Bitfab");
-    }
-    return {
-      serviceUrl: config2.serviceUrl.replace(/\/$/, ""),
-      headers: buildBitfabRequestHeaders(config2.apiKey, pluginVersion, platform)
-    };
-  };
-  const directory = sessionExperimentsPath(os6.homedir(), agentSessionId);
-  void pruneStaleSessionFolders(path7.join(os6.homedir(), ".bitfab", "agent-sessions"), agentSessionId, Date.now());
-  await watchSessionExperiments({
-    connection: () => {
-      const config2 = getConfig();
-      return JSON.stringify([config2.serviceUrl, config2.apiKey]);
-    },
-    readSessionExperiments: () => readSessionFile(directory, current().serviceUrl),
-    findLaunch: (launchId) => {
-      const { serviceUrl, headers } = current();
-      return findLaunchFromApi(serviceUrl, headers, launchId);
-    },
-    watchSessionFile: (onChange) => watchDirectory(directory, onChange),
-    readStatus: (id) => {
-      const { serviceUrl, headers } = current();
-      return readStatusFromApi(serviceUrl, headers, id);
-    },
-    readErrors: (id) => {
-      const { serviceUrl, headers } = current();
-      return readErrorsFromApi(serviceUrl, headers, id);
-    },
-    experimentUrl: (id) => `${current().serviceUrl}${buildExperimentPath(id)}`,
-    openStream: (onEvent, signal) => {
-      const { serviceUrl, headers } = current();
-      return readEventStream(`${serviceUrl}/api/plugin/experimentEvents`, headers, onEvent, signal);
-    },
-    emit: (snapshot) => console.log(JSON.stringify(snapshot)),
-    now: () => Date.now(),
-    wait: (ms, wake) => Promise.race([
-      wake,
-      new Promise((resolve2) => setTimeout(resolve2, ms))
-    ]),
-    shouldStop: () => process.ppid !== parentPid
-  });
-  process.exit(0);
 }
 
 // _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/hooks/captureHook.js
@@ -32498,6 +32506,9 @@ ${messages.join("\n")}`;
       hookEventName: "SessionStart",
       additionalContext: contextParts.join("\n")
     };
+    if (platform.replaysNeedSessionIdFromContext) {
+      output2.additional_context = contextParts.join("\n");
+    }
   }
   if (Object.keys(output2).length > 0) {
     process.stdout.write(JSON.stringify(output2));
@@ -43471,6 +43482,7 @@ function createBitfabToolHandlers(platform, getConfig2, pluginVersion) {
 function buildMcpInstructions(platform) {
   return renderMcpInstructions(platform);
 }
+var REPLAY_SESSION_ID_LINE = "- Start every replay command with `AGENT_SESSION_ID=<agent_session_id> `, the id in this session's context, so its experiment is tied to this chat.\n";
 function renderMcpInstructions(platform) {
   return `Bitfab records traces of AI agent runs and helps the user improve the code that produced them.
 There is no special command for this work: use these tools and the SDK's commands.
@@ -43481,7 +43493,7 @@ Replaying traces against the current code:
 - Run it from the project directory. TypeScript: \`pnpm exec bitfab-replay --registry <registry-path> <trace-function-key> --dataset-id <dataset-id>\`. Python: \`uv run\` or \`poetry run bitfab-replay ...\`. Ruby: \`bundle exec bitfab-replay ...\`. Go: \`go run ./cmd/registry <trace-function-key> ...\`.
 - Every replay needs \`--code-change\`: \`working-tree\`, \`last-branch\`, \`default-branch\`, \`ref\` with \`--code-change-base <branch|sha>\`, \`skip\`, or \`manual\` with \`--code-change-file <path>\`. Ask if unclear.
 - \`--trace-ids <id>,<id>\` replays specific traces; with \`--dataset-id\`, as a subset of that dataset. \`--attempts <n>\` repeats each trace. \`--cloud\` runs it on GitHub Actions. \`--help\` lists every option.
-- Each replay creates an experiment. ${getReplayStatus.name} reports its progress. If it stopped early, resume it with the same command plus \`--resume <experiment-id>\`, minus the flags that pick traces.
+${platform.replaysNeedSessionIdFromContext ? REPLAY_SESSION_ID_LINE : ""}- Each replay creates an experiment. ${getReplayStatus.name} reports its progress. If it stopped early, resume it with the same command plus \`--resume <experiment-id>\`, minus the flags that pick traces.
 
 Recording a fresh run of a trace:
 - \`bitfab-seed --registry <registry-path> <trace-function-key> --from-trace <trace-id>\` reruns the function on a trace's inputs under the same trace ID. It runs side effects for real, so warn the user first.
@@ -43533,6 +43545,13 @@ async function startMcpServer(platform, getConfig2, pluginVersion) {
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }
+
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/codexExperimentWaker.js
+import { execFile as execFile2 } from "node:child_process";
+import { promisify } from "node:util";
+var run = promisify(execFile2);
+var CODEX_IDLE_STOP_MS = 24 * 60 * 6e4;
+var ROLLOUT_TAIL_BYTES = 256 * 1024;
 
 // _target/node_modules/.pnpm/@agent-flows+core@0.1.2_zod@4.6.7/node_modules/@agent-flows/core/dist/commands.js
 function defineCommandCatalog(catalog) {
@@ -48741,11 +48760,146 @@ function detectClaudeInstallScopes(pluginKey, homeDir = os9.homedir(), projectDi
   }
 }
 
+// _target/node_modules/.pnpm/bitfab-plugin-lib@file++++home+runner+_work+ai-assistant+ai-assistant+bitfab-plugin-lib/node_modules/bitfab-plugin-lib/dist/cloudReplay/constants.js
+var PREFIX = "bitfab-replay/";
+var API_KEY_ENV = "BITFAB_REPLAY_BITFAB_API_KEY";
+var LEGACY_KEY_SECRET_REFERENCE = new RegExp(`^[ \\t]*"?${API_KEY_ENV}"?[ \\t]*:[ \\t]*["']?\\$\\{\\{\\s*secrets\\[\\s*format\\(.*$`);
+var OUTPUT_LIMIT = 16 * 1024 * 1024;
+var DISK_LIMIT = 1024 * 1024 * 1024;
+var NEW_FILES_LIMIT = 20 * 1024 * 1024;
+var PUSH_SUBJECT = "Bitfab replay started on push";
+var PUSH_CONDITION = `github.event_name != 'push' || !startsWith(github.ref_name, '${PREFIX}') || startsWith(github.event.head_commit.message, '${PUSH_SUBJECT}')`;
+var FOLLOW_FLAGS = [
+  "--cloud-status",
+  "--cloud-watch",
+  "--cloud-cancel",
+  "--cloud-cleanup"
+];
+var CLOUD_VALUE_FLAGS = [
+  ...FOLLOW_FLAGS,
+  "--cloud-request-id",
+  "--cloud-timeout",
+  "--cloud-ref"
+];
+var MINIMUM_NODE_MAJOR = 18;
+var HELP = `Cloud replay: run the replay you run locally on GitHub Actions by adding --cloud.
+
+  bitfab-replay --registry scripts/replay.ts classify --trace-ids UUID --cloud
+
+Every replay option works as it does locally, including --dry-run and --fail-on-error,
+and your SDK checks them before anything is uploaded. The runner replays a snapshot of
+your working tree (changed files, plus new files git does not ignore) from the same
+directory, and this command prints the replay's output and exits with its exit code.
+The experiment records your branch, the commit the snapshot was taken on, and the
+snapshot's changed files as its code change, as it would for a local replay.
+Credential-like files that are not on GitHub yet are refused unless you name them with
+--cloud-allow-file. Requires git and Node.js ${MINIMUM_NODE_MAJOR}+ on macOS or Linux, with a github.com
+origin.
+
+The replay's stderr comes back as it printed it. Its stdout result comes back as a
+short summary instead of every item: the experiment ID and URL, how many traces were
+replayed, same, changed, and errored, each errored trace with its error, and the exit
+code. Every item's input and output are saved in the experiment in Bitfab, where the
+Bitfab MCP tools read them, so by default the job log holds no trace data.
+
+Options added by --cloud:
+  --cloud-preview        List what the snapshot would contain and push nothing.
+  --cloud-detach         Return after dispatch instead of waiting.
+  --cloud-full-output    Print the replay's whole stdout result, every item included,
+                         instead of the summary. The result passes through the
+                         GitHub job log, so it is refused on a public repository,
+                         and large runs can exceed what the log holds.
+  --cloud-timeout MIN    Stop the replay after MIN minutes (1..7200).
+  --cloud-env NAME=VALUE Set an environment variable for this replay only; repeat it
+                         for more. NAME alone copies the value from your shell. The
+                         value is stored in the snapshot commit on GitHub, so this is
+                         for settings, never secrets: names that look like secrets,
+                         and names the workflow reads from a secret, are refused.
+  --cloud-allow-file PATH
+                         Upload PATH even though it looks like a credential, such as
+                         a test certificate; repeat it for more. Refused on a public
+                         repository, where anyone can read the snapshot branch.
+  --cloud-request-id ID  Recover a submission whose response was lost.
+  --cloud-ref BRANCH     Replay BRANCH as it is on GitHub, with no snapshot of your
+                         working tree, and record the experiment on BRANCH. Meant for
+                         CI jobs, such as a nightly replay of dev. Runs from a
+                         checkout of the repository, with GitHub access that can
+                         read it and run Actions (a job token needs contents: read
+                         and actions: write, passed as GH_TOKEN), and a workflow on
+                         BRANCH that declares a request input. With no snapshot,
+                         --code-change default-branch and ref fetch their base on
+                         the runner with the run's GitHub token, which the
+                         workflow passes as BITFAB_REPLAY_GIT_TOKEN and the
+                         replay never sees; working-tree and last-branch are
+                         refused, as they are on a dispatched run.
+
+A workflow can also dispatch bitfab-replay.yml itself on any branch other than a
+bitfab-replay/ snapshot branch, passing the replay as JSON in the request input:
+
+  {"args": ["--registry", "scripts/replay.ts", "classify", "--dataset-ids", "UUID"],
+   "cwd": "web", "timeoutMinutes": 60, "env": {"LOG_LEVEL": "debug"}}
+
+args are the replay options without --cloud. cwd is the directory to replay from,
+relative to the repository root, and defaults to the root. timeoutMinutes and
+fullOutput (true) match --cloud-timeout and --cloud-full-output, and env holds the
+values --cloud-env sets. version and id are optional: version names the request
+format (4 when env is set, otherwise 3; 2 is still accepted), and id is the
+execution UUID, which must match an execution_id input when the workflow has one.
+
+The replay runs as the person who started it, so the experiment is recorded as
+yours. Before dispatch, the replay's registry is loaded locally to read its
+client's key, which asks Bitfab for a one-time token passed as the key_id input,
+tied to the repository, branch, and workflow of the run. The runner trades that
+token, together with the GitHub Actions OIDC token of its own run, for a key that
+works only until the replay ends, so only that run can use it; the token alone
+opens nothing. With no key resolved locally, a token Bitfab will not issue or
+trade, or a workflow that declares no key_id input or does not grant
+id-token: write, the run uses the workflow's BITFAB_API_KEY secret instead.
+
+The runner's job exits with the replay's exit code, so the Actions run fails when
+the replay does. Traces that errored fail it only under --fail-on-error.
+
+Follow a replay by the execution UUID it prints:
+  --cloud-watch ID | --cloud-status ID | --cloud-cancel ID | --cloud-cleanup ID
+--cloud-cleanup removes the snapshot branch once the run completed, or when GitHub
+shows no run for it, such as after a dispatch that failed.
+
+Set up once:
+  --cloud-init [--secret NAME ...] [--environment NAME] [--run COMMAND]
+               [--runs-on LABEL] [--secret-prefix PREFIX] [--check COMMAND]
+      Writes .github/workflows/bitfab-replay.yml, the only file cloud replay keeps
+      in the repository, and lists what is left to do. On an existing workflow it
+      adds only the lines a newer SDK needs, such as the push trigger that lets a
+      replay run without GitHub access, and lists what it changed.
+  --cloud-update [same options] [--remove-old-key-secrets]
+      The same command as --cloud-init, for bringing an existing setup up to date.
+      It also lists BITFAB_REPLAY_KEY_* secrets an older SDK left in the
+      repository, each a copy of someone's Bitfab API key, and with
+      --remove-old-key-secrets deletes them.
+  --cloud-secrets --env-file FILE [NAME ...] [--environment NAME] [--dry-run]
+      Copies local values into the GitHub secrets the workflow reads.
+
+GitHub access comes from the GitHub CLI when it is logged in, otherwise from GH_TOKEN
+or GITHUB_TOKEN, otherwise from the github.com credential git already stores. Without
+the GitHub CLI, --cloud-secrets lists the secrets to create by hand and where.
+
+Without GitHub access, or with access that cannot read or push to the repository, a
+replay still runs when git can push the snapshot branch and the workflow also starts
+on a push to a bitfab-replay/ branch, as one written or updated by --cloud-init does.
+This command then warns, prints where to watch the run, and returns once the branch
+is pushed, with no updates and exit code 0. The run uses the workflow's BITFAB_API_KEY
+secret, and --cloud-full-output and --cloud-allow-file are refused, since only GitHub
+access can confirm the repository is private. Delete the snapshot branch once the run
+finishes. With access, a replay starts through the GitHub API as before, and its
+snapshot commit asks GitHub not to start any workflow on the push.
+`;
+
 export {
   getConfig,
+  runOpenExperiments,
+  runWatchRunningExperiments,
   runLogin,
   runLogout,
-  runOpenExperiments,
   runOpenDatasetExperiments,
   runPageLink,
   runSessionLogConsent,
@@ -48757,7 +48911,6 @@ export {
   runSwitchOrg,
   parseUpdateMode,
   runUpdate,
-  runWatchRunningExperiments,
   readHookStdin,
   runCaptureHook,
   runUserPromptSubmit,

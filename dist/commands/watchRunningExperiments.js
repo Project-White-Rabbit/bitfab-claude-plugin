@@ -4,10 +4,10 @@ import {
 } from "../chunks/chunk-FQSXOP32.js";
 import {
   platform
-} from "../chunks/chunk-5DN4NDQD.js";
+} from "../chunks/chunk-SMC4WOUF.js";
 import {
   runWatchRunningExperiments
-} from "../chunks/chunk-VMAJBUSN.js";
+} from "../chunks/chunk-JG76KYDI.js";
 
 // _target/dist/commands/watchRunningExperiments.js
 runWatchRunningExperiments(platform, getVersion()).catch((err) => {
